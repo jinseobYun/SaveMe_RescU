@@ -102,6 +102,13 @@ const GlobalStyles = createGlobalStyle`
   button {
     cursor: pointer;
   }
+
+	* {
+  -webkit-tap-highlight-color:rgba(255,255,255,0);
+	user-select: none;
+  -webkit-touch-callout: none;
+
+}
 `;
 
 export default GlobalStyles;
