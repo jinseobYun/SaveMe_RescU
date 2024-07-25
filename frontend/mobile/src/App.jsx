@@ -1,12 +1,13 @@
-import './App.css'
-
+import React, { Fragment } from "react";
+import GlobalStyle from "@/globalStyles.js";
+import { Button, Input } from "@components/elements";
 function App() {
-
   return (
     <>
-      <h1>init Frontend</h1>
+      <GlobalStyle />
+      <Input />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
