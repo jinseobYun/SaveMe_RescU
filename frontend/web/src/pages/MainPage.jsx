@@ -1,7 +1,10 @@
 import React from 'react'
+import BasicLayout from '../layouts/BasicLayout'
 
 export default function MainPage() {
   return (
-    <div>MainPage입니다.</div>
+    <BasicLayout>
+      <div>MainPage</div>
+    </BasicLayout>
   )
 }
