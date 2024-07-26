@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { Text } from "@components/elements";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
