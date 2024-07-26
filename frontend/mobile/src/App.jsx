@@ -1,22 +1,29 @@
 import React, { useState } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import styled from "styled-components";
+import { Home, Login, Signup } from "@/pages";
 import GlobalStyle from "@/globalStyles.js";
-import { Button, Input } from "@components/elements";
 function App() {
-  const [input, setInput] = useState("");
-
   return (
     <>
-      <GlobalStyle />
-      <Input
-        required={true}
-        placeholder="아이디"
-        value={input}
-        setValue={setInput}
-        successMessage="성공"
-        label="아이디*"
-      />
+      <Container>
+        <GlobalStyle />
+        <Router>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+          </Routes>
+        </Router>
+      </Container>
     </>
   );
 }
-
+const Container = styled.div`
+  display: flex;
+  width: 360px;
+  padding-bottom: 4px;
+  flex-direction: column;
+  align-items: flex-start;
+`;
 export default App;

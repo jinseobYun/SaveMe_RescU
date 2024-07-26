@@ -70,6 +70,7 @@ const GlobalStyles = createGlobalStyle`
 	}
 	body {
 		line-height: 1;
+		-webkit-text-size-adjust:none;
 	}
 	ol, ul {
 		list-style: none;

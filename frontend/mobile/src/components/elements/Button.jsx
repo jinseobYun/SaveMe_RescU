@@ -16,6 +16,7 @@ const Button = ({
   bold = false,
   radius = "3px",
 }) => {
+  console.log(bg);
   return (
     <BasicButton onClick={_onClick} disabled={disabled}>
       {text ? text : children}
