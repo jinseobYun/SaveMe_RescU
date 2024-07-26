@@ -8,6 +8,7 @@ function App() {
     <>
       <GlobalStyle />
       <Input
+        required={true}
         placeholder="아이디"
         value={input}
         setValue={setInput}
