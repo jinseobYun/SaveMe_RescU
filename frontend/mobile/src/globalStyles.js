@@ -1,7 +1,7 @@
 import { createGlobalStyle } from "styled-components";
 const GlobalStyles = createGlobalStyle`
     :root {
-        --button-red-color: ##FF4C4C;
+        --button-red-color: #FF4C4C;
         --main-orange-color:#FFB22C;
         --orange-op50-color:rgba(255, 178, 44, 0.50)
         --yellow-color-100:#FFDE4D;

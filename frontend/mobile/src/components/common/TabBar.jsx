@@ -22,8 +22,8 @@ export default TabBar;
 
 const Wrapper = styled.div`
   display: flex;
-  width: 360px;
-  height: 50px;
+  width: 100%;
+  height: 15vh;
   justify-content: center;
   align-items: flex-start;
 `;
