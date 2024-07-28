@@ -21,13 +21,13 @@ const Grid = ({
   $border_bottom = "none",
   $wrap = false,
   $border = "none",
-  $is_flex = false,
+  $display = false,
   $flex_direction = "row",
   $justify_content = "space-between",
   $align_items = "center",
 }) => {
   const styles = {
-    $is_flex: $is_flex,
+    $display: $display,
     $width: $width,
     $wrap: $wrap,
     $height: $height,
@@ -69,10 +69,8 @@ const GridBox = styled.div`
   ${(props) => (props.$margin ? `margin: ${props.$margin};` : "")}
   ${(props) => (props.$bg ? `background-color: ${props.$bg};` : "")}
   ${(props) => (props.$radius ? `border-radius: ${props.$radius};` : "")}
-  ${(props) =>
-    props.$is_flex
-      ? `display: flex; align-items: center; justify-content: space-between; `
-      : ""}
+  ${(props) => (props.$display ? `display: ${props.$display};` : "")}
+
   ${(props) =>
     props.$align_items ? ` align-items:${props.$align_items};` : ""}
   ${(props) =>

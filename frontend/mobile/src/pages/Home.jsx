@@ -7,7 +7,7 @@ const Home = () => {
     <>
       {/* 헤더 */}
       <Grid
-        $is_flex={true}
+        $display="grid"
         $height="20vh"
         $padding="0 0 0 "
         $flex_direction="column"
@@ -28,7 +28,7 @@ const Home = () => {
             $radius="50%"
             $width="40vw"
             $height="40vw"
-            $bg={{ default: "var(--button-red-color)" }}
+            $bg={{ default: "var(--main-red-color)" }}
             $border="none"
             $boxShadow=" 4px 3px 62px 0px rgba(0, 0, 0, 0.50);"
             children={
@@ -43,7 +43,11 @@ const Home = () => {
         </Grid>
 
         {/* gps  */}
-        <Toggle />
+        <Toggle
+          $toggleColor="var(--main-yellow-color)"
+          $toggleOnText={<Text children="위치 정보 제공 동의" />}
+          $toggleOffText={<Text children="동의해야 앱을 사용할 수 있습니다" />}
+        />
       </Grid>
       <TabBar />
     </>
