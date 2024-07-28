@@ -22,6 +22,7 @@ function App() {
 const Container = styled.div`
   display: flex;
   width: 360px;
+  height: 100vh;
   padding-bottom: 4px;
   flex-direction: column;
   align-items: flex-start;

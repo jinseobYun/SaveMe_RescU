@@ -6,11 +6,11 @@ const Grid = ({
   $left = false,
   $max_width = "100%",
   $max_height = "100%",
-  $radius = "0",
-  $is_flex = false,
+  $radius = false,
+  $height = "auto",
   $width = "100%",
-  $margin = "0",
-  $padding = "0",
+  $margin = false,
+  $padding = false,
   $bg = "transparent",
   children = null,
   $center = false,
@@ -19,10 +19,12 @@ const Grid = ({
   $border_left = "none",
   $border_right = "none",
   $border_bottom = "none",
-  $height = "auto",
   $wrap = false,
   $border = "none",
+  $is_flex = false,
   $flex_direction = "row",
+  $justify_content = "space-between",
+  $align_items = "center",
 }) => {
   const styles = {
     $is_flex: $is_flex,
@@ -44,6 +46,8 @@ const Grid = ({
     $border_bottom: $border_bottom,
     $border: $border,
     $flex_direction: $flex_direction,
+    $justify_content: $justify_content,
+    $align_items: $align_items,
   };
 
   return (
@@ -69,6 +73,10 @@ const GridBox = styled.div`
     props.$is_flex
       ? `display: flex; align-items: center; justify-content: space-between; `
       : ""}
+  ${(props) =>
+    props.$align_items ? ` align-items:${props.$align_items};` : ""}
+  ${(props) =>
+    props.$justify_content ? ` justify-content:${props.$justify_content};` : ""}
   ${(props) =>
     props.$center
       ? `text-align: center;`

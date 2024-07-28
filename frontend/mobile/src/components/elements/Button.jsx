@@ -9,7 +9,7 @@ const Button = ({
   $width = "100%",
   $height = "100%",
   $padding = "15px 15px",
-  $bg = "var(bg-baige-color)",
+  $bg = { default: "var(--button-red-color)", hover: "var(bg-baige-color)" },
   $color = "var(--black-color-100)",
   $disabled = false,
   $border = "1px solid var(--black-color-300)",
@@ -35,7 +35,6 @@ const Button = ({
     $transition,
     $zIndex,
   };
-  console.log($bg);
   return (
     <BasicButton {...styles} onClick={_onClick} disabled={$disabled}>
       {$text ? $text : children}
@@ -48,7 +47,7 @@ const BasicButton = styled.button`
   width: ${(props) => props.$width};
   height: ${(props) => props.$height};
   cursor: pointer;
-  background-color: ${(props) => props.$bg};
+  background-color: ${(props) => props.$bg.default};
   color: ${(props) => props.$color};
   padding: ${(props) => props.$padding};
   border: ${(props) => props.$border};

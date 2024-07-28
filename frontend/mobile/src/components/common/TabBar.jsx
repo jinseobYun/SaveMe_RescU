@@ -23,9 +23,10 @@ export default TabBar;
 const Wrapper = styled.div`
   display: flex;
   width: 100%;
-  height: 15vh;
+  height: 10vh;
   justify-content: center;
-  align-items: flex-start;
+  position: fixed;
+  bottom: 0px;
 `;
 
 const TabItem = styled.div`
