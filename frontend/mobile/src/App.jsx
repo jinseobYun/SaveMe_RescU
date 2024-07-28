@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import styled from "styled-components";
-import { Home, Login, Signup } from "@/pages";
+import { HomePage, LoginPage, SignupPage, ReportCallPage } from "@/pages";
 import GlobalStyle from "@/globalStyles.js";
 function App() {
   return (
@@ -10,9 +10,10 @@ function App() {
         <GlobalStyle />
         <Router>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/report" element={<ReportCallPage />} />
           </Routes>
         </Router>
       </Container>
@@ -21,8 +22,10 @@ function App() {
 }
 const Container = styled.div`
   display: flex;
-  width: 360px;
-  height: 100vh;
+  width: 100%;
+  height: 100%
+  max-height: 800px;
+  max-width:360px;
   padding-bottom: 4px;
   flex-direction: column;
   align-items: flex-start;

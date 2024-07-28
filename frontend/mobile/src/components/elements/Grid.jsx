@@ -12,8 +12,8 @@ const Grid = ({
   $margin = false,
   $padding = false,
   $bg = "transparent",
-  children = null,
   $center = false,
+  children = null,
   _onClick = () => {},
   $border_top = "none",
   $border_left = "none",
@@ -79,8 +79,8 @@ const GridBox = styled.div`
     props.$center
       ? `text-align: center;`
       : props.$right
-        ? `text-align: right;`
-        : ""};
+      ? `text-align: right;`
+      : ""};
   ${(props) => (props.$wrap ? `flex-wrap: wrap;` : "")}
   ${(props) => (props.$border ? `border: ${props.$border};` : "")}
   ${(props) => (props.$border_top ? `border-top: ${props.$border_top};` : "")}

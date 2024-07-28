@@ -22,10 +22,10 @@ const Toggle = ({
 
   return (
     <>
-      <Grid {...$gridStyle}>
-        <ToggleContainer
-        // 클릭하면 토글이 켜진 상태(isOn)를 boolean 타입으로 변경하는 메소드가 실행
-        >
+      <ToggleWrapper>
+        <ToggleContainer>
+          <Desc>{isActive ? $toggleOnText : $toggleOffText}</Desc>
+
           <ToggleSwitch>
             <CheckBox
               type="checkbox"
@@ -35,17 +35,46 @@ const Toggle = ({
             <ToggleSlider />
           </ToggleSwitch>
         </ToggleContainer>
-        <Desc>{isActive ? $toggleOnText : $toggleOffText}</Desc>
-      </Grid>
+      </ToggleWrapper>
     </>
   );
 };
 export default Toggle;
+const ToggleWrapper = styled.div`
+  display: flex;
+  width: 84vw;
+  padding: 8px 19px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  flex-shrink: 0;
+  border-radius: 16px;
+  border: 1px solid var(--black-color-200);
+  background: var(--white-color-200);
+
+  /* Drop Shadow / Normal */
+  box-shadow: 0px 4px 0px 0px #000;
+`;
+const ToggleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  align-self: stretch;
+`;
+
+const Desc = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4px;
+  flex: 1 0 0;
+`;
 const ToggleSwitch = styled.label`
   position: relative;
   display: inline-block;
-  width: 47.7px;
-  height: 23.33px;
+  width: 60px;
+  height: 36px;
 `;
 const ToggleSlider = styled.span`
   position: absolute;
@@ -61,9 +90,10 @@ const ToggleSlider = styled.span`
 
   &:before {
     position: absolute;
+    flex-shrink: 0;
     content: "";
-    height: 15px;
-    width: 15px;
+    height: 28px;
+    width: 28px;
     left: 4px;
     bottom: 4px;
     background-color: var(--white-color-100);
@@ -88,20 +118,8 @@ const CheckBox = styled.input`
   }
 
   &:checked + ${ToggleSlider}:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
+    -webkit-transform: translateX(23px);
+    -ms-transform: translateX(23px);
+    transform: translateX(23px);
   }
-`;
-const ToggleContainer = styled.div`
-  position: relative;
-  margin-top: 8rem;
-  left: 47%;
-  cursor: pointer;
-`;
-
-const Desc = styled.div`
-  //설명 부분의 CSS를 구현
-  text-align: center;
-  margin: 20px;
 `;
