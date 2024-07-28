@@ -23,9 +23,9 @@ function App() {
 const Container = styled.div`
   display: flex;
   width: 100%;
-  height: 100%
+  height: 100%;
   max-height: 800px;
-  max-width:360px;
+  max-width: 360px;
   padding-bottom: 4px;
   flex-direction: column;
   align-items: flex-start;
