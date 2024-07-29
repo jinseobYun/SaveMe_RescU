@@ -67,7 +67,7 @@ const Input = ({
       }
     }
   };
-  console.log(value.length, isError);
+  // console.log(value.length, isError);
   return (
     <>
       <InputContainer>

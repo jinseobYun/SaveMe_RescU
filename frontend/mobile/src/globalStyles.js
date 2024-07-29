@@ -71,6 +71,8 @@ const GlobalStyles = createGlobalStyle`
 	body {
 		line-height: 1;
 		-webkit-text-size-adjust:none;
+		width: 100%;
+  	height: 100%;
 	}
 	ol, ul {
 		list-style: none;
@@ -88,9 +90,11 @@ const GlobalStyles = createGlobalStyle`
 		border-spacing: 0;
 	}
 	html {
-        font-size: 62.5%;
+		font-size: 62.5%;
 		font-family: 'NotoSans';
 		overflow-x: hidden;
+		width: 100%;
+ 	 	height: 100%;
 	}
 	img {
 		width: 100%;
