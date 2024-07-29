@@ -1,2 +1,4 @@
-package com.ssafy.smru.dto;public class WebMemberDto {
+package com.ssafy.smru.dto;
+
+public class WebMemberDto {
 }

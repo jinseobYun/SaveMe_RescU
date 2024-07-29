@@ -17,6 +17,6 @@ public class MedicalInformation {
     @Column
     private String otherInfo;
 
-    @OneToOne(mappedBy = "medicalInfo")
+    @OneToOne(mappedBy = "medicalInformation")
     private AppMember appMember;
 }

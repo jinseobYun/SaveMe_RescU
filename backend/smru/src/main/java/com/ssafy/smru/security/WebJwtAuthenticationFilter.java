@@ -14,8 +14,8 @@ import org.springframework.web.filter.GenericFilterBean;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public class AppJwtAuthenticationFilter extends GenericFilterBean {
-    private final AppJwtProvider jwtProvider;
+public class WebJwtAuthenticationFilter extends GenericFilterBean {
+    private final WebJwtProvider jwtProvider;
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         /**

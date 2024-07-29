@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/app/member")
+@RequestMapping("/api/v1/web/member")
 @RequiredArgsConstructor
 @Slf4j
-public class AppMemberController {
+public class WebMemberController {
     private final AppMemberService appMemberService;
 
     @PostMapping("/login")

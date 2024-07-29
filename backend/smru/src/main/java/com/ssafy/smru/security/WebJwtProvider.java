@@ -9,15 +9,12 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Key;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -25,10 +22,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 @PropertySource(value="classpath:/security.properties")
-public class JwtProvider {
+public class WebJwtProvider {
     private final Key key;
 
-    public JwtProvider(@Value("${jwt.secretkey}") String secretKey) {
+    public WebJwtProvider(@Value("${jwt.web.secretkey}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
