@@ -1,7 +1,7 @@
 package com.ssafy.smru.controller;
 
-import com.ssafy.smru.dto.AppMemberDto;
-import com.ssafy.smru.service.AppMemberService;
+import com.ssafy.smru.dto.WebMemberDto;
+import com.ssafy.smru.service.WebMemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,22 +15,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 public class WebMemberController {
-    private final AppMemberService appMemberService;
+    private final WebMemberService webMemberService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AppMemberDto.Request dto) {
+    public ResponseEntity<?> login(@RequestBody WebMemberDto.Request dto) {
         log.info("로그인 요청");
         try {
-            return ResponseEntity.ok(appMemberService.login(dto));
+            return ResponseEntity.ok(webMemberService.login(dto));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("서버에서 오류 발생");
         }
     }
     @PostMapping("")
-    public ResponseEntity<?> register(@RequestBody AppMemberDto.Request dto) {
+    public ResponseEntity<?> register(@RequestBody WebMemberDto.Request dto) {
         try {
-            return ResponseEntity.ok(appMemberService.register(dto));
+            return ResponseEntity.ok(webMemberService.register(dto));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("서버에서 오류 발생");

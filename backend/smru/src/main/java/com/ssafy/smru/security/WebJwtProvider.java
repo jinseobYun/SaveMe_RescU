@@ -17,7 +17,6 @@ import java.security.Key;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -33,27 +32,24 @@ public class WebJwtProvider {
     /**
      * 유저 정보를 갖고 엑세트 토큰, 리프레시 토큰을 생성하는 함수
      * */
-    public TokenInfo generateToken(Authentication authentication, int memberId) {
+    public TokenInfo generateToken(Authentication authentication, Long memberId, Integer roleId) {
         // 권한 가져오기
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
 
         // 토큰 만료 시간 설정
         Date accessTokenExpiresIn = new Date((new Date()).getTime() + 1000L * 60 * 60 * 3);
-
         // 엑세스 토큰 생성
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
-                .claim("memberId", memberId)
-                .claim("auth", authorities)
+                .claim("webMemberId", memberId)
+                .claim("roleId", roleId)
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
+        Date refreshTokenExpiresIn = new Date((new Date()).getTime() + 1000L * 60 * 60 * 24 * 30);
         // 리프레시 토큰 생성
         String refreshToken = Jwts.builder()
-                .setExpiration(accessTokenExpiresIn)
+                .setExpiration(refreshTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 

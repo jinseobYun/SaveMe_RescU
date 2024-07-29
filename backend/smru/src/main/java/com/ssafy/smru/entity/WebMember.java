@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -53,5 +54,12 @@ public class WebMember implements UserDetails {
     @Override
     public String getUsername() {
         return memberId;
+    }
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
+    public void changeRole(int roleId) {
+        this.roleId = roleId;
     }
 }

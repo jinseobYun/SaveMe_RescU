@@ -31,7 +31,7 @@ public class WebMemberDetailService implements UserDetailsService {
         return User.builder()
                 .username(member.getMemberId())
                 .password(member.getPassword())
-                //.roles(admin.getRoles().toArray(new String[0]))
+                .roles(member.getRoleId() + "")
                 .build();
     }
 }
