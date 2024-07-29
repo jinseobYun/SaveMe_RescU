@@ -50,21 +50,16 @@
     background: var(--black-50-f-2-f-2-f-2, #F2F2F2);
 }
 .login-button {
-    cursor: pointer;
     display: flex;
-    width: 614px;
-    height: 59px;
-    padding: 10px 24px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
-    border-radius: 6px;
     opacity: var(--sds-size-stroke-border);
-    background: var(--font-title-mobile, #2D4059);
+    background: #2D4059;
 }
 .login-text {
-    color: var(--white-ffffff, var(--Primary-Base-White, #FFF));
+    color: #FFF;
     text-align: center;
     font-feature-settings: 'clig' off, 'liga' off;
     /* Button-label */

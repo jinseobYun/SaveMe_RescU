@@ -1,6 +1,7 @@
 import React from "react";
 import "./LoginPage.css";
 import BasicLayout from "../layouts/BasicLayout";
+import Button from "../components/elements/Button";
 
 export default function LoginPage() {
   return (
@@ -19,9 +20,11 @@ export default function LoginPage() {
             <input className="input"></input>
           </div>
         </div>
-        <button onClick={() => console.log("로그인")} className="login-button">
+        <Button className="login-button"
+          _onClick={() => console.log("로그인")} disabled="false"
+        >
           <div className="login-text">로그인</div>
-        </button>
+        </Button>
       </div>
     </BasicLayout>
   );
