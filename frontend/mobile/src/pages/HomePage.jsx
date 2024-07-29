@@ -21,6 +21,7 @@ const Home = () => {
         $bg="var(--bg-baige-color)"
         $align_items="flex-start"
       >
+        {/* //TODO - 헤더 만들기 */}
         <Text>119 신고 서비스</Text>
         <Text>SAVE ME</Text>
       </Grid>

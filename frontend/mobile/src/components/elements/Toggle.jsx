@@ -42,7 +42,7 @@ const Toggle = ({
 export default Toggle;
 const ToggleWrapper = styled.div`
   display: flex;
-  width: 84vw;
+  width: 84%;
   padding: 8px 19px;
   flex-direction: column;
   justify-content: center;
