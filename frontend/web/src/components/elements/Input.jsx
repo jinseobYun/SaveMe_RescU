@@ -1,8 +1,8 @@
 import React, { useState, useRef, Component } from "react";
 import styled from "styled-components";
-import { Text } from "@components/elements";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import Text from "./Text";
+// import VisibilityIcon from "@mui/icons-material/Visibility";
+// import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 const Input = ({
   type = "text",
@@ -20,6 +20,7 @@ const Input = ({
   successMessage = "유효한 값입니다",
   errorMessage = "유효한 값을 입력해주세요",
   defaultMessage = "",
+  showClearButton = false,
 }) => {
   const [isError, setIsError] = useState(false);
   const [helperText, setHelperText] = useState("");
@@ -67,6 +68,11 @@ const Input = ({
       }
     }
   };
+
+  // 추가
+  const clearValue = () => {
+    setValue("");
+  };
   console.log(value.length, isError);
   return (
     <>
@@ -81,23 +87,30 @@ const Input = ({
             />
           )}
         </Label>
-        <InputWrapper></InputWrapper>
-        <BasicInput
-          value={value}
-          disabled={disabled}
-          type={showPassword ? "text" : type}
-          inputMode={type === "number" ? "numeric" : undefined}
-          pattern={type === "number" ? "[0-9]*" : undefined}
-          placeholder={placeholder}
-          name={name}
-          required={required}
-          onBlur={onBlur}
-          onChange={onChange}
-          ref={ref}
-        />
+        {/* 수정 InputWrapper*/}
+        <InputWrapper>
+          <BasicInput
+            value={value}
+            disabled={disabled}
+            type={showPassword ? "text" : type}
+            inputMode={type === "number" ? "numeric" : undefined}
+            pattern={type === "number" ? "[0-9]*" : undefined}
+            placeholder={placeholder}
+            name={name}
+            required={required}
+            onBlur={onBlur}
+            onChange={onChange}
+            ref={ref}
+          />
+          {/* 추가 */}
+          {showClearButton && (
+            <ClearButton onClick={clearValue}>X</ClearButton>
+          )}
+        </InputWrapper>
         {type === "password" && (
           <div className="input_icon" onClick={handleTogglePassword}>
-            {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+            {zz}
+            {/* {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />} */}
           </div>
         )}
 
@@ -118,32 +131,64 @@ const Input = ({
 };
 const InputContainer = styled.div`
   display: flex;
-  width: 200px;
+  width: 100%;
   height: 80px;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
+  gap: 5px;
 `;
 const Label = styled.div`
-width:100%
+  width:100%
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   align-self: stretch;
 `;
+
 const InputWrapper = styled.div`
-  // display: flex;
-  // height: 40px;
-  // padding: 8px;
-  // flex-direction: column;
-  // justify-content: center;
-  // align-items: flex-start;
-  // gap: 10px;
-  // align-self: stretch;
+  width: 95%;
+  padding: 5px;
+  display: flex;
+  box-sizing: border-box;
+
+  // 색 확인하기 -------------------------------------
+  border: 1px solid;
+  // var(--gray-color-400);
+  border-radius: 5px;
+  box-shadow: 0px 1px 2px 0px rgba(55, 65, 81, 0.08);
+  color: var(--gray-color-400);
+  background: var(--white-color-100);
 `;
 const BasicInput = styled.input`
+  width: 90%;
+  display:flex;
+  border: none;
+  outline: none;
+  color: var(--gray-color-400);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  background: var(--white-color-100);
+  /* Light / Elevation / 200 */
+  
+  &::placeholder {
+    color: var(--gray-color-400);
+  }
+`;
+
+// ClearButton
+const ClearButton = styled.button`
+  display: flex;
+  background: none;
+  border: none;
+  cursor: pointer;
+  // color: #ff0000;
+`;
+
+// 임시
+const CheckInput = styled.div`
   width: 100%;
-  padding: 10px;
+  padding: 5px;
   box-sizing: border-box;
   border-radius: 5px;
   border: 1px solid var(--main-orange-color);
@@ -161,21 +206,20 @@ const BasicInput = styled.input`
   }
   &:user-invalid {
     border: 1px solid var(--red-color-100);
-    box-shadow:
-      0px 0px 0px 2px #fde2dd,
+    box-shadow: 0px 0px 0px 2px #fde2dd,
       0px 0px 0px 1px var(--red-color-100) inset;
   }
   &:user-valid {
     border: 1px solid var(--green-color-100);
-    box-shadow:
-      0px 0px 0px 2px #cbf4c9,
+    box-shadow: 0px 0px 0px 2px #cbf4c9,
       0px 0px 0px 1px var(--green-color-100) inset;
   }
 `;
+
 const HelpText = styled.div`
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   align-self: stretch;
 `;
 export default Input;
