@@ -61,7 +61,7 @@ export default function Map() {
 
   return (
     <div className="map">
-      <div className="left-side">
+      <div className="map-left-side">
         <div className="controls">
           <button>환지위치로 센터조정</button>
           <button>전체마커표시</button>
