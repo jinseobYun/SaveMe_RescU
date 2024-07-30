@@ -9,7 +9,6 @@ a:active, a:visited {
 }
 a:hover {
     color: rgba(70, 113, 255, 0.5);
-    /* text-decoration: underline; */
 }
 
 #navbar {
@@ -19,77 +18,46 @@ a:hover {
     height: 180px;
     flex-shrink: 0;
     align-items: center;
-    /* 컬러임시 */
     border-bottom: 1px solid;
     border-color: gainsboro;
+    padding: 30px;
+    position: relative;
 }
 
-.menu-left{
+.admin-menu-right {
     display: flex;
-}
-.menu-right{
-    display: flex;
+    gap: 50px;
+    position: absolute;
+    right: 0;
+    margin-right: 50px;
 }
 
-.open-map {
+.open-search {
     display: flex;
-    width: 201px;
-    height: 180px;
     flex-direction: column;
     justify-content: center;
-    flex-shrink: 0;
     color: #000;
-    font-size: 40px;
+    font-size: 36px;
     font-style: normal;
     font-weight: 600;
     line-height: 16px;
 }
-.open-rtc {
-    display: flex;
-    width: 172px;
-    height: 180px;
-    flex-direction: column;
-    justify-content: center;
-    flex-shrink: 0;
-    color: #000;
-    font-size: 40px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 16px;
-    margin-left: 50px
-}
 
-.open-edit-password {
-    display: flex;
-    width: 300px;   
-    height: 180px;
-    flex-direction: column;
-    justify-content: center;
-    flex-shrink: 0;
-    color: #000;
-    font-size: 40px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 16px;
-}
 .logout {
     display: flex;
-    width: 172px;
-    height: 180px;
     flex-direction: column;
     justify-content: center;
-    flex-shrink: 0;
     color: #000;
-    font-size: 40px;
+    font-size: 36px;
     font-style: normal;
     font-weight: 600;
     line-height: 16px;
 }
-.logo-box {
-    /* width: 263px;
-    height: 126px; */
-    flex-shrink: 0;
-}
+.admin-logo-box {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+  }
 .logo {
     width: 272px;
     height: 125px;

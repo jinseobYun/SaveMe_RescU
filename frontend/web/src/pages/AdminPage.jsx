@@ -1,5 +1,10 @@
 import React from "react";
+import BasicLayout from "../layouts/BasicLayout";
 
 export default function Admin() {
-  return <div>Admin</div>;
+  return (
+    <BasicLayout>
+      <div>admin</div>
+    </BasicLayout>
+  )
 }
