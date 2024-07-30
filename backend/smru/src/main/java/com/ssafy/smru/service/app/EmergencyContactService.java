@@ -3,7 +3,6 @@ package com.ssafy.smru.service.app;
 import com.ssafy.smru.dto.app.EmergencyContactDto;
 import com.ssafy.smru.entity.AppMember;
 import com.ssafy.smru.entity.app.EmergencyContact;
-import com.ssafy.smru.exception.ResourceConflictException;
 import com.ssafy.smru.exception.ResourceNotFoundException;
 import com.ssafy.smru.exception.UnauthorizedException;
 import com.ssafy.smru.repository.AppMemberRepository;
@@ -38,7 +37,7 @@ public class EmergencyContactService {
         AppMember appMember = appMemberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new ResourceNotFoundException("등록된 사용자가 아닙니다."));
 
-        
+
 
         EmergencyContact emergencyContact = request.toEntity(appMember);
         emergencyContact = emergencyContactRepository.save(emergencyContact);

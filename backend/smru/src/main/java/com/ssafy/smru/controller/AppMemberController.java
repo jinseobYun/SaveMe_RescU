@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/app/member")
+@RequestMapping("/api/v1/app/members")
 @RequiredArgsConstructor
 @Slf4j
 public class AppMemberController {
@@ -35,5 +35,14 @@ public class AppMemberController {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("서버에서 오류 발생");
         }
+    }
+
+    @PostMapping("/id-validate")
+    public ResponseEntity<?> idValidate(@RequestBody AppMemberDto.Request dto) {
+        if(dto.getMemberId() == null || dto.getMemberId().trim().equals("")) {
+            return ResponseEntity.badRequest().body("입력값을 확인하세요");
+        }
+        boolean result = appMemberService.idConfirm(dto);
+        return ResponseEntity.ok(result);
     }
 }

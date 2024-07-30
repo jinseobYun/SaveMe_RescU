@@ -63,4 +63,10 @@ public class AppMemberServiceImpl implements AppMemberService {
         return appJwtProvider.generateToken(authentication, appMember.getAppMemberId());
     }
 
+
+    // 아이디 중복확인 매서드
+    @Override
+    public boolean idConfirm(AppMemberDto.Request dto) {
+        return appMemberRepository.findByMemberId(dto.getMemberId()).isEmpty();
+    }
 }

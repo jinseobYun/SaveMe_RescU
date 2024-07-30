@@ -6,4 +6,5 @@ import com.ssafy.smru.security.TokenInfo;
 public interface AppMemberService {
     int register(AppMemberDto.Request dto);
     TokenInfo login(AppMemberDto.Request dto);
+    boolean idConfirm(AppMemberDto.Request dto);
 }
