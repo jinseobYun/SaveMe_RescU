@@ -132,7 +132,6 @@ const Input = ({
 const InputContainer = styled.div`
   display: flex;
   width: 100%;
-  height: 80px;
   flex-direction: column;
   align-items: flex-start;
   gap: 5px;
@@ -146,7 +145,7 @@ const Label = styled.div`
 `;
 
 const InputWrapper = styled.div`
-  width: 95%;
+  width: 100%;
   padding: 5px;
   display: flex;
   box-sizing: border-box;
@@ -160,7 +159,7 @@ const InputWrapper = styled.div`
   background: var(--white-color-100);
 `;
 const BasicInput = styled.input`
-  width: 90%;
+  width: 100%;
   display:flex;
   border: none;
   outline: none;
