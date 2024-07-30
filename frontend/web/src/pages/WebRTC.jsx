@@ -4,6 +4,7 @@ import Input from "../components/elements/Input";
 import WebRTC from "../components/WebRTC";
 import styled from "styled-components";
 import FirstInfo from "../components/FirstInfo";
+import SecondInfo from "../components/SecondInfo";
 import "./WebRTC.css";
 
 const WebRtcPage = () => {
@@ -17,19 +18,15 @@ const WebRtcPage = () => {
     <div className="webrtc">
       <div className="left-side">
         {activeComponent === "component1" && <FirstInfo />}
-        {activeComponent === "component2" && (
-          <Component2>
-            <Input label="Another Input" placeholder="Enter more..." />
-          </Component2>
-        )}
-        {/* <Button
+        {activeComponent === "component2" && <SecondInfo />}
+        <Button
           $text="First Info"
           _onClick={() => handleComponentChange("component1")}
         />
         <Button
           $text="Second Info"
           _onClick={() => handleComponentChange("component2")}
-        /> */}
+        />
       </div>
       <div className="center">
         {/* RTC component */}
