@@ -35,6 +35,13 @@ const useUserStore = create(
       user: null,
       setUser: (user) => set({ user }),
       clearUser: () => set({ user: null }),
+      accessToken: null,
+      setAccessToken: (token) => set({ accessToken: token }),
+      clearAccessToken: () => set({ accessToken: null }),
+
+      refreshToken: null,
+      setReFreshToken: (token) => set({ refreshToken: token }),
+      clearreFreshToken: () => set({ refreshToken: null }),
     }),
     {
       name: 'user-storage', // 스토리지 항목의 이름
