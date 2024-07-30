@@ -1,11 +1,9 @@
 package com.ssafy.smru.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -20,17 +18,21 @@ public class WebMember implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long webMemberId;
 
-    @Column
+    @Column(nullable = false, unique = true)
     private String memberId;
 
-    @Column
+    @Column(nullable = false)
     private String password;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
-    @Column
-    private Integer roleId;
+
+
+    @OneToOne
+    @JoinColumn(name = "role_id", nullable = false)
+    private WebMemberRole role;
+
 
     @Builder
     public WebMember(Long webMemberId, String memberId, String password, String name, Integer roleId) {
@@ -38,9 +40,9 @@ public class WebMember implements UserDetails {
         this.memberId = memberId;
         this.password = password;
         this.name = name;
-        this.roleId = roleId;
     }
 
+    // GrantedAuthority 를 구현하는 getAuthorities 메서드, 현재는 빈 리스트 반환
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
@@ -51,15 +53,48 @@ public class WebMember implements UserDetails {
         return password;
     }
 
+
     @Override
     public String getUsername() {
         return memberId;
     }
 
+
+    // 회원 이름 변경 메서드
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    // 계정이 만료되지 않았는지 여부 반환, true로 설정
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    // 계정이 잠겨 있지 않았는지 여부 반환, true로 설정
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    // 자격 증명이 만료되지 않았는지 여부 반환, true로 설정
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    // 계정이 활성화되어 있는지 여부 반환, true로 설정
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    // 비밀번호 변경
     public void changePassword(String password) {
         this.password = password;
     }
-    public void changeRole(int roleId) {
-        this.roleId = roleId;
+    public void changeRole(WebMemberRole role) {
+        this.role = role;
     }
+
 }

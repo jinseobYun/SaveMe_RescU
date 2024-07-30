@@ -2,7 +2,9 @@ package com.ssafy.smru.service;
 
 import com.ssafy.smru.dto.WebMemberDto;
 import com.ssafy.smru.entity.WebMember;
+import com.ssafy.smru.entity.WebMemberRole;
 import com.ssafy.smru.repository.WebMemberRepository;
+import com.ssafy.smru.repository.WebMemberRoleRepository;
 import com.ssafy.smru.security.TokenInfo;
 import com.ssafy.smru.security.WebJwtProvider;
 import jakarta.transaction.Transactional;
@@ -23,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 public class WebMemberServiceImpl implements WebMemberService {
     private final WebMemberRepository webMemberRepository;
+    private final WebMemberRoleRepository webMemberRoleRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final WebJwtProvider webJwtProvider;
     private final PasswordEncoder passwordEncoder;
@@ -34,7 +37,9 @@ public class WebMemberServiceImpl implements WebMemberService {
         //--- 2. id 생성 후 저장
         try {
             WebMember webMember = dto.toEntity();
-            webMember.changeRole(1);
+            WebMemberRole role = webMemberRoleRepository.findById(1)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid role ID"));
+            webMember.changeRole(role);
             webMember.changePassword(passwordEncoder.encode(webMember.getPassword()));
             webMemberRepository.save(webMember);
             return 0;
@@ -59,7 +64,7 @@ public class WebMemberServiceImpl implements WebMemberService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "입력된 정보와 일치하는 사용자가 없습니다."));
         System.out.println(webMember);
         //--- 3. 인증 정보를 기반으로 JWT 생성
-        return webJwtProvider.generateToken(authentication, webMember.getWebMemberId(), webMember.getRoleId());
+        return webJwtProvider.generateToken(authentication, webMember.getWebMemberId(), webMember.getRole().getRoleId());
     }
 
 }
