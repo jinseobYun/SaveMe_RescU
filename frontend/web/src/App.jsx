@@ -1,12 +1,15 @@
-import './App.css'
+import { RouterProvider } from "react-router-dom";
+import "./App.css";
+import root from "./router/root";
+import GlobalStyles from "./globalStyles";
 
 function App() {
-
   return (
     <>
-      <h1>init Frontend</h1>
+      <GlobalStyles/>
+      <RouterProvider router={root} />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
