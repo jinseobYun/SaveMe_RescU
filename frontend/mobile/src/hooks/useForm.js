@@ -10,10 +10,9 @@ function useForm({ initialValues, onSubmit, validate }) {
     setValues({ ...values, [name]: value });
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     setIsLoading(true);
     event.preventDefault();
-    await new Promise((r) => setTimeout(r, 1000));
     setErrors(validate(values));
   };
 

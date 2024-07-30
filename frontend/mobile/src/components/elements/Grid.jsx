@@ -22,9 +22,10 @@ const Grid = ({
   $wrap = false,
   $border = "none",
   $display = false,
-  $flex_direction = "row",
+  $flex_direction = "column",
   $justify_content = "space-between",
   $align_items = "center",
+  $gap = "",
 }) => {
   const styles = {
     $display: $display,
@@ -48,6 +49,7 @@ const Grid = ({
     $flex_direction: $flex_direction,
     $justify_content: $justify_content,
     $align_items: $align_items,
+    $gap: $gap,
   };
 
   return (
@@ -91,6 +93,7 @@ const GridBox = styled.div`
   ${(props) =>
     props.$border_bottom ? `border-bottom: ${props.$border_bottom};` : ""}
   flex-direction: ${(props) => props.$flex_direction};
+  gap: ${(props) => props.$gap};
 `;
 
 export default Grid;

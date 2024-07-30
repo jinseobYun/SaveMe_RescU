@@ -171,6 +171,7 @@ const InputWrapper = styled.div`
 const BasicInput = styled.input`
   border: none;
   outline: none;
+  width: 100%;
   color: var(--black-color-200);
   font-size: 1.5rem;
   font-weight: 500;

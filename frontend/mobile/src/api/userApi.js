@@ -1,4 +1,4 @@
-import { Axios, loginAxios } from "@/util/http-commons.js";
+import { Axios, loginAxios } from "@/api/http-commons";
 
 const http = Axios();
 
@@ -59,3 +59,5 @@ async function modifyUser(updateInfo, success, fail) {
 // async function logout(loginId, success, fail) {
 //   await http.get(`/members/logout/${loginId}`).then(success).catch(fail);
 // }
+
+export { registerUser, login, getUserInfo, updateUserPwd, checkIdDuplication, reqVerifyCode, }
