@@ -69,3 +69,7 @@
     line-height: 20px;
     letter-spacing: 0.3px;
 }
+
+.id, .password{
+    width: 100%;
+}

@@ -109,8 +109,7 @@ const Input = ({
         </InputWrapper>
         {type === "password" && (
           <div className="input_icon" onClick={handleTogglePassword}>
-            {zz}
-            {/* {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />} */}
+             {/* {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />} */}
           </div>
         )}
 
