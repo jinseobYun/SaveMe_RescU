@@ -43,6 +43,7 @@ public class AppJwtProvider {
         Date accessTokenExpiresIn = new Date((new Date()).getTime() + 1000L * 60 * 60 * 3);
 
         // 엑세스 토큰 생성
+
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("appMemberId", appMemberId)
@@ -111,5 +112,10 @@ public class AppJwtProvider {
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
+    }
+
+    public Long getAppMemberIdFromToken(String token) {
+        Claims claims = parseClaims(token);
+        return claims.get("appMemberId", Long.class);
     }
 }

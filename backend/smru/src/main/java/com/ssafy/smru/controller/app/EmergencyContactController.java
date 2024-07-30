@@ -2,6 +2,9 @@ package com.ssafy.smru.controller.app;
 
 
 import com.ssafy.smru.dto.app.EmergencyContactDto;
+import com.ssafy.smru.exception.ResourceConflictException;
+import com.ssafy.smru.exception.ResourceNotFoundException;
+import com.ssafy.smru.exception.UnauthorizedException;
 import com.ssafy.smru.service.app.EmergencyContactService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,48 +23,72 @@ public class EmergencyContactController {
 
     private final EmergencyContactService emergencyContactService;
 
-    @GetMapping
-    public ResponseEntity<?> getEmergencyContacts() {
+    private String getAuthenticatedUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String memberId = null;
-
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            memberId = userDetails.getUsername();
-            System.out.println(memberId);
-
+            return userDetails.getUsername();
         }
-        List<EmergencyContactDto.Response> findList = emergencyContactService.getEmergencyContactsByMemberId(memberId);
+        throw new UnauthorizedException("사용자가 인증되지 않았습니다.");
+    }
 
-        return new ResponseEntity<List<EmergencyContactDto.Response>>(findList, HttpStatus.OK);
+    @GetMapping
+    public ResponseEntity<?> getEmergencyContacts() {
+        try {
+            System.out.println("1");
+            String memberId = getAuthenticatedUserId();
+            System.out.println(2);
+            List<EmergencyContactDto.Response> contacts = emergencyContactService.getEmergencyContactsByMemberId(memberId);
+            System.out.println(3);
+            return new ResponseEntity<List<EmergencyContactDto.Response>>(contacts, HttpStatus.OK);
+        }catch (ResourceNotFoundException e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping
-    public ResponseEntity<?>  createEmergencyContact(@RequestBody EmergencyContactDto.Request request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String memberId = null;
-
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            memberId = userDetails.getUsername();
+    public ResponseEntity<?> createEmergencyContact(@RequestBody EmergencyContactDto.Request request) {
+        try {
+            String memberId = getAuthenticatedUserId();
+            EmergencyContactDto.Response response = emergencyContactService.createEmergencyContact(memberId, request);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (ResourceConflictException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        emergencyContactService.createEmergencyContact(memberId, request);
-        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping("/{emergencyContactId}")
     public ResponseEntity<?> updateEmergencyContact(@PathVariable("emergencyContactId") Long emergencyContactId, @RequestBody EmergencyContactDto.Request request) {
-        emergencyContactService.updateEmergencyContact(emergencyContactId, request);
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            String memberId = getAuthenticatedUserId();
+            EmergencyContactDto.Response response = emergencyContactService.updateEmergencyContact(emergencyContactId, request, memberId);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (UnauthorizedException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping
     public ResponseEntity<?> deleteEmergencyContact(@RequestParam Long emergencyContactId) {
         try {
-            emergencyContactService.deleteEmergencyContact(emergencyContactId);
+            String memberId = getAuthenticatedUserId();
+            emergencyContactService.deleteEmergencyContact(emergencyContactId, memberId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (UnauthorizedException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
