@@ -5,8 +5,15 @@ import styled from "styled-components";
 import {
   SignupUserInfoForm,
   SignupLoginInfoForm,
-} from "@components/signupForm";
-import { HomePage, LoginPage, SignupPage, ReportCallPage } from "@/pages";
+  VerifyCodeForm,
+} from "@components/form";
+import {
+  HomePage,
+  LoginPage,
+  SignupPage,
+  ReportCallPage,
+  AgreeTermsPage,
+} from "@/pages";
 import GlobalStyle from "@/globalStyles.js";
 function App() {
   return (
@@ -15,10 +22,13 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/signup" element={<SignupPage />}>
-            <Route path="userInfo" element={<SignupUserInfoForm />} />
-            <Route path="loinInfo" element={<SignupLoginInfoForm />} />
+          <Route path="/signup/*" element={<SignupPage />}>
+            <Route path="userinfo" element={<SignupUserInfoForm />} />
+            <Route path="logininfo" element={<SignupLoginInfoForm />} />
           </Route>
+
+          <Route path="/verification" element={<VerifyCodeForm />} />
+          <Route path="/terms" element={<AgreeTermsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/report" element={<ReportCallPage />} />
           <Route path="/findId" element={<HomePage />} />
@@ -32,8 +42,10 @@ const Container = styled.div`
   display: flex;
   width: 100%;
   height: 100%;
+  min-height: 640px;
+  // max-width: 360px;
   max-height: 800px;
-  max-width: 360px;
+  min-width: 360px;
   padding-bottom: 4px;
   flex-direction: column;
   align-items: flex-start;

@@ -7,7 +7,7 @@ const GlobalStyles = createGlobalStyle`
         --main-yellow-color:#ffde4d;
         --dark-blue-color:#2D4059;
         --bg-baige-color:#FFFCE3;
-        --label-gray-color:##7A7D84;
+        --label-gray-color:#7A7D84;
         --chat-pink-color:#FF9393;
         
         --red-color-100: #CD3D64;

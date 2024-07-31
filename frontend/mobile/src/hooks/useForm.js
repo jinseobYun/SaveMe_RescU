@@ -8,18 +8,18 @@ function useForm({ initialValues, onSubmit, validate }) {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setValues({ ...values, [name]: value });
+    setErrors(validate(values));
   };
 
   const handleSubmit = (event) => {
     setIsLoading(true);
     event.preventDefault();
-    setErrors(validate(values));
   };
 
   useEffect(() => {
     (async () => {
       if (isLoading) {
-        if (Object.keys(errors).length === 0) {
+        if (errors === undefined || Object.keys(errors).length === 0) {
           await onSubmit(values);
         }
         setIsLoading(false);

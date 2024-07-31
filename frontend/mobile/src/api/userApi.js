@@ -38,12 +38,12 @@ async function getUserInfo(loginId, success, fail) {
   await http.get(`/members/${loginId}`).then(success).catch(fail);
 }
 
-async function reqVerifyCode(type, data, success, fail) {
-  //NOTE - type :{reg,id,pw}
-  await http
-    .get(`/members/phone-verify-code-${type}`)
-    .then(success)
-    .catch(fail);
+async function reqVerifyCode(phoneNumber, success, fail) {
+  await http.get(`/members/phone-verify-code`).then(success).catch(fail);
+}
+//TODO - url 확인
+async function checkVerifyCode(data, success, fail) {
+  await http.get(`/members/phone-verify-code`).then(success).catch(fail);
 }
 //TODO - 아이디 찾기
 //TODO - 비밀번호 찾기
@@ -60,4 +60,12 @@ async function modifyUser(updateInfo, success, fail) {
 //   await http.get(`/members/logout/${loginId}`).then(success).catch(fail);
 // }
 
-export { registerUser, login, getUserInfo, updateUserPwd, checkIdDuplication, reqVerifyCode, }
+export {
+  registerUser,
+  login,
+  getUserInfo,
+  updateUserPwd,
+  checkIdDuplication,
+  reqVerifyCode,
+  checkVerifyCode,
+};

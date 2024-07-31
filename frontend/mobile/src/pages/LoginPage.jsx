@@ -30,8 +30,8 @@ const Login = () => {
       //   }
       // );
     },
+    validate: () => {},
   });
-  useEffect;
   return (
     <FormWrapper>
       <Header navText="로그인" />
@@ -75,7 +75,7 @@ const Login = () => {
           />
           <TextBox>
             <Text children="계정이 없으신가요? " />
-            <Link to="/signup">
+            <Link to="/signup/userinfo">
               <Text children="회원가입" $color="var(--main-orange-color)" />
             </Link>
           </TextBox>

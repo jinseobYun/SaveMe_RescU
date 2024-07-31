@@ -41,10 +41,10 @@ const Grid = ({
     $radius: $radius,
     $max_width: $max_width,
     $max_height: $max_height,
-    $border_top: $border_top,
-    $border_left: $border_left,
-    $border_right: $border_right,
-    $border_bottom: $border_bottom,
+    // $border_top: $border_top,
+    // $border_left: $border_left,
+    // $border_right: $border_right,
+    // $border_bottom: $border_bottom,
     $border: $border,
     $flex_direction: $flex_direction,
     $justify_content: $justify_content,
@@ -81,8 +81,8 @@ const GridBox = styled.div`
     props.$center
       ? `text-align: center;`
       : props.$right
-      ? `text-align: right;`
-      : ""};
+        ? `text-align: right;`
+        : ""};
   ${(props) => (props.$wrap ? `flex-wrap: wrap;` : "")}
   ${(props) => (props.$border ? `border: ${props.$border};` : "")}
   ${(props) => (props.$border_top ? `border-top: ${props.$border_top};` : "")}

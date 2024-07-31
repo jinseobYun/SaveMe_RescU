@@ -16,11 +16,12 @@ const TabBar = () => {
         <Link to="/">홈</Link>
       </TabItem>
       <TabItem>
-        {user ? (
+        {/* {user ? (
           <Link to="/login">로그인</Link>
         ) : (
           <Link to="/mySetting">내정보</Link>
-        )}
+        )} */}
+        <Link to="/login">로그인</Link>
       </TabItem>
     </Wrapper>
   );
