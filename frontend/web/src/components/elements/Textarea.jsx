@@ -69,11 +69,11 @@ const Label = styled.div`
 `;
 
 const StyledTextArea = styled.textarea`
-  width: 95%;
+  width: 100%;
   padding: 10px;
   box-sizing: border-box;
   border-radius: 5px;
-  border: 1px solid var(--gray-color-400);
+  border: 1px solid;
   box-shadow: 0px 1px 2px 0px rgba(55, 65, 81, 0.08);
   color: var(--gray-color-400);
   font-size: 16px;
