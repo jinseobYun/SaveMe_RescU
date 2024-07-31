@@ -4,18 +4,20 @@
     height:700px;
 }
 
-.left {
+.main-left {
     display: flex;
     flex-direction: column;
-    width: 27%;
+    width: 37%;
     height: 80%;
     flex-shrink: 0;
     margin-left:20px;
     margin-top: 20px;
 }
-.divide {
+
+
+.main-divide {
     width: 1%;
-    height: 75%;
+    height: 100%;
     flex-shrink: 0;
     border-right: 1px solid;
     border-color:#D0D0D0;
@@ -23,9 +25,9 @@
     margin-right: 1%;
 }
 
-.right {
-    width: 65%;
-    height: 80%;
+.main-right {
+    width: 61%;
+    height: 100%;
     overflow-y: scroll;
     margin-top: 20px;
 }
@@ -37,40 +39,46 @@
     margin-bottom: 48px;
 }
 .filter >.condition {
-    width: 60%;
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
 }
-.filter >.condition div {
-    display: flex;
-    flex-direction: column;
+.filter-date {
+    width: 10rem;
+}
+.charge-input {
+    margin-right:4rem;
+    width: 8rem;
 }
 
-.filter >.condition label {
-    margin-bottom: 5px;
+.filter-btn {
+    width: 10rem;
 }
 
-
+.list-container {
+    border: 1px solid;
+    border-radius: 0.5rem;
+}
 
 .list {
     display: flex;
     width: 100%;
-    border: 1px solid;
+}
+.list > div {
+    justify-content: center;
+    padding: 1rem;
 }
 
-.list >.num {
-    width: 25%;
-    border-right: 1px solid;
+.num {
+    flex:1;
 }
 
-.list >.time {
-    width: 50%;
-    border-right: 1px solid;
+.time {
+    flex:2;
 }
 
-.list >.charge {
-    width: 25%;
+.charge {
+    flex:1;
 }
 
 form {
@@ -79,10 +87,18 @@ form {
 }
 
 .left-column, .right-column {
-    flex: 1;
+    display: flex;
+    width: 47%;
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+.left-column {
+    border-right: 1px solid gainsboro;
+    padding-right: 1rem;
+}
+.right-column {
+    margin-right: 1.5rem;
 }
 
 label {
