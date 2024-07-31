@@ -79,4 +79,8 @@ public class AppMember implements UserDetails {
     public void changePassword(String password) {
         this.password = password;
     }
+
+    public void changeMedicalInformation(MedicalInformation medicalInformation) {
+        this.medicalInformation = medicalInformation;
+    }
 }

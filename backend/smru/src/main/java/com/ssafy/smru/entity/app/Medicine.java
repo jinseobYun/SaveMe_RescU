@@ -1,8 +1,10 @@
 package com.ssafy.smru.entity.app;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
+@Getter
 @Table(name = "medicine")
 public class Medicine {
 

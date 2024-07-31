@@ -153,7 +153,7 @@ public class AppMemberController {
     }
 
     // PW 찾기에서 휴대폰 인증 후  pw 변경 페이지에서의 pw 변경 요청
-    @PostMapping("/password-not-login")
+    @PutMapping("/password-not-login")
     public ResponseEntity<?> resetPasswordNotLogin(@RequestBody PasswordResetDto.Request request) {
         if (request.getPhoneNumber() == null || request.getPhoneNumber().trim().isEmpty() ||
                 request.getVerifyCode() == null || request.getVerifyCode().trim().isEmpty() ||
