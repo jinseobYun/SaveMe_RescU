@@ -24,11 +24,6 @@ public class AppSecurityConfig {
     private static final String APP_BASE_URL = "/api/v1/app";
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return new AppMemberDetailService();
-    }
-
-    @Bean
     public SecurityFilterChain appFilterChain(HttpSecurity http) throws Exception {
         http
                 .httpBasic(httpSecurityHttpBasicConfigurer -> {
@@ -41,17 +36,17 @@ public class AppSecurityConfig {
                     httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
-                            authorizationManagerRequestMatcherRegistry
-                                    // 모든 사용자 가능
-                            		.requestMatchers( "/**").permitAll()
-//                            		.requestMatchers(HttpMethod.GET, "/files/**").permitAll()
+                    authorizationManagerRequestMatcherRegistry
+                            // 모든 사용자 가능
+                            .requestMatchers( "/**").permitAll()
+//                                    .requestMatchers(HttpMethod.GET, "/files/**").permitAll()
 //                                    .requestMatchers(HttpMethod.POST, "/login", "/signup").permitAll()
-                                    // 관리자 로그인한 사용자만 가능
+                            // 관리자 로그인한 사용자만 가능
 //                                    .requestMatchers(HttpMethod.GET).hasAnyRole("ADMIN")
 //                                    .requestMatchers(HttpMethod.DELETE).hasAnyRole("ADMIN")
 //                                    .requestMatchers(HttpMethod.POST).hasAnyRole("ADMIN")
 //                                    .requestMatchers(HttpMethod.PUT).hasAnyRole("ADMIN")
-                                    .anyRequest().authenticated();
+                            .anyRequest().authenticated();
                 })
                 .addFilterBefore(new AppJwtAuthenticationFilter(appJwtProvider), UsernamePasswordAuthenticationFilter.class);
 

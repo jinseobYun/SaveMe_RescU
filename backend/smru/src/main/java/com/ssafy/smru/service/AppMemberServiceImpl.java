@@ -55,7 +55,7 @@ public class AppMemberServiceImpl implements AppMemberService {
     public TokenInfo login(AppMemberDto.Request dto) {
         //--- 1. ID, 암호화된 PW를 기반으로 Authentication 객체 생성
         // 이 때 authentication 은 인증 여부를 확인하는 authenticated 값이 false 로 설정되어있음.
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(dto.getMemberId(), dto.getPassword());
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken("app:"+dto.getMemberId(), dto.getPassword());
         //--- 2. 실제 검증 과정 (사용자 비밀번호 확인)
         // authenticate 함수가 실행되면, CustomUserDetailsService 에서 구현한 loadUserByUsername 함수가 자동으로 실행 됨.
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(token);
