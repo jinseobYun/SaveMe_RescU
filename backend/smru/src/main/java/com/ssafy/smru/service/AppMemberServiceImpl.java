@@ -2,18 +2,15 @@ package com.ssafy.smru.service;
 
 import com.ssafy.smru.dto.AppMemberDto;
 import com.ssafy.smru.entity.AppMember;
+import com.ssafy.smru.exception.ResourceNotFoundException;
 import com.ssafy.smru.repository.AppMemberRepository;
 import com.ssafy.smru.security.AppJwtProvider;
 import com.ssafy.smru.security.TokenInfo;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -21,8 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +36,8 @@ public class AppMemberServiceImpl implements AppMemberService {
         try {
             AppMember appMember = dto.toEntity();
             appMember.changePassword(passwordEncoder.encode(appMember.getPassword()));
+
+
             appMemberRepository.save(appMember);
             return 0;
         } catch (DataIntegrityViolationException e) {
@@ -67,4 +64,44 @@ public class AppMemberServiceImpl implements AppMemberService {
         return appJwtProvider.generateToken(authentication, appMember.getAppMemberId());
     }
 
+
+    // 아이디 중복확인 매서드
+    @Override
+    public boolean idConfirm(AppMemberDto.Request dto) {
+        return appMemberRepository.findByMemberId(dto.getMemberId()).isEmpty();
+    }
+
+
+
+    @Override
+    public AppMemberDto.Response getMemberByPhoneNumber(String phoneNumber) {
+        AppMember appMember = appMemberRepository.findByPhone(phoneNumber)
+                .orElseThrow(() -> new ResourceNotFoundException("해당 휴대폰 번호로 등록된 사용자가 없습니다."));
+        return AppMemberDto.Response.fromEntity(appMember);
+    }
+
+
+    @Override
+    public AppMemberDto.Response getMemberByMemberId(String memberId) {
+        AppMember appMember = appMemberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new ResourceNotFoundException("해당 ID로 등록된 사용자가 없습니다."));
+        return AppMemberDto.Response.fromEntity(appMember);
+    }
+
+
+    @Override
+    @Transactional
+    public void updatePassword(Long appMemberId, String newPassword) {
+        AppMember member = appMemberRepository.findById(appMemberId)
+                .orElseThrow(() -> new ResourceNotFoundException("해당 ID로 등록된 사용자가 없습니다."));
+        member.changePassword(passwordEncoder.encode(newPassword));
+        appMemberRepository.save(member);
+    }
+
+    @Override
+    public boolean checkPassword(Long appMemberId, String currentPassword) {
+        AppMember member = appMemberRepository.findById(appMemberId)
+                .orElseThrow(() -> new ResourceNotFoundException("해당 ID로 등록된 사용자가 없습니다."));
+        return passwordEncoder.matches(currentPassword, member.getPassword());
+    }
 }

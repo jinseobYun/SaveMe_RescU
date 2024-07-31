@@ -1,5 +1,6 @@
 package com.ssafy.smru.entity;
 
+import com.ssafy.smru.entity.app.MedicalInformation;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;

@@ -48,7 +48,24 @@ public class AppMemberDto {
         }
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class Response {
+        private Long appMemberId;
+        private String memberId;
+        private String memberName;
+        private String phone;
 
+        public static Response fromEntity(AppMember member) {
+            return Response.builder()
+                    .appMemberId(member.getAppMemberId())
+                    .memberId(member.getMemberId())
+                    .memberName(member.getMemberName())
+                    .phone(member.getPhone())
+                    .build();
+        }
     }
 }
