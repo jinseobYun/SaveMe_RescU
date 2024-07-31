@@ -25,6 +25,8 @@
 
 .list-items {
     overflow-y: auto;
-    flex-grow: 1;
+    width: 95%;
+    margin: 0 auto;
+    /* flex-grow: 1; */
     padding-top: 16px;
 }

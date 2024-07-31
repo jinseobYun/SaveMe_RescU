@@ -55,7 +55,6 @@ export default function LoginPage() {
               placeholder="비밀번호를 입력하세요"
               showClearButton={true}
             />
-            {/* <input className="input"></input> */}
           </div>
         </div>
         <Button
