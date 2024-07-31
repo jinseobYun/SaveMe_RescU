@@ -51,7 +51,7 @@ public class EmergencyContactService {
                 .orElseThrow(() -> new ResourceNotFoundException("비상연락망이 존재하지 않습니다."));
 
         if (!emergencyContact.getAppMember().getMemberId().equals(memberId)) {
-            throw new UnauthorizedException("해당 정보를 수정할 권한이 존재하지 않습니다.");
+            throw new UnauthorizedException("해당 정보를 수정할 권한이 없습니다.");
         }
 
         emergencyContact.changeRelation(request.getRelation());
@@ -67,7 +67,7 @@ public class EmergencyContactService {
                 .orElseThrow(() -> new ResourceNotFoundException("비상연락망이 존재하지 않습니다."));
 
         if (!emergencyContact.getAppMember().getMemberId().equals(memberId)) {
-            throw new UnauthorizedException("해당 정보를 삭제할 권한이 존재하지 않습니다.");
+            throw new UnauthorizedException("해당 정보를 삭제할 권한이 없습니다.");
         }
 
         emergencyContactRepository.delete(emergencyContact);

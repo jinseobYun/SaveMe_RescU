@@ -35,17 +35,14 @@ public class EmergencyContactController {
     @GetMapping
     public ResponseEntity<?> getEmergencyContacts() {
         try {
-            System.out.println("1");
             String memberId = getAuthenticatedUserId();
-            System.out.println(2);
             List<EmergencyContactDto.Response> contacts = emergencyContactService.getEmergencyContactsByMemberId(memberId);
-            System.out.println(3);
             return new ResponseEntity<List<EmergencyContactDto.Response>>(contacts, HttpStatus.OK);
         }catch (ResourceNotFoundException e) {
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
         catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("처리 중 서버에서 오류가 발생했습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -53,14 +50,14 @@ public class EmergencyContactController {
     public ResponseEntity<?> createEmergencyContact(@RequestBody EmergencyContactDto.Request request) {
         try {
             String memberId = getAuthenticatedUserId();
-            EmergencyContactDto.Response response = emergencyContactService.createEmergencyContact(memberId, request);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+            emergencyContactService.createEmergencyContact(memberId, request);
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (ResourceConflictException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("처리 중 서버에서 오류가 발생했습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -68,29 +65,32 @@ public class EmergencyContactController {
     public ResponseEntity<?> updateEmergencyContact(@PathVariable("emergencyContactId") Long emergencyContactId, @RequestBody EmergencyContactDto.Request request) {
         try {
             String memberId = getAuthenticatedUserId();
-            EmergencyContactDto.Response response = emergencyContactService.updateEmergencyContact(emergencyContactId, request, memberId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            emergencyContactService.updateEmergencyContact(emergencyContactId, request, memberId);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (UnauthorizedException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("처리 중 서버에서 오류가 발생했습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @DeleteMapping
     public ResponseEntity<?> deleteEmergencyContact(@RequestParam Long emergencyContactId) {
         try {
+            if(emergencyContactId  == null) {
+                return new ResponseEntity<>("잘못된 요청입니다.",HttpStatus.BAD_REQUEST);
+            }
             String memberId = getAuthenticatedUserId();
             emergencyContactService.deleteEmergencyContact(emergencyContactId, memberId);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (UnauthorizedException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("처리 중 서버에서 오류가 발생했습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
