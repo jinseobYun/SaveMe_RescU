@@ -97,4 +97,8 @@ public class WebMember implements UserDetails {
         this.role = role;
     }
 
+    public Integer getRoleId() {
+        return this.role != null ? this.role.getRoleId() : null;
+    }
+
 }

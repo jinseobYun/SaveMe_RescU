@@ -6,5 +6,5 @@ import org.springframework.stereotype.Service;
 
 public interface WebMemberService {
     int register(WebMemberDto.Request dto);
-    TokenInfo login(WebMemberDto.Request dto);
+    TokenInfo login(WebMemberDto.LoginRequest dto);
 }

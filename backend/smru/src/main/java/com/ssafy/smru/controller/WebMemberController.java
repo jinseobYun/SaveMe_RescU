@@ -1,5 +1,6 @@
 package com.ssafy.smru.controller;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.ssafy.smru.dto.WebMemberDto;
 import com.ssafy.smru.service.WebMemberService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class WebMemberController {
     private final WebMemberService webMemberService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody WebMemberDto.Request dto) {
+    public ResponseEntity<?> login(@RequestBody WebMemberDto.LoginRequest dto) {
         log.info("로그인 요청");
         try {
             return ResponseEntity.ok(webMemberService.login(dto));
@@ -27,12 +28,13 @@ public class WebMemberController {
             return ResponseEntity.internalServerError().body("서버에서 오류 발생");
         }
     }
-    @PostMapping("")
+    @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody WebMemberDto.Request dto) {
         try {
+            System.out.println(dto.getMemberId());
             return ResponseEntity.ok(webMemberService.register(dto));
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             return ResponseEntity.internalServerError().body("서버에서 오류 발생");
         }
     }
