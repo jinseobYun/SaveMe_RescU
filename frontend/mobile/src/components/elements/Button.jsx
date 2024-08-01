@@ -66,18 +66,18 @@ const BasicButton = styled.button`
     outline: none;
   }
   &:disabled {
-    background-color: #ddd;
+  background-color: ${(props) => props.$bg.disabled};
     border: 1px solid #ddd;
   }
   &:hover {
     background-color: ${(props) => props.$bg.hover};
-    color:var(--white-color-100)
+    // color:var(--white-color-100)
     cursor: pointer;
   }
 
   &.active {
     background-color: ${(props) => props.$bg.active};
-    color:var(--white-color-100)
+    // color:var(--white-color-100)
   }
     ${(props) =>
       props.$boxShadow &&

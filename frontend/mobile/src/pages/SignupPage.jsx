@@ -1,29 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Input } from "@components/elements";
-const Signup = () => {
-  const [input, setInput] = useState("");
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import styled from "styled-components";
 
+import { Header, TabBar } from "@components/common";
+import { SignupUserInfoForm, SignupLoginInfoForm } from "@components/form";
+import { Button, Text, Input } from "@components/elements";
+
+const SignupPage = () => {
   return (
     <>
-      <Input
-        required={true}
-        placeholder="아이디"
-        value={input}
-        setValue={setInput}
-        successMessage="성공"
-        label="아이디*"
-      />
-      <Input
-        type="password"
-        required={true}
-        placeholder="비밀번호"
-        value={input}
-        setValue={setInput}
-        successMessage="성공"
-        label="비밀번호*"
-      />
+      <Header navText="회원가입" />
+      <Routes>
+        <Route path="userinfo" element={<SignupUserInfoForm />} />
+        <Route path="logininfo" element={<SignupLoginInfoForm />} />
+      </Routes>
     </>
   );
 };
 
-export default Signup;
+export default SignupPage;

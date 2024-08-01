@@ -22,9 +22,10 @@ const Grid = ({
   $wrap = false,
   $border = "none",
   $display = false,
-  $flex_direction = "row",
+  $flex_direction = "column",
   $justify_content = "space-between",
   $align_items = "center",
+  $gap = "",
 }) => {
   const styles = {
     $display: $display,
@@ -40,14 +41,15 @@ const Grid = ({
     $radius: $radius,
     $max_width: $max_width,
     $max_height: $max_height,
-    $border_top: $border_top,
-    $border_left: $border_left,
-    $border_right: $border_right,
-    $border_bottom: $border_bottom,
+    // $border_top: $border_top,
+    // $border_left: $border_left,
+    // $border_right: $border_right,
+    // $border_bottom: $border_bottom,
     $border: $border,
     $flex_direction: $flex_direction,
     $justify_content: $justify_content,
     $align_items: $align_items,
+    $gap: $gap,
   };
 
   return (
@@ -79,8 +81,8 @@ const GridBox = styled.div`
     props.$center
       ? `text-align: center;`
       : props.$right
-      ? `text-align: right;`
-      : ""};
+        ? `text-align: right;`
+        : ""};
   ${(props) => (props.$wrap ? `flex-wrap: wrap;` : "")}
   ${(props) => (props.$border ? `border: ${props.$border};` : "")}
   ${(props) => (props.$border_top ? `border-top: ${props.$border_top};` : "")}
@@ -91,6 +93,7 @@ const GridBox = styled.div`
   ${(props) =>
     props.$border_bottom ? `border-bottom: ${props.$border_bottom};` : ""}
   flex-direction: ${(props) => props.$flex_direction};
+  gap: ${(props) => props.$gap};
 `;
 
 export default Grid;

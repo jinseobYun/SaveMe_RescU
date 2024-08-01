@@ -1,128 +1,109 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { Text } from "@components/elements";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 const Input = ({
-  type = "text",
-  placeholder = "",
-  name = "",
-  value = "",
-  setValue = () => {},
-  maxLen = 20,
-  disabled = false,
-  regexCheck = "",
+  $type = "text",
+  $placeholder = "",
+  $name = "",
+  $value = "",
+  $disabled = false,
   _onBlur = () => {},
   _onChange = () => {},
-  label = "",
-  required = false,
-  successMessage = "유효한 값입니다",
-  errorMessage = "유효한 값을 입력해주세요",
-  defaultMessage = "",
+  $label = "",
+  $required = false,
+  $successMessage = "유효한 값입니다",
+  $errorMessage = "",
+  $defaultMessage = "",
+  $haveToCheckValid = false,
+  $isValid = true,
+  $maxLen = 20,
 }) => {
-  const [isError, setIsError] = useState(false);
   const [helperText, setHelperText] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const ref = useRef();
+  const [inputState, setInputState] = useState("default");
+  const [value, setValue] = useState($value);
 
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
   };
-  const onChange = (e) => {
+  const onChangeInput = (e) => {
     setValue(e.target.value);
     _onChange(e);
   };
-  const onBlur = (e) => {
-    _onBlur(e);
-    //최대값이 지정되어있으면 value를 저장하지 않는다.
-    if (maxLen && maxLen < e.target.value.length) {
-      e.target.value = e.target.value.slice(0, maxLen);
-    }
-    setValue(e.target.value);
-
-    //공백인 경우 defaultMessage로 바꾼다.
-    if (required && e.target.value === "") {
-      setIsError(true);
-      ref.current.focus();
-      return setHelperText("필수 값입니다");
+  useEffect(() => {
+    setInputState("default");
+    if (!$haveToCheckValid) setInputState("default");
+    if (value == "") setInputState("default");
+    else if ($isValid) {
+      setHelperText($successMessage);
+      setInputState("valid");
     } else {
-      setIsError(false);
-      setHelperText(defaultMessage);
+      setInputState("invalid");
+      setHelperText($errorMessage);
     }
+  }, [$isValid, value]);
 
-    if (regexCheck) {
-      // 정규표현식체크가 통과되면 successText를 송출하고 아니면 errorText를 송출한다
-      if (regexCheck.test(e.target.value)) {
-        setIsError(false);
-        // e.target.classList.remove("invalid");
-        // e.target.classList.add("valid");
-        return setHelperText(successMessage);
-      }
-      if (!regexCheck.test(e.target.value)) {
-        setIsError(true);
-        ref.current.focus();
-        // e.target.classList.add("invalid");
-        setHelperText(errorMessage);
-      }
-    }
-  };
-  // console.log(value.length, isError);
   return (
     <>
       <InputContainer>
         <Label>
-          {label && (
+          {$label && (
             <Text
-              children={label}
-              color="var(--label-gray-color)"
-              size="12px"
-              lineHeight="16px"
+              children={$label}
+              $color="var(--label-gray-color)"
+              $size="12px"
+              $lineHeight="16px"
             />
           )}
         </Label>
-        <InputWrapper></InputWrapper>
-        <BasicInput
-          value={value}
-          disabled={disabled}
-          type={showPassword ? "text" : type}
-          inputMode={type === "number" ? "numeric" : undefined}
-          pattern={type === "number" ? "[0-9]*" : undefined}
-          placeholder={placeholder}
-          name={name}
-          required={required}
-          onBlur={onBlur}
-          onChange={onChange}
-          ref={ref}
-        />
-        {type === "password" && (
-          <div className="input_icon" onClick={handleTogglePassword}>
-            {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
-          </div>
-        )}
-
-        <HelpText>
-          <Text
-            children={helperText}
-            size="12px"
-            color={
-              isError
-                ? "var(--red-color-100)"
-                : value && "var(--green-color-100)"
-            }
+        <InputWrapper $inputState={inputState}>
+          <BasicInput
+            defaultValue={$value}
+            disabled={$disabled}
+            required={$required}
+            type={showPassword ? "text" : $type}
+            inputMode={$type === "tel" ? "numeric" : undefined}
+            pattern={$type === "tel" ? "[0-9]{3}-[0-9]{3}-[0-9]{4}" : undefined}
+            placeholder={$placeholder}
+            $haveToCheckValid={$haveToCheckValid}
+            name={$name}
+            onBlur={_onBlur}
+            onChange={onChangeInput}
+            maxLength={$maxLen}
           />
-        </HelpText>
+          {$type === "password" && (
+            <div className="input_icon" onClick={handleTogglePassword}>
+              {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+            </div>
+          )}
+        </InputWrapper>
+        {inputState === "invalid" && (
+          <HelpText>
+            <Text
+              children={helperText}
+              $size="12px"
+              $color={
+                inputState === "invalid"
+                  ? "var(--red-color-100)"
+                  : $value && "var(--green-color-100)"
+              }
+            />
+          </HelpText>
+        )}
       </InputContainer>
     </>
   );
 };
 const InputContainer = styled.div`
   display: flex;
-  width: 200px;
+  width: 55vw;
   height: 80px;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
+  gap: 0.5rem;
 `;
 const Label = styled.div`
 width:100%
@@ -132,44 +113,51 @@ width:100%
   align-self: stretch;
 `;
 const InputWrapper = styled.div`
-  // display: flex;
-  // height: 40px;
-  // padding: 8px;
-  // flex-direction: column;
-  // justify-content: center;
-  // align-items: flex-start;
-  // gap: 10px;
-  // align-self: stretch;
-`;
-const BasicInput = styled.input`
+  display: flex;
+  padding: 8px;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  align-self: stretch;
   width: 100%;
-  padding: 10px;
   box-sizing: border-box;
   border-radius: 5px;
   border: 1px solid var(--main-orange-color);
   outline: none;
-  color: var(--gray-color-400);
-  font-size: 10px;
+  ${(props) =>
+    props.$inputState === "valid" &&
+    props.$haveToCheckValid &&
+    `
+          border: 1px solid var(--green-color-100);
+          box-shadow:
+            0px 0px 0px 2px #cbf4c9,
+            0px 0px 0px 1px var(--green-color-100) inset;
+        `}
+  ${(props) =>
+    props.$inputState === "invalid" &&
+    props.$haveToCheckValid &&
+    `
+          border: 1px solid var(--red-color-100);
+          box-shadow:
+            0px 0px 0px 2px #fde2dd,
+            0px 0px 0px 1px var(--red-color-100) inset;
+        `};
+  ${(props) =>
+    props.$inputState === "default" &&
+    `  border: 1px solid var(--main-orange-color);
+        `};
+`;
+const BasicInput = styled.input`
+  border: none;
+  outline: none;
+  width: 100%;
+  color: var(--black-color-200);
+  font-size: 1.5rem;
   font-weight: 500;
-  line-height: 24px;
-  border-radius: 4px;
-  background: var(--white-color-100);
-  /* Light / Elevation / 200 */
   box-shadow: 0px 1px 2px 0px rgba(55, 65, 81, 0.08);
   &::placeholder {
-    color: var(--gray-color-400);
-  }
-  &:user-invalid {
-    border: 1px solid var(--red-color-100);
-    box-shadow:
-      0px 0px 0px 2px #fde2dd,
-      0px 0px 0px 1px var(--red-color-100) inset;
-  }
-  &:user-valid {
-    border: 1px solid var(--green-color-100);
-    box-shadow:
-      0px 0px 0px 2px #cbf4c9,
-      0px 0px 0px 1px var(--green-color-100) inset;
+    color: var(--label-gray-color);
+    font-size: 1rem;
   }
 `;
 const HelpText = styled.div`
