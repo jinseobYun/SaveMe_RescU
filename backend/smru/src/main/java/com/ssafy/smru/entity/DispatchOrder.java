@@ -1,10 +1,12 @@
 package com.ssafy.smru.entity;
 
+import com.ssafy.smru.dto.SecondDispatchOrderDto;
+import com.ssafy.smru.util.ChronicDiseaseUtil;
+import com.ssafy.smru.util.DrugUtil;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.sql.Timestamp;
 
@@ -100,5 +102,12 @@ public class DispatchOrder {
         this.webMember = webMember;
     }
 
-
+    public void setSecondInfo(SecondDispatchOrderDto.Request dto) {
+        this.hospital = dto.getHospitalName();
+        this.bloodType1 = dto.getMedicalInformation().getBloodType1();
+        this.bloodType2 = dto.getMedicalInformation().getBloodType2();
+        this.otherInfo = dto.getMedicalInformation().getOtherInfo();
+        this.chronicDisease = ChronicDiseaseUtil.toString(dto.getMedicalInformation().getChronicDisease());
+        this.drugInfos = DrugUtil.toString(dto.getMedicalInformation().getDrugInfos());
+    }
 }

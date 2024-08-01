@@ -2,7 +2,6 @@ package com.ssafy.smru.dto;
 
 import com.ssafy.smru.entity.DispatchOrder;
 import com.ssafy.smru.entity.WebMember;
-import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

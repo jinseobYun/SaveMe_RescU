@@ -2,20 +2,22 @@ package com.ssafy.smru.service;
 
 import com.ssafy.smru.dto.DispatchOrderDto;
 import com.ssafy.smru.dto.FirstDispatchOrderDto;
+import com.ssafy.smru.dto.SecondDispatchOrderDto;
 import com.ssafy.smru.entity.DispatchOrder;
 import com.ssafy.smru.entity.WebMember;
 import com.ssafy.smru.repository.DispatchOrderRepository;
 import com.ssafy.smru.repository.WebMemberRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
-import java.security.Timestamp;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class DispatchOrderService {
+public class DispatchOrderServiceImpl {
     private final DispatchOrderRepository dispatchOrderRepository;
     private final WebMemberRepository webMemberRepository;
 
@@ -54,4 +56,12 @@ public class DispatchOrderService {
         return new FirstDispatchOrderDto.Response(savedOrder.getDispatchOrderId());
     }
 
+    @Transactional
+    public int createDispatchOrder2(SecondDispatchOrderDto.Request dto) {
+        DispatchOrder dispatchOrder = dispatchOrderRepository.findById(dto.getDispatchOrderId())
+                .orElseThrow(() -> new NotFoundException(""));
+        dispatchOrder.setSecondInfo(dto);
+
+        return 0;
+    }
 }
