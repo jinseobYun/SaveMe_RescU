@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.security.Timestamp;
 import java.util.Optional;
 
 @Service
