@@ -4,6 +4,7 @@ const GlobalStyles = createGlobalStyle`
         --main-red-color: #FF4C4C;
         --main-orange-color:#FFB22C;
         --orange-op50-color:rgba(255, 178, 44, 0.50);
+				--orange-color-100:#FFCC70;
         --main-yellow-color:#ffde4d;
         --dark-blue-color:#2D4059;
         --bg-baige-color:#FFFCE3;
@@ -73,6 +74,7 @@ const GlobalStyles = createGlobalStyle`
 		-webkit-text-size-adjust:none;
 		width: 100%;
   	height: 100%;
+		overflow: hidden;
 	}
 	ol, ul {
 		list-style: none;

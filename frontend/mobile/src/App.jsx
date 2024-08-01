@@ -28,7 +28,7 @@ function App() {
           </Route>
 
           <Route path="/verification" element={<VerifyCodeForm />} />
-          <Route path="/terms" element={<AgreeTermsPage />} />
+          <Route path="/agreeterms" element={<AgreeTermsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/report" element={<ReportCallPage />} />
           <Route path="/findId" element={<HomePage />} />

@@ -83,6 +83,8 @@ const Login = () => {
             <Link to="/findId">
               <Text children="아이디 찾기" $color="var(--gray-color-200)" />
             </Link>
+            <Text children="|" $color="var(--gray-color-200)" />
+
             <Link to="/findPassword">
               <Text children="비밀번호 찾기" $color="var(--gray-color-200)" />
             </Link>

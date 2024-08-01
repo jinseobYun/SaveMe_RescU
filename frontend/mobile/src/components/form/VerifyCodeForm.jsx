@@ -105,6 +105,7 @@ const VerifyCodeForm = () => {
   };
 
   const onClickBtn = () => {
+    console.log(JSON.stringify(inputs));
     switch (type) {
       case "signup":
         navigate("/signup/logininfo");
