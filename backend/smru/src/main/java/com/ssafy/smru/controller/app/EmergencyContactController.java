@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/app/emergency-info")
+    @RequestMapping("/api/v1/app/emergency-info")
 @RequiredArgsConstructor
 public class EmergencyContactController {
 
@@ -51,7 +51,7 @@ public class EmergencyContactController {
         try {
             String memberId = getAuthenticatedUserId();
             emergencyContactService.createEmergencyContact(memberId, request);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>("비상연락망이 정상적으로 등록되었습니다.",HttpStatus.CREATED);
         } catch (ResourceConflictException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         } catch (ResourceNotFoundException e) {
@@ -66,7 +66,7 @@ public class EmergencyContactController {
         try {
             String memberId = getAuthenticatedUserId();
             emergencyContactService.updateEmergencyContact(emergencyContactId, request, memberId);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>("비상연락망을 정상적으로 수정했습니다.",HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (UnauthorizedException e) {
@@ -84,7 +84,7 @@ public class EmergencyContactController {
             }
             String memberId = getAuthenticatedUserId();
             emergencyContactService.deleteEmergencyContact(emergencyContactId, memberId);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>("비상연락망을 정상적으로 삭제했습니다.",HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (UnauthorizedException e) {
