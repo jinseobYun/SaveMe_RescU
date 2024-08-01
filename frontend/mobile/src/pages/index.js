@@ -3,4 +3,7 @@ import LoginPage from "./LoginPage";
 import SignupPage from "./SignupPage";
 import ReportCallPage from "./ReportCallPage";
 import AgreeTermsPage from "./AgreeTermsPage";
-export { HomePage, LoginPage, SignupPage, ReportCallPage, AgreeTermsPage };
+import MyInfoMenuPage from './MyInfoMenuPage';
+import MedicalInfoPage from './MedicalInfoPage';
+import EditMedicalInfoPage from './EditMedicalInfoPage';
+export { HomePage, LoginPage, SignupPage, ReportCallPage, AgreeTermsPage, MyInfoMenuPage, MedicalInfoPage, EditMedicalInfoPage };

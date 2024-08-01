@@ -10,8 +10,8 @@ import useUserStore from "@/store/useUserStore";
 
 const Login = () => {
   const navigate = useNavigate();
-  const setAccessToken = useUserStore((state) => state.setAccessToken);
-  const setReFreshToken = useUserStore((state) => state.setReFreshToken);
+  const { setAccessToken, setReFreshToken, login, setUserId } = useUserStore();
+
   const { values, errors, isLoading, handleChange, handleSubmit } = useForm({
     initialValues: { id: "", password: "" },
     onSubmit: (values) => {
@@ -20,8 +20,15 @@ const Login = () => {
       // login(
       //   values.id,
       //   values.password,
-      //   ({ data }) => {
+      //   (response) => {
       // //TODO - 토큰 저장하기
+      // if(response.status ===200)
+      // {
+      //   setAccessToken(response.data.accessToken);
+      //   setReFreshToken(response.data.refreshToken);
+      //   setUserId(values.id);
+      //   login();
+      // }
       //     navigate("/");
       //   },
       // (error) => {
