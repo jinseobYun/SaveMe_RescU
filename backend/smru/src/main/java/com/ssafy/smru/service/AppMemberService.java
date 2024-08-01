@@ -1,16 +1,18 @@
 package com.ssafy.smru.service;
 
 import com.ssafy.smru.dto.AppMemberDto;
+import com.ssafy.smru.dto.app.AppMemberRegisterDto;
 import com.ssafy.smru.security.TokenInfo;
 
 public interface AppMemberService {
-    int register(AppMemberDto.Request dto);
+    void register(AppMemberRegisterDto.Request dto);
     TokenInfo login(AppMemberDto.Request dto);
-    boolean idConfirm(AppMemberDto.Request dto);
+    boolean checkMemberIdDuplicate(String memberId);
     AppMemberDto.Response getMemberByPhoneNumber(String phoneNumber);
-    void updatePassword(Long memberId, String newPassword);
-
+    void updatePassword(String memberId, String newPassword);
     AppMemberDto.Response getMemberByMemberId(String memberId);
-    boolean checkPassword(Long memberId, String currentPassword);
+    boolean checkPasswordMatchMemberId(String memberId, String currentPassword);
+    boolean checkPhoneNumberDuplicate(String phone);
 
+    void updatePhoneNumber(String currentUserName, String phone);
 }

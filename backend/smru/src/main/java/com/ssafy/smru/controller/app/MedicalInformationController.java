@@ -28,7 +28,7 @@ public class MedicalInformationController {
             MedicalInformationDto.Response  response = medicalInformationService.getMedicalInformationByMemberId(memberId);
             return ResponseEntity.ok(response);
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (UnauthorizedException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (Exception e) {
@@ -46,7 +46,7 @@ public class MedicalInformationController {
             medicalInformationService.createMedicalInformation(request);
             return new ResponseEntity<>("의료정보 등록에 성공했습니다.", HttpStatus.CREATED);
         } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (EntityExistsException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
@@ -61,7 +61,7 @@ public class MedicalInformationController {
 
             return ResponseEntity.ok("의료 정보가 성공적으로 수정되었습니다.");
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (UnauthorizedException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (Exception e) {
@@ -79,7 +79,7 @@ public class MedicalInformationController {
 
             return ResponseEntity.ok("의료 정보가 성공적으로 삭제되었습니다.");
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (UnauthorizedException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (Exception e) {

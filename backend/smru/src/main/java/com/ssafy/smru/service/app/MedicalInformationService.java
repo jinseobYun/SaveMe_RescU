@@ -6,6 +6,7 @@ import com.ssafy.smru.dto.app.MedCdiDto;
 import com.ssafy.smru.dto.app.MedicalInformationDto;
 import com.ssafy.smru.entity.AppMember;
 import com.ssafy.smru.entity.app.*;
+import com.ssafy.smru.exception.EntityExistsException;
 import com.ssafy.smru.exception.ResourceNotFoundException;
 import com.ssafy.smru.repository.AppMemberRepository;
 import com.ssafy.smru.repository.app.*;
@@ -33,9 +34,9 @@ public class MedicalInformationService {
         AppMember appMember = appMemberRepository.findByMemberId(request.getMemberId())
                 .orElseThrow(() -> new ResourceNotFoundException(request.getMemberId() + "는 등록되지 않은 사용자입니다."));
         // 이미 존재하는 경우 삭제
-//        if (appMember.getMedicalInformation() != null && appMember.getMedicalInformation().getMedicalInformationId() != null) {
-//            throw new EntityExistsException("이미 등록된 의료정보가 있습니다.");
-//        }
+        if (appMember.getMedicalInformation() != null && appMember.getMedicalInformation().getMedicalInformationId() != null) {
+                throw new EntityExistsException("이미 등록된 의료정보가 있습니다.");
+        }
         // 메디컬 인포메이션 저장 후
         MedicalInformation medicalInformation = medicalInformationRepository.save(request.toEntity());
         appMember.changeMedicalInformation(medicalInformation);
@@ -99,7 +100,7 @@ public class MedicalInformationService {
     // 아이디로 의료 정보 불러오기
     public  MedicalInformationDto.Response getMedicalInformationByMemberId(String memberId) {
         AppMember member = appMemberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new ResourceNotFoundException("등록된 사용자가 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("등록된 사용자가 아닙니다"));
 
         // 의료 정보 없는 경우 예외 처리
         if(member.getMedicalInformation() == null){
