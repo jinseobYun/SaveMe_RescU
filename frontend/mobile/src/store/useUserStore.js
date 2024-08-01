@@ -19,12 +19,12 @@ const useUserStore = create(
   import.meta.env.NODE_ENV === "production"
     ? persist(store, {
         name: "userStore",
-        storage: localStorage, // 로컬 스토리지를 사용
+        storage: localStorage,
       })
     : devtools(
         persist(store, {
           name: "userStore",
-          storage: localStorage, // 로컬 스토리지를 사용
+          storage: localStorage,
         })
       )
 );

@@ -24,10 +24,10 @@ const Login = () => {
       // //TODO - 토큰 저장하기
       //     navigate("/");
       //   },
-      //   (error) => {
-      //     console.log(error);
-      //     errorAlert(error.response.status);
-      //   }
+      // (error) => {
+      //   console.log(error);
+      //   errorAlert(error.response.status);
+      // }
       // );
     },
     validate: () => {},

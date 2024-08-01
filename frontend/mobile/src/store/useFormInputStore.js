@@ -4,8 +4,8 @@ import { devtools, persist } from "zustand/middleware";
 const store = (set) => ({
   inputs: {},
   updateInputs: (newInputs) =>
-    set((state) => ({
-      inputs: { ...state.inputs, newInputs },
+    set((prev) => ({
+      inputs: { ...prev.inputs, ...newInputs },
     })),
   clearInputs: () => set({ inputs: {} }), // 빈 객체로 수정
 });

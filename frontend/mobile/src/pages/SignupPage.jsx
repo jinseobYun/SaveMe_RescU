@@ -11,8 +11,8 @@ const SignupPage = () => {
     <>
       <Header navText="회원가입" />
       <Routes>
-        <Route path="userInfo" element={<SignupUserInfoForm />} />
-        <Route path="loinInfo" element={<SignupLoginInfoForm />} />
+        <Route path="userinfo" element={<SignupUserInfoForm />} />
+        <Route path="logininfo" element={<SignupLoginInfoForm />} />
       </Routes>
     </>
   );

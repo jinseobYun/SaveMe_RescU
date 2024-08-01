@@ -1,45 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import {
-  Grid,
-  Button,
-  Text,
-  Input,
-  NextPageButton,
-} from "@components/elements";
+import { Grid, Input, NextPageButton } from "@components/elements";
 import useForm from "@/hooks/useForm";
 import { SignUpValidationLoginInfo } from "@/util/validation";
 import useFormInputStore from "@/store/useFormInputStore";
 
 const SignupLoginInfoForm = () => {
   const { updateInputs, inputs } = useFormInputStore();
+  const navigate = useNavigate();
   const { values, errors, isLoading, handleChange, handleSubmit } = useForm({
     initialValues: {
-      id: inputs.id,
-      password: "",
-      confirmPassword: "",
+      id: inputs.id || "",
+      password: inputs.password || "",
+      confirmPassword: inputs.confirmPassword || "",
     },
     onSubmit: (values) => {
-      console.log("success");
       console.log(values);
-      //TODO - 인증번호 요청 api
       updateInputs(values);
-
-      navigate("/signup/terms");
+      navigate("/agreeterms");
     },
     validate: SignUpValidationLoginInfo,
   });
-  const navigate = useNavigate();
 
   const [isTextOnce, setIsTextOnce] = useState(false);
-  const onChangeGender = (e) => {
-    e.preventDefault();
-    values.gender = e.target.value;
-  };
+  useEffect(() => {}, []);
   useEffect(() => {
-    Object.keys(errors).length > 0 && setIsTextOnce(true);
+    console.log(errors, values);
+    if (isTextOnce != (Object.keys(errors).length !== 0)) setIsTextOnce(true);
+
+    // Object.keys(errors).length > 0 && setIsTextOnce(true);
   }, [errors]);
   return (
     <FormWrapper>
@@ -57,7 +48,9 @@ const SignupLoginInfoForm = () => {
             $value={values.id}
             _onChange={handleChange}
             $label="아이디*"
+            $errorMessage={errors.id}
             $haveToCheckValid={true}
+            $isValid={errors.id && false}
           />
           <Input
             $name="password"
@@ -67,6 +60,8 @@ const SignupLoginInfoForm = () => {
             $label="비밀번호*"
             $haveToCheckValid={true}
             $type="password"
+            $errorMessage={errors.password}
+            $isValid={errors.password && false}
           />
           <Input
             $name="confirmPassword"
@@ -75,6 +70,8 @@ const SignupLoginInfoForm = () => {
             _onChange={handleChange}
             $label="비밀번호*"
             $haveToCheckValid={true}
+            $errorMessage={errors.confirmPassword}
+            $isValid={errors.confirmPassword && false}
             $type="password"
           />
         </StyledForm>

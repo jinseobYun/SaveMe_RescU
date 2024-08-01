@@ -15,31 +15,42 @@ import useFormInputStore from "@/store/useFormInputStore";
 import { reqVerifyCode } from "@/api/userApi";
 const SignupUserInfoForm = () => {
   const { updateInputs, inputs } = useFormInputStore();
+  const navigate = useNavigate();
   const { values, errors, isLoading, handleChange, handleSubmit } = useForm({
     initialValues: {
-      name: inputs.name,
-      birth: "",
-      phoneNumber: "",
-      gender: "남성",
+      name: inputs.name || "",
+      birth: inputs.birth || "",
+      phoneNumber: inputs.phoneNumber || "",
+      gender: inputs.gender || "남성",
     },
     onSubmit: (values) => {
-      console.log("success");
       console.log(values);
-      //TODO - 인증번호 요청 api
+      navigate("/verification", { state: { type: "signup" } });
       updateInputs(values);
-      navigate("/verification");
+
+      //TODO - api 연결
+      // updateInputs(values);
+      // reqVerifyCode(
+      //   values.phoneNumber,
+      //   ({ data }) => {
+      //     navigate("/verification", { type: "signup" });
+      //   },
+      //   (error) => {}
+      // );
     },
     validate: SignUpValidationUserInfo,
   });
-  const navigate = useNavigate();
 
   const [isTextOnce, setIsTextOnce] = useState(false);
+
   const onChangeGender = (e) => {
     e.preventDefault();
-    values.gender = e.target.value;
+    handleChange(e);
   };
   useEffect(() => {
-    Object.keys(errors).length > 0 && setIsTextOnce(true);
+    if (isTextOnce != (Object.keys(errors).length !== 0)) setIsTextOnce(true);
+    console.log(values);
+    console.log(errors);
   }, [errors]);
   return (
     <FormWrapper>
@@ -55,7 +66,7 @@ const SignupUserInfoForm = () => {
           <Input
             $name="name"
             $placeholder="이름"
-            $value={values.id}
+            $value={values.name}
             _onChange={handleChange}
             $errorMessage={errors.name}
             $haveToCheckValid={true}

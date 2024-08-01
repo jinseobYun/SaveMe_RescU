@@ -157,6 +157,7 @@ const BasicInput = styled.input`
   box-shadow: 0px 1px 2px 0px rgba(55, 65, 81, 0.08);
   &::placeholder {
     color: var(--label-gray-color);
+    font-size: 1rem;
   }
 `;
 const HelpText = styled.div`

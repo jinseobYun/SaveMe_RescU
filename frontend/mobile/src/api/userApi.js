@@ -13,7 +13,7 @@ async function login(id, pw, success, fail) {
   await http.post("/members/login", data).then(success).catch(fail);
 }
 
-async function checkIdDuplication(id) {
+async function checkIdDuplication(id, success, fail) {
   const data = {
     memberId: id,
   };
@@ -39,11 +39,11 @@ async function getUserInfo(loginId, success, fail) {
 }
 
 async function reqVerifyCode(phoneNumber, success, fail) {
-  await http.get(`/members/phone-verify-code`).then(success).catch(fail);
+  await http.get(`/members/phone-verify-code-req`).then(success).catch(fail);
 }
-//TODO - url 확인
+
 async function checkVerifyCode(data, success, fail) {
-  await http.get(`/members/phone-verify-code`).then(success).catch(fail);
+  await http.get(`/members/phone-verify-code-check`).then(success).catch(fail);
 }
 //TODO - 아이디 찾기
 //TODO - 비밀번호 찾기
@@ -51,10 +51,6 @@ async function checkVerifyCode(data, success, fail) {
 async function modifyUser(updateInfo, success, fail) {
   http.put("/members", updateInfo).then(success).catch(fail);
 }
-
-// async function tokenRegeneration(members, success, fail) {
-//   await http.post("/members/refresh", members).then(success).catch(fail);
-// }
 
 // async function logout(loginId, success, fail) {
 //   await http.get(`/members/logout/${loginId}`).then(success).catch(fail);
