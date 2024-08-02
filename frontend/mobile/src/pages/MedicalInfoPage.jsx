@@ -1,16 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
 import { Header, TabBar } from "@components/common";
-import { Grid, Button, Text, MainContainer } from "@components/elements";
+import { Grid, Button, Text } from "@components/elements";
 import useUserStore from "@/store/useUserStore";
 
 const MedicalInfoPage = () => {
   const userMedicalInfo = useUserStore((state) => state.userMedicalInfo);
   const navigate = useNavigate();
   const btnStyles = {
-    _onClick: () => navigate("/medical-info/form"),
+    _onClick: () => navigate("/medicalinfo/edit?form=basic"),
     children: "등록하기",
     $radius: "8px",
     $bg: {
@@ -28,19 +28,20 @@ const MedicalInfoPage = () => {
     $width: "",
     $height: "10vh",
   };
+  useEffect(() => {
+    //TODO - 의료 정보 조회하기
+
+    console.log(userMedicalInfo);
+  });
   return (
-    <MainContainer>
+    <Container>
       <Header navText="내 의료 정보" />
       <Content>
         {/* //TODO - 의료 정보 있으면 있는 상태 보여주기 */}
-        {userMedicalInfo ? (
-          <Button {...btnStyles} />
-        ) : (
-          <Button {...btnStyles} />
-        )}
+        {userMedicalInfo ? { userMedicalInfo } : <Button {...btnStyles} />}
       </Content>
       <TabBar />
-    </MainContainer>
+    </Container>
   );
 };
 
@@ -51,5 +52,11 @@ const Content = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh;
+  height: 100%;
+`;
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
 `;

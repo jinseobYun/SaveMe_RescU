@@ -105,7 +105,6 @@ const VerifyCodeForm = () => {
   };
 
   const onClickBtn = () => {
-    console.log(JSON.stringify(inputs));
     switch (type) {
       case "signup":
         navigate("/signup/logininfo");
@@ -151,7 +150,7 @@ const VerifyCodeForm = () => {
                 autoFocus={index === 0}
                 maxLength={1}
                 onChange={handleChange}
-                type="number"
+                // type="number"
                 name={`ssn-${index + 1}`}
                 inputMode="numeric"
               />

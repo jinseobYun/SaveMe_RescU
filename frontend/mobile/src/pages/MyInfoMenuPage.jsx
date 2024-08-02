@@ -18,17 +18,17 @@ const MyInfoMenuPage = () => {
     {
       icon: <PaperclipOutlinedIcon />,
       label: "NFC 정보 등록",
-      path: "/nfc-info",
+      path: "/nfcinfo",
     },
     {
       icon: <MedicalServicesOutlinedIcon />,
       label: "내 의료 정보 관리",
-      path: "/medical-info",
+      path: "/medicalinfo",
     },
     {
       icon: <PhoneOutlinedIcon />,
       label: "비상 연락망 등록",
-      path: "/emergency-contacts",
+      path: "/emergencycontacts",
     },
     {
       icon: <NotificationsOutlinedIcon />,
@@ -38,12 +38,12 @@ const MyInfoMenuPage = () => {
     {
       icon: <InfoOutlinedIcon />,
       label: "개인 정보 수집 활용 동의서",
-      path: "/privacy-agreement",
+      path: "/privacyagreement",
     },
     {
       icon: <PersonOutlinedIcon />,
       label: "내 정보 관리",
-      path: "/profile-management",
+      path: "/profilemanagement",
     },
   ];
 

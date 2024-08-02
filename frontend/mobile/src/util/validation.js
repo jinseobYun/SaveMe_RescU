@@ -23,7 +23,7 @@ function SignUpValidationUserInfo({ name, birth, gender, phoneNumber }) {
 }
 function SignUpValidationLoginInfo({ id, password, confirmPassword }) {
   const errors = {};
-  let isCheck = false;
+  let isCheck;
   if (!id) {
     errors.id = "아이디를 입력해주세요.";
     isCheck = true;

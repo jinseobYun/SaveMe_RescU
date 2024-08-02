@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import styled from "styled-components";
 
@@ -6,7 +6,6 @@ import {
   SignupUserInfoForm,
   SignupLoginInfoForm,
   VerifyCodeForm,
-  MedicalSpecificForm,
 } from "@components/form";
 import {
   HomePage,
@@ -39,11 +38,8 @@ function App() {
           <Route path="/findPassword" element={<HomePage />} />
 
           <Route path="/menu" element={<MyInfoMenuPage />} />
-          <Route path="/medical-info" element={<MedicalInfoPage />} />
-          <Route path="/medical-info/form" element={<EditMedicalInfoPage />}>
-            <Route path="drug" element={<MedicalSpecificForm />} />
-            <Route path="disease" element={<MedicalSpecificForm />} />
-          </Route>
+          <Route path="/medicalinfo" element={<MedicalInfoPage />} />
+          <Route path="/medicalinfo/edit/*" element={<EditMedicalInfoPage />} />
 
           {/* <Route
             path="/emergency-contacts"

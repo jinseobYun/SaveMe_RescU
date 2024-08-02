@@ -6,6 +6,7 @@ import { Grid, Input, NextPageButton } from "@components/elements";
 import useForm from "@/hooks/useForm";
 import { SignUpValidationLoginInfo } from "@/util/validation";
 import useFormInputStore from "@/store/useFormInputStore";
+import { Header } from "@/components/common";
 
 const SignupLoginInfoForm = () => {
   const { updateInputs, inputs } = useFormInputStore();
@@ -33,55 +34,59 @@ const SignupLoginInfoForm = () => {
     // Object.keys(errors).length > 0 && setIsTextOnce(true);
   }, [errors]);
   return (
-    <FormWrapper>
-      <Grid
-        $display="flex"
-        $width="100%"
-        $height="100%"
-        $padding="10vh 4px"
-        $flex_direction="column"
-      >
-        <StyledForm noValidate>
-          <Input
-            $name="id"
-            $placeholder="아이디"
-            $value={values.id}
-            _onChange={handleChange}
-            $label="아이디*"
-            $errorMessage={errors.id}
-            $haveToCheckValid={true}
-            $isValid={errors.id && false}
-          />
-          <Input
-            $name="password"
-            $placeholder="비밀번호"
-            $value={values.password}
-            _onChange={handleChange}
-            $label="비밀번호*"
-            $haveToCheckValid={true}
-            $type="password"
-            $errorMessage={errors.password}
-            $isValid={errors.password && false}
-          />
-          <Input
-            $name="confirmPassword"
-            $placeholder="비밀번호를 다시 입력해주세요"
-            $value={values.confirmPassword}
-            _onChange={handleChange}
-            $label="비밀번호*"
-            $haveToCheckValid={true}
-            $errorMessage={errors.confirmPassword}
-            $isValid={errors.confirmPassword && false}
-            $type="password"
-          />
-        </StyledForm>
-      </Grid>
+    <>
+      <Header navText="회원가입" />
+
+      <FormWrapper>
+        <Grid
+          $display="flex"
+          $width="100%"
+          $height="100%"
+          $padding="10vh 4px"
+          $flex_direction="column"
+        >
+          <StyledForm noValidate>
+            <Input
+              $name="id"
+              $placeholder="아이디"
+              $value={values.id}
+              _onChange={handleChange}
+              $label="아이디*"
+              $errorMessage={errors.id}
+              $haveToCheckValid={true}
+              $isValid={errors.id && false}
+            />
+            <Input
+              $name="password"
+              $placeholder="비밀번호"
+              $value={values.password}
+              _onChange={handleChange}
+              $label="비밀번호*"
+              $haveToCheckValid={true}
+              $type="password"
+              $errorMessage={errors.password}
+              $isValid={errors.password && false}
+            />
+            <Input
+              $name="confirmPassword"
+              $placeholder="비밀번호를 다시 입력해주세요"
+              $value={values.confirmPassword}
+              _onChange={handleChange}
+              $label="비밀번호*"
+              $haveToCheckValid={true}
+              $errorMessage={errors.confirmPassword}
+              $isValid={errors.confirmPassword && false}
+              $type="password"
+            />
+          </StyledForm>
+        </Grid>
+      </FormWrapper>
       <NextPageButton
         isError={isTextOnce != (Object.keys(errors).length === 0)}
         text="다음"
         handleClick={handleSubmit}
       />
-    </FormWrapper>
+    </>
   );
 };
 

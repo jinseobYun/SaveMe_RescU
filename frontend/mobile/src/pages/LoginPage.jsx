@@ -77,7 +77,7 @@ const Login = () => {
             $justify-content="center"
             $align-items="center"
             $bg={{ default: "var(--main-orange-color)" }}
-            $color="var(--white-color-100)"
+            $color={{ default: "var(--white-color-100)" }}
             children="로그인"
           />
           <TextBox>
