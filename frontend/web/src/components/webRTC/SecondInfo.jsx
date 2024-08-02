@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import Input from "./elements/Input";
-import Button from "./elements/Button";
-import Radio from "./elements/Radio";
-import Select from "./elements/Select";
-
+import Input from "../elements/Input";
+import Button from "../elements/Button";
+import Radio from "../elements/Radio";
+import Select from "../elements/Select";
 
 const mockTagData = {
   hospitals: ["가장 가까운 응급실 기본값 설정", "응급실 1", "응급실 2"],
@@ -16,16 +15,30 @@ const mockTagData = {
   diseases: ["당뇨", "천식"],
   medications: ["아세트아미노펜 20mg", "약품2 40mg", "약품2 40mg"],
   specialNotes: ["아세트아미노펜 20mg"],
-};
-
-const mockReporterData = {
   reporterName: "신고자",
   reporterPhone: "010-1234-5678",
 };
 
+const mockReporterData = {
+  patientName: "김신고자",
+  gender: "여",
+  birthDate: "1990.12.12",
+  bloodType: "AB",
+  rhType: "Rh-",
+  diseases: ["풍", "ADHD"],
+  medications: [
+    "신고자 의약품1 40mg",
+    "신고자 의약품2 11mg",
+    "신고자 의약품3 10mg",
+  ],
+  specialNotes: ["신고자는신고신고합니다"],
+  reporterName: "신고자",
+  reporterPhone: "010-9876-5432",
+};
+
 const SecondInfo = () => {
   const [formData, setFormData] = useState({
-    hospital:"",
+    hospital: "",
     patientName: "",
     gender: "",
     birthDate: "",
@@ -48,10 +61,22 @@ const SecondInfo = () => {
     }));
   }, []);
 
-  const handleInputChange = (name, value) => {
-    setFormData({
-      ...formData,
-      [name]: value,
+  const handleInputChange = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  // 추가: 배열로 들어온 값에 대해 수정하는 경우.
+  const handleArrayInputChange = (name, index, value) => {
+    setFormData((prevState) => {
+      const updatedArray = [...prevState[name]];
+      updatedArray[index] = value;
+      return {
+        ...prevState,
+        [name]: updatedArray,
+      };
     });
   };
 
@@ -86,7 +111,7 @@ const SecondInfo = () => {
   };
 
   const handleSubmit = () => {
-    console.log("Form Data Submitted:", formData);
+    console.log(formData);
   };
 
   return (
@@ -94,9 +119,12 @@ const SecondInfo = () => {
       <Section>
         <Select
           label="응급실"
+          name="hospitals"
           options={hospitalOptions}
           selectedValue={formData.hospital}
-          setSelectedValue={(value) => handleInputChange("hospital", value)}
+          setSelectedValue={(value) =>
+            handleInputChange({ target: { name: "hospital", value } })
+          }
         />
         <div>
           <Button _onClick={handleClearAll}>환자정보 일괄삭제</Button>
@@ -110,20 +138,26 @@ const SecondInfo = () => {
         <InputRow>
           <Input
             label="환자명"
+            name="patientName"
             value={formData.patientName}
-            setValue={(value) => handleInputChange("patientName", value)}
+            onChange={handleInputChange}
+            // setValue={(value) => handleInputChange("patientName", value)}
             placeholder="이름"
           />
           <Input
             label="성별"
+            name="gender"
             value={formData.gender}
-            setValue={(value) => handleInputChange("gender", value)}
+            onChange={handleInputChange}
+            // setValue={(value) => handleInputChange("gender", value)}
             placeholder="남/여"
           />
           <Input
             label="생년월일"
+            name="birthDate"
             value={formData.birthDate}
-            setValue={(value) => handleInputChange("birthDate", value)}
+            onChange={handleInputChange}
+            // setValue={(value) => handleInputChange("birthDate", value)}
             placeholder="yyyy.mm.dd"
           />
         </InputRow>
@@ -133,14 +167,20 @@ const SecondInfo = () => {
             label="혈액형"
             options={["A", "B", "AB", "O"]}
             selectedValue={formData.bloodType}
-            setSelectedValue={(value) => handleInputChange("bloodType", value)}
+            setSelectedValue={(value) =>
+              handleInputChange({ target: { name: "bloodType", value } })
+            }
+            // setSelectedValue={(value) => handleInputChange("bloodType", value)}
           />
           <Radio
             name="rhType"
             label="Rh"
             options={["Rh+", "Rh-"]}
             selectedValue={formData.rhType}
-            setSelectedValue={(value) => handleInputChange("rhType", value)}
+            setSelectedValue={(value) =>
+              handleInputChange({ target: { name: "rhType", value } })
+            }
+            // setSelectedValue={(value) => handleInputChange("rhType", value)}
           />
         </InputRow>
       </Section>
@@ -149,12 +189,11 @@ const SecondInfo = () => {
         {formData.diseases.map((disease, index) => (
           <Input
             key={index}
+            name={`disease_${index}`}
             value={disease}
-            setValue={(value) => {
-              const newDiseases = [...formData.diseases];
-              newDiseases[index] = value;
-              handleInputChange("diseases", newDiseases);
-            }}
+            onChange={(e) =>
+              handleArrayInputChange("diseases", index, e.target.value)
+            }
             placeholder={`지병을 입력하세요`}
             // showClearButton={true}
           />
@@ -165,12 +204,11 @@ const SecondInfo = () => {
         {formData.medications.map((medication, index) => (
           <Input
             key={index}
+            name={`medication_${index}`}
             value={medication}
-            setValue={(value) => {
-              const newMedications = [...formData.medications];
-              newMedications[index] = value;
-              handleInputChange("medications", newMedications);
-            }}
+            onChange={(e) =>
+              handleArrayInputChange("medications", index, e.target.value)
+            }
             placeholder={`투약정보를 입력하세요`}
             // showClearButton={true}
           />
@@ -181,12 +219,11 @@ const SecondInfo = () => {
         {formData.specialNotes.map((note, index) => (
           <Input
             key={index}
+            name={`specialNote_${index}`}
             value={note}
-            setValue={(value) => {
-              const newNotes = [...formData.specialNotes];
-              newNotes[index] = value;
-              handleInputChange("specialNotes", newNotes);
-            }}
+            onChange={(e) =>
+              handleArrayInputChange("specialNotes", index, e.target.value)
+            }
             placeholder={`기타 특이사항`}
             // showClearButton={true}
           />
@@ -220,7 +257,6 @@ const ButtonRow = styled.div`
   display: flex;
   gap: 16px;
 `;
-
 const InputRow = styled.div`
   display: flex;
   gap: 16px;

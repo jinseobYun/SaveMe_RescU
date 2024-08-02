@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import Button from "../components/elements/Button";
-import Input from "../components/elements/Input";
-import WebRTC from "../components/WebRTC";
+import WebRTC from "../components/webRTC/WebRTC";
 import styled from "styled-components";
-import FirstInfo from "../components/FirstInfo";
-import SecondInfo from "../components/SecondInfo";
+import FirstInfo from "../components/webRTC/FirstInfo";
+import SecondInfo from "../components/webRTC/SecondInfo";
 import "./WebRTC.css";
 
 const WebRtcPage = () => {
