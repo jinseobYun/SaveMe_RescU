@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class MemberDetailsService implements UserDetailsService {
     private final AppMemberRepository appMemberRepository;
     private final WebMemberRepository webMemberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String memberId) throws UsernameNotFoundException {
@@ -28,15 +30,14 @@ public class MemberDetailsService implements UserDetailsService {
         if (memberId.startsWith("app:")) {
             memberId = memberId.substring(4);
             AppMember member = appMemberRepository.findByMemberId(memberId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인에 실패했습니다. 다시 시도해주세요."));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 일치하지 않습니다."));
             userDetails = createUserDetails(member);
         } else {
             memberId = memberId.substring(4);
             WebMember member = webMemberRepository.findByMemberId(memberId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인에 실패했습니다. 다시 시도해주세요."));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 일치하지 않습니다."));
             userDetails = createUserDetails(member);
         }
-
         return userDetails;
     }
 

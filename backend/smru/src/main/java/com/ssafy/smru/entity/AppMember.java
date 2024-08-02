@@ -35,7 +35,7 @@ public class AppMember implements UserDetails {
     @Column
     private boolean gender;
 
-    @Column
+    @Column(unique = true)
     private String phone;
 
     @Column
@@ -82,5 +82,8 @@ public class AppMember implements UserDetails {
 
     public void changeMedicalInformation(MedicalInformation medicalInformation) {
         this.medicalInformation = medicalInformation;
+    }
+    public void changePhone(String phone) {
+        this.phone = phone;
     }
 }
