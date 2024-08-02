@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import LoginPage from "../pages/LoginPage";
+import LoginPage from "../pages/members/LoginPage";
 import MainPage from "../pages/MainPage";
 import WebRTC from "../pages/WebRTC";
 import Map from "../pages/MapPage";

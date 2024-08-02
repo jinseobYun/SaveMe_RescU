@@ -1,6 +1,7 @@
-import React, { useState, useRef, Component } from "react";
+import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import Text from "./Text";
+
 // import VisibilityIcon from "@mui/icons-material/Visibility";
 // import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
@@ -9,12 +10,13 @@ const Input = ({
   placeholder = "",
   name = "",
   value = "",
-  setValue = () => {},
+  onChange = () => {},
+  // setValue = () => {},
   maxLen = 20,
   disabled = false,
   regexCheck = "",
   _onBlur = () => {},
-  _onChange = () => {},
+  // _onChange = () => {},
   label = "",
   required = false,
   successMessage = "유효한 값입니다",
@@ -30,17 +32,22 @@ const Input = ({
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
   };
-  const onChange = (e) => {
-    setValue(e.target.value);
-    _onChange(e);
-  };
+
+  // 추가
+  const handleChange = (e) => {
+    onChange(e)
+  }
+  // const onChange = (e) => {
+  //   setValue(e.target.value);
+  //   _onChange(e);
+  // };
   const onBlur = (e) => {
     _onBlur(e);
     //최대값이 지정되어있으면 value를 저장하지 않는다.
     if (maxLen && maxLen < e.target.value.length) {
       e.target.value = e.target.value.slice(0, maxLen);
     }
-    setValue(e.target.value);
+    // setValue(e.target.value);
 
     //공백인 경우 defaultMessage로 바꾼다.
     if (required && e.target.value === "") {
@@ -71,9 +78,10 @@ const Input = ({
 
   // 추가
   const clearValue = () => {
-    setValue("");
+    onChange({ target: { name, value: "" } });
+    // setValue("");
   };
-  console.log(value.length, isError);
+  // console.log(value.length, isError);
   return (
     <>
       <InputContainer>
@@ -99,17 +107,17 @@ const Input = ({
             name={name}
             required={required}
             onBlur={onBlur}
-            onChange={onChange}
+            // 수정 onChange
+            onChange={handleChange}
+            // onChange={onChange}
             ref={ref}
           />
           {/* 추가 */}
-          {showClearButton && (
-            <ClearButton onClick={clearValue}>X</ClearButton>
-          )}
+          {showClearButton && <ClearButton onClick={clearValue}>X</ClearButton>}
         </InputWrapper>
         {type === "password" && (
           <div className="input_icon" onClick={handleTogglePassword}>
-             {/* {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />} */}
+            {/* {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />} */}
           </div>
         )}
 
@@ -159,7 +167,7 @@ const InputWrapper = styled.div`
 `;
 const BasicInput = styled.input`
   width: 100%;
-  display:flex;
+  display: flex;
   border: none;
   outline: none;
   color: var(--gray-color-400);
@@ -168,7 +176,7 @@ const BasicInput = styled.input`
   line-height: 24px;
   background: var(--white-color-100);
   /* Light / Elevation / 200 */
-  
+
   &::placeholder {
     color: var(--gray-color-400);
   }

@@ -1,51 +1,53 @@
 import React, { useState, useEffect } from "react";
-import Input from "../components/elements/Input";
-import Button from "../components/elements/Button";
 import styled from "styled-components";
-import Select from "./elements/Select";
-import Textarea from "./elements/Textarea";
+import Input from "../elements/Input";
+import Button from "../elements/Button";
+import Select from "../elements/Select";
+import Textarea from "../elements/Textarea";
 
 const mockData = {
-  centers: ["대전 중구청 소방", "서울 강남구청 소방", "부산 해운대구청 소방"],
-  address1: "덕명동 593 싸피빌리지",
-  address2: "한밭대로 1234 싸피빌리지",
+  gwanhals: ["대전 중구청 소방", "서울 강남구청 소방", "부산 해운대구청 소방"],
+  jibunLocationInfo: "덕명동 593 싸피빌리지",
+  doroLocationInfo: "한밭대로 1234 싸피빌리지",
   emergencyType: "질병",
-  reportDetails: "환자가 고열로 의식이 없습니다.",
   reporterName: "김싸피",
+  reportedTime : "2024-01-01 12:35:56",
   reporterPhone: "010-1234-5678",
+  reportDetail: "환자가 고열로 의식이 없습니다.",
 };
 
 const FirstInfo = () => {
   const [formData, setFormData] = useState({
-    center: "",
-    address1: "",
-    address2: "",
+    rescueTeamName: "",
+    jibunLocationInfo: "",
+    doroLocationInfo: "",
     emergencyType: "",
-    reportDetails: "",
     reporterName: "",
+    reportedTime:"",
     reporterPhone: "",
+    reportDetail: "",
   });
 
-  const [centerOptions, setCenterOptions] = useState([]);
+  const [rescueTeamNameOptions, setrescueTeamNameOptions] = useState([]);
 
   useEffect(() => {
-    setCenterOptions(mockData.centers);
+    setrescueTeamNameOptions(mockData.gwanhals);
     setFormData({
-      center: mockData.centers[0],
-      address1: mockData.address1,
-      address2: mockData.address2,
+      rescueTeamName: mockData.gwanhals[0],
+      jibunLocationInfo: mockData.jibunLocationInfo,
+      doroLocationInfo: mockData.doroLocationInfo,
       emergencyType: mockData.emergencyType,
-      reportDetails: mockData.reportDetails,
+      reportDetail: mockData.reportDetail,
       reporterName: mockData.reporterName,
       reporterPhone: mockData.reporterPhone,
     });
   }, []);
 
-  const handleInputChange = (name, value) => {
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+  const handleInputChange = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
   };
 
   const handleSubmit = () => {
@@ -56,31 +58,36 @@ const FirstInfo = () => {
     <FormContainer>
       <Select
         label="관할 119안전센터"
-        options={centerOptions}
-        selectedValue={formData.center}
-        setSelectedValue={(value) => handleInputChange("center", value)}
+        name="gwanhals"
+        options={rescueTeamNameOptions}
+        selectedValue={formData.rescueTeamName}
+        setSelectedValue={(value) => handleInputChange({ target: { name: "rescueTeamName", value } })}
       />
       <Input
         label="신고위치 - 지번"
-        value={formData.address1}
-        setValue={(value) => handleInputChange("address1", value)}
+        name="jibunLocationInfo"
+        value={formData.jibunLocationInfo}
+        onChange={handleInputChange}
         showClearButton={true}
       />
       <Input
         label="신고위치 - 도로명"
-        value={formData.address2}
-        setValue={(value) => handleInputChange("address2", value)}
+        name="doroLocationInfo"
+        value={formData.doroLocationInfo}
+        onChange={handleInputChange}
         showClearButton={true}
       />
       <Input
         label="긴급구조분류"
+        name="emergencyType"
         value={formData.emergencyType}
-        setValue={(value) => handleInputChange("emergencyType", value)}
+        onChange={handleInputChange}
       />
       <Textarea
         label="신고내용"
-        value={formData.reportDetails}
-        setValue={(value) => handleInputChange("reportDetails", value)}
+        name="reportDetail"
+        value={formData.reportDetail}
+        onChange={handleInputChange}
         placeholder="신고 내용을 입력하세요"
         cols={40}
         rows={10}
@@ -91,14 +98,16 @@ const FirstInfo = () => {
       />
       <Input
         label="신고자명"
+        name="reporterName"
         value={formData.reporterName}
-        setValue={(value) => handleInputChange("reporterName", value)}
+        onChange={handleInputChange}
         showClearButton={true}
       />
       <Input
         label="신고자번호"
+        name="reporterPhone"
         value={formData.reporterPhone}
-        setValue={(value) => handleInputChange("reporterPhone", value)}
+        onChange={handleInputChange}
         showClearButton={true}
       />
       <SubmitButton>

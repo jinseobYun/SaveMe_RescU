@@ -4,8 +4,10 @@ import Text from "./Text";
 
 const Textarea = ({
   label,
-  value,
-  setValue,
+  value = "",
+  name ="",
+  onChange,
+  // onChange = () => {},
   placeholder = "",
   required = false,
   cols = 30,
@@ -18,7 +20,7 @@ const Textarea = ({
 }) => {
   const handleChange = (e) => {
     if (e.target.value.length <= maxLength) {
-      setValue(e.target.value);
+      onChange(e);
     }
   };
   return (
@@ -35,6 +37,7 @@ const Textarea = ({
       )}
       <StyledTextArea
         value={value}
+        name={name}
         onChange={handleChange}
         placeholder={placeholder}
         required={required}

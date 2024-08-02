@@ -1,0 +1,25 @@
+.list-container {
+  border: 1px solid;
+  border-radius: 0.5rem;
+}
+.list {
+  display: flex;
+  width: 100%;
+}
+.list > div {
+  justify-content: center;
+  padding: 1rem;
+}
+.num {
+  flex: 1;
+}
+.time {
+  flex: 2;
+}
+.charge {
+  flex: 1;
+}
+.list-item {
+  display: flex;
+  width: 100%;
+}
