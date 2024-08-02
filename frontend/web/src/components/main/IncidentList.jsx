@@ -1,6 +1,7 @@
 import React from "react";
 import ListItem from "./IncidentListItem";
 
+
 // 필터 되기 이전 데이터 가져오기
 // const IncidentList = ({ data, filter }) => {
 //   const filteredData = data.filter(filter);

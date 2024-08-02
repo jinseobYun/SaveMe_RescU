@@ -1,0 +1,21 @@
+.filter {
+    display: flex;
+    width: 100%;
+    border-bottom: 1px solid;
+    margin-bottom: 48px;
+}
+.filter > .condition {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.filter-date {
+    width: 10rem;
+}
+.charge-input {
+    margin-right: 4rem;
+    width: 8rem;
+}
+.filter-btn {
+    width: 10rem;
+}
