@@ -37,3 +37,4 @@ out/
 .vscode/
 
 security.properties
+openAPI.properties

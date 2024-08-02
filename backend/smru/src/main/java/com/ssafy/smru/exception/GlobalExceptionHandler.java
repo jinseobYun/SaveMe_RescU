@@ -3,6 +3,7 @@ package com.ssafy.smru.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -45,5 +46,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         return new ResponseEntity<>("요청 보낸 데이터가 올바른지 확인하세요." +
                 " 오류 상세 : " + ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+        return new ResponseEntity<>("입력값을 확인하세요 " + ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
