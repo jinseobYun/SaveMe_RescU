@@ -20,6 +20,9 @@ const Input = ({
   $haveToCheckValid = false,
   $isValid = true,
   $maxLen = 20,
+  $icon = null,
+  $width = "55vw",
+  $height = "80px",
 }) => {
   const [helperText, setHelperText] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -48,7 +51,7 @@ const Input = ({
 
   return (
     <>
-      <InputContainer>
+      <InputContainer $width={$width} $height={$height}>
         <Label>
           {$label && (
             <Text
@@ -59,7 +62,10 @@ const Input = ({
             />
           )}
         </Label>
-        <InputWrapper $inputState={inputState}>
+        <InputWrapper
+          $haveToCheckValid={$haveToCheckValid}
+          $inputState={inputState}
+        >
           <BasicInput
             defaultValue={$value}
             disabled={$disabled}
@@ -68,7 +74,6 @@ const Input = ({
             inputMode={$type === "tel" ? "numeric" : undefined}
             pattern={$type === "tel" ? "[0-9]{3}-[0-9]{3}-[0-9]{4}" : undefined}
             placeholder={$placeholder}
-            $haveToCheckValid={$haveToCheckValid}
             name={$name}
             onBlur={_onBlur}
             onChange={onChangeInput}
@@ -79,17 +84,14 @@ const Input = ({
               {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
             </div>
           )}
+          {$icon && <div>{$icon}</div>}
         </InputWrapper>
         {inputState === "invalid" && (
           <HelpText>
             <Text
               children={helperText}
               $size="12px"
-              $color={
-                inputState === "invalid"
-                  ? "var(--red-color-100)"
-                  : $value && "var(--green-color-100)"
-              }
+              $color={"var(--red-color-100)"}
             />
           </HelpText>
         )}
@@ -99,8 +101,8 @@ const Input = ({
 };
 const InputContainer = styled.div`
   display: flex;
-  width: 55vw;
-  height: 80px;
+  width: ${(props) => props.$width};
+  height: ${(props) => props.$height};
   flex-direction: column;
   align-items: flex-start;
   gap: 0.5rem;

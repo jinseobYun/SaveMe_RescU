@@ -9,8 +9,10 @@ const Button = ({
   $width = "100%",
   $height = "100%",
   $padding = "15px 15px",
-  $bg = { default: "var(--button-red-color)", hover: "var(bg-baige-color)" },
-  $color = "var(--black-color-100)",
+  $bg = { default: "var(--button-red-color)" },
+  $color = {
+    default: "var(--black-color-100)",
+  },
   $disabled = false,
   $border = "none",
   $size = "16px",
@@ -48,36 +50,38 @@ const BasicButton = styled.button`
   height: ${(props) => props.$height};
   cursor: pointer;
   background-color: ${(props) => props.$bg.default};
-  color: ${(props) => props.$color};
   padding: ${(props) => props.$padding};
   border: ${(props) => props.$border};
   border-radius: ${(props) => props.$radius};
   box-sizing: border-box;
   font-size: ${(props) => props.$size};
+  color: ${(props) => props.$color.default};
   ${(props) =>
     props.$margin
       ? css`
           margin: ${props.$margin};
         `
       : ""}
-  ${(props) => (props.$bold ? "font-weight: 600;" : "")}
-  outline: none;
+    ${(props) => (props.$bold ? "font-weight: 600;" : "")}
+    outline: none;
   &:focus {
     outline: none;
   }
   &:disabled {
-  background-color: ${(props) => props.$bg.disabled};
+    background-color: ${(props) => props.$bg.disabled || props.$bg.default};
     border: 1px solid #ddd;
+    color: ${(props) => props.$color.disabled || props.$color.default};
+
   }
   &:hover {
-    background-color: ${(props) => props.$bg.hover};
-    // color:var(--white-color-100)
+    background-color: ${(props) => props.$bg.hover || props.$bg.default};
+    color: ${(props) => props.$color.hover || props.$color.default};
     cursor: pointer;
   }
 
   &.active {
-    background-color: ${(props) => props.$bg.active};
-    // color:var(--white-color-100)
+    background-color: ${(props) => props.$bg.active || props.$bg.default};
+    color: ${(props) => props.$color.active || props.$color.default};
   }
     ${(props) =>
       props.$boxShadow &&

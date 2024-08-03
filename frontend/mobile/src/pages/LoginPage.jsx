@@ -5,23 +5,30 @@ import styled from "styled-components";
 import { Grid, Button, Text, Input } from "@components/elements";
 import { Header } from "@components/common";
 import useForm from "@/hooks/useForm";
-import { login } from "@/api/userApi";
+import { loginApi } from "@/api/userApi";
 import useUserStore from "@/store/useUserStore";
 
 const Login = () => {
   const navigate = useNavigate();
-  const setAccessToken = useUserStore((state) => state.setAccessToken);
-  const setReFreshToken = useUserStore((state) => state.setReFreshToken);
+  const { setAccessToken, setReFreshToken, login, setUserId } = useUserStore();
+
   const { values, errors, isLoading, handleChange, handleSubmit } = useForm({
     initialValues: { id: "", password: "" },
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
       //TODO - api test
-      // login(
+      // loginApi(
       //   values.id,
       //   values.password,
-      //   ({ data }) => {
+      //   (response) => {
       // //TODO - 토큰 저장하기
+      // if(response.status ===200)
+      // {
+      //   setAccessToken(response.data.accessToken);
+      //   setReFreshToken(response.data.refreshToken);
+      //   setUserId(values.id);
+      //   login();
+      // }
       //     navigate("/");
       //   },
       // (error) => {
@@ -70,7 +77,7 @@ const Login = () => {
             $justify-content="center"
             $align-items="center"
             $bg={{ default: "var(--main-orange-color)" }}
-            $color="var(--white-color-100)"
+            $color={{ default: "var(--white-color-100)" }}
             children="로그인"
           />
           <TextBox>

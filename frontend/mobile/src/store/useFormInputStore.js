@@ -1,27 +1,81 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
+
 const store = (set) => ({
-  inputs: {},
-  updateInputs: (newInputs) =>
-    set((prev) => ({
-      inputs: { ...prev.inputs, ...newInputs },
+  isFormEdit: true,
+  changeFormRegister: () =>
+    set((state) => ({
+      isFormEdit: false,
     })),
-  clearInputs: () => set({ inputs: {} }), // 빈 객체로 수정
+  changeFormEdit: () =>
+    set((state) => ({
+      isFormEdit: true,
+    })),
+  inputs: {
+  },
+  updateInputs: (newInputs) =>
+    set((state) => ({
+      inputs: { ...state.inputs, ...newInputs },
+    })),
+  clearInputs: () => set({ inputs: {} }),
+
+  //SECTION - 질병 인풋
+  //id, name
+  medCdisInputs: [
+  ],
+  addMedCdisInputs: (newInput) =>
+    set((state) => ({
+      medCdisInputs: [...state.medCdisInputs, newInput],
+    })),
+  setMedCdisInput: (userMedCdis) =>
+    set((state) => ({
+      medCdisInputs: [...userMedCdis]
+    })),
+  deleteMedCdisInput: (inputId) =>
+    set((state) => ({
+      medCdisInputs: state.medCdisInputs.filter((i) => i.cdInfoId !== inputId),
+    })),
+  clearMedCdisInputs: () => set({ medCdisInputs: [] }),
+
+  //SECTION - 약 인풋
+  drugInputs: [
+
+  ],
+  addDrugInputs: (newInput) =>
+    set((state) => ({
+      drugInputs: [...state.drugInputs, newInput],
+    })),
+  setDrugInputs: (userDrugInfos) =>
+    set((state) => ({
+      drugInputs: [...userDrugInfos]
+    })),
+  deleteDrugInput: (inputId) =>
+    set((state) => ({
+      drugInputs: state.drugInputs.filter((i) => i.medicineId !== inputId),
+    })),
+
+  clearDrugInputs: () => set({ drugInputs: [] }),
+
+  clearAllInput: () =>
+    set((state) => ({
+      inputs: {},
+      medCdisInputs: [],
+      drugInputs: [],
+    }))
+
 });
 
 const useFormInputStore = create(
   import.meta.env.NODE_ENV === "production"
     ? persist(store, {
-        name: "formStore",
-        storage: localStorage, // 로컬 스토리지를 사용
-      })
+      name: "formStore",
+    })
     : devtools(
-        persist(store, {
-          name: "formStore",
-          storage: localStorage, // 로컬 스토리지를 사용
-        })
-      )
+      persist(store, {
+        name: "formStore",
+      })
+    )
 );
 
 export default useFormInputStore;

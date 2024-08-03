@@ -7,7 +7,7 @@ function useForm({ initialValues, onSubmit, validate }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const debouncedValidate = debounce((values) => {
-    setErrors(validate(values));
+    validate && setErrors(validate(values));
   }, 300); // 300ms 디바운싱
 
   const handleChange = (event) => {

@@ -16,4 +16,8 @@ export default defineConfig({
       { find: "@api", replacement: resolve(__dirname, "src/api") },
     ],
   },
+  build: {
+    manifest: true,
+    target: "esnext",
+  },
 });

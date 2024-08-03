@@ -21,7 +21,7 @@ const NextPageButton = ({
           disabled: "var(--orange-op50-color)",
           default: "var(--main-orange-color)",
         }}
-        $color="var(--white-color-100)"
+        $color={{ default: "var(--white-color-100)" }}
         children={text}
         $disabled={isError}
       />
