@@ -18,7 +18,7 @@ export default function BasicMenus() {
       </div>
       <div className="menu-right">
         <div className="open-edit-password">
-          <Link to={"/map"}>비밀번호 수정</Link>
+          <Link to={"/mypage"}>비밀번호 수정</Link>
         </div>
         <div className="logout">
           <Link to={"/"}>로그아웃</Link>
