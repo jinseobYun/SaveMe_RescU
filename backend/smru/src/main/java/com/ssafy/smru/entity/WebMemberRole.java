@@ -1,6 +1,7 @@
 package com.ssafy.smru.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,7 +20,10 @@ public class WebMemberRole {
     private String roleName;
 
     // 생성자
-    public WebMemberRole(String roleName) {
+
+    @Builder
+    public WebMemberRole(Integer roleId, String roleName) {
+        this.roleId = roleId;
         this.roleName = roleName;
     }
 }

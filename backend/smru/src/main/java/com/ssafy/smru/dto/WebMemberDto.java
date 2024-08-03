@@ -1,7 +1,6 @@
 package com.ssafy.smru.dto;
 
 import com.ssafy.smru.entity.WebMember;
-import jakarta.persistence.Column;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,6 +35,33 @@ public class WebMemberDto {
                     .name(name)
                     .build();
         }
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @ToString
+    public static class Response {
+        private Long webMemberId;
+        private String memberId;
+        private String name;
+        private Integer roleId;
+
+        @Builder
+        public Response(Long webMemberId, String memberId, String name, Integer roleId) {
+            this.webMemberId = webMemberId;
+            this.memberId = memberId;
+            this.name = name;
+            this.roleId = roleId;
+        }
+        public static Response fromEntity(WebMember member) {
+            return Response.builder()
+                    .webMemberId(member.getWebMemberId())
+                    .memberId(member.getMemberId())
+                    .name(member.getName())
+                    .roleId(member.getRoleId())
+                    .build();
+        }
+
     }
 
     @Getter
