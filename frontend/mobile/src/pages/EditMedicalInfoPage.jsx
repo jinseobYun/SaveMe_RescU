@@ -14,7 +14,6 @@ const EditMedicalInfoPage = () => {
     drug: { url: "/medicalinfo/edit?form=disease", text: "다음" },
     disease: { url: "/medicalinfo", text: "저장하기" },
   };
-  const { updateInputs, inputs } = useFormInputStore();
   useEffect(() => {
     //TODO - userStore의 정보를 input으로 set하기
     // 만약 뒤로 가서 왓을 때도 다시 조회되면 페이지 이동 전에 조회하는거로 바꾸기

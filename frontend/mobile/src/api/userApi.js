@@ -5,7 +5,7 @@ const http = Axios();
 async function registerUser(data, success, fail) {
   await http.post("/members/register", data).then(success).catch(fail);
 }
-async function login(id, pw, success, fail) {
+async function loginApi(id, pw, success, fail) {
   const data = {
     memberId: id,
     password: pw,
@@ -58,7 +58,7 @@ async function modifyUser(updateInfo, success, fail) {
 
 export {
   registerUser,
-  login,
+  loginApi,
   getUserInfo,
   updateUserPwd,
   checkIdDuplication,

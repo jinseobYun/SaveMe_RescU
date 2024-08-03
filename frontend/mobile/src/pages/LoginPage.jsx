@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Grid, Button, Text, Input } from "@components/elements";
 import { Header } from "@components/common";
 import useForm from "@/hooks/useForm";
-import { login } from "@/api/userApi";
+import { loginApi } from "@/api/userApi";
 import useUserStore from "@/store/useUserStore";
 
 const Login = () => {
@@ -17,7 +17,7 @@ const Login = () => {
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
       //TODO - api test
-      // login(
+      // loginApi(
       //   values.id,
       //   values.password,
       //   (response) => {

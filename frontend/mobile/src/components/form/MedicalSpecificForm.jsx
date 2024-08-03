@@ -1,65 +1,202 @@
 import React, { useEffect, useState } from "react";
+import { createRoot } from "react-dom/client";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-
-import {
-  Grid,
-  Button,
-  Input,
-  Text,
-  NextPageButton,
-} from "@components/elements";
+import Swal from "sweetalert2";
+import EditIcon from "@mui/icons-material/Edit";
+import { Grid, Button, Text, NextPageButton } from "@components/elements";
+import AutoCompleteInput from "@components//MedicalInfo/AutoCompleteInput";
 import useUserStore from "@/store/useUserStore";
 import useFormInputStore from "@/store/useFormInputStore";
+import useSearchStore from "@/store/useSearchStore";
+import { registerMedicalInfo, updateMedicalInfo } from "@api/medicalInfoApi";
 
-//TODO - 투약 정보 폼, 지병 폼 두개 다 가능하게 하기
 const MedicalSpecificForm = ({ form, btnSetting }) => {
-  const { medCdisInputs, drugInputs, addMedCdisInputs, addDrugInputs } =
-    useFormInputStore();
+  const {
+    medCdisInputs,
+    drugInputs,
+    addMedCdisInputs,
+    addDrugInputs,
+    isFormEdit,
+    inputs,
+    clearAllInput,
+  } = useFormInputStore();
+  const { setUserMedicalInfo } = useUserStore();
+  const { searchResults, setSearchResults } = useSearchStore();
   const navigate = useNavigate();
-
-  const onClickAddBtn = (e) => {
-    e.preventDefault();
-    //TODO - 입력값에 해당하는 index번호로 파싱
-    const index = 0;
-
-    if (form === "disease") {
-      const data = {
-        cdInfoId: index,
-        cdName: input,
-      };
-      addMedCdisInputs(data);
-    } else {
-      const data = {
-        medicineId: index,
-        medicineName: input,
-      };
-      addDrugInputs(data);
-    }
-
-    setInput("");
-  };
-
-  const [input, setInput] = useState("");
-
-  const onChange = (e) => {
-    setInput(e.target.value);
-  };
-  useEffect(() => {
-    //TODO - 첫 검색시 SearchStore에 저장하고 첫 글자가 바뀌면 다시 서치 api 호출
-    //TODO - 엘라스틱 서치 도입,지병과 의약품 삼항식으로
-
-    console.log(input);
-  }, [input]);
 
   const onClickNextBtn = (e) => {
     if (form === "disease") {
+      const { bloodType1, bloodType2, otherInfo } = inputs;
+      const medCdis = medCdisInputs.map((item) => item.id);
+      const drugInfos = drugInputs.map((item) => item.id);
+      const data = {
+        bloodType1,
+        bloodType2,
+        otherInfo,
+        medCdis,
+        drugInfos,
+      };
       //TODO - 의료정보 저장 api
+      if (isFormEdit) {
+        updateMedicalInfo(
+          data,
+          (response) => {
+            if (response.status === 200) {
+              Swal.fire("저장되었습니다");
+              clearAllInput();
+
+              setUserMedicalInfo(data);
+              navigate("/medicalinfo", { replace: true });
+            }
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      } else {
+        registerMedicalInfo(
+          data,
+          (response) => {
+            if (response.status === 200) {
+              Swal.fire("등록되었습니다");
+
+              setUserMedicalInfo(data);
+              clearAllInput();
+
+              navigate("/medicalinfo", { replace: true });
+            }
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      }
+    } else {
+      navigate(btnSetting.url);
     }
-    navigate(btnSetting.url);
   };
 
+  const handleSaveInput = (value) => {
+    const data = {
+      id: value.id,
+      name: value.name,
+    };
+
+    if (form === "disease") {
+      addMedCdisInputs(data);
+    } else {
+      addDrugInputs(data);
+    }
+  };
+  const onClickAddBtn = (name) => {
+    if (name == "[object Object]") name = "";
+    Swal.fire({
+      // title: " 을 .",
+      // title: `<h5>의약품 명을 적어주세요</h5>`,
+      html: '<div id="swal-react-container"></div>',
+      didOpen: () => {
+        const container = document.getElementById("swal-react-container");
+        const root = createRoot(container); // React 18의 createRoot 사용
+        root.render(
+          <AutoCompleteInput
+            $onChange={Swal.resetValidationMessage}
+            $prev={name}
+          />
+        );
+      },
+      preConfirm: () => {
+        const inputValue = document.querySelector(
+          "#swal-react-container input"
+        ).value;
+        const existsInArray = searchResults.some(
+          (item) => item.name === inputValue
+        );
+        const existsInInputs = (
+          form === "disease" ? medCdisInputs : drugInputs
+        ).some((item) => item.name === inputValue);
+
+        if (!existsInArray) {
+          Swal.showValidationMessage("해당하는 단어가 DB에 없습니다.");
+          return false;
+        }
+
+        if (existsInInputs) {
+          Swal.showValidationMessage("이미 추가된 항목입니다.");
+          return false;
+        }
+
+        // 추가 처리 로직
+        const newItem = searchResults.find((item) => item.name === inputValue);
+
+        return inputValue
+          ? Promise.resolve(newItem)
+          : Promise.reject("의약품 명을 입력해 주세요.");
+      },
+      width: "30em",
+      confirmButtonText: "저장하기",
+      confirmButtonColor: "var(--main-orange-color)",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleSaveInput(result.value);
+      }
+    });
+  };
+
+  const btnStyles = {
+    _onClick: onClickAddBtn,
+    children: <>추가하기</>,
+    $radius: "10px",
+    $bg: {
+      default: "var(--main-orange-color)",
+    },
+    $color: {
+      default: "var(--white-color-200)",
+    },
+    $padding: "1rem 2rem",
+    $size: "2rem",
+    $bold: true,
+    // $boxShadow: "0px 4px 0px 0px var(--main-orange-color);",
+    $padding: "1rem",
+    $width: "",
+    $height: "auto",
+  };
+  useEffect(() => {
+    //STUB - 테스트 후 지우기
+    const data = medCdisInputs;
+    const stringifiedData = JSON.stringify(data);
+    const parsedData = JSON.parse(stringifiedData); // 정상 작동
+    if (form === "disease") {
+      setSearchResults([
+        {
+          id: 1,
+          name: "고혈압",
+        },
+        {
+          id: 2,
+          name: "당뇨병",
+        },
+        {
+          id: 3,
+          name: "천식",
+        },
+      ]);
+    } else
+      setSearchResults([
+        {
+          id: 24,
+          name: "러츠날캡슐(탐스로신염산염)",
+        },
+        {
+          id: 25,
+          name: "세린드연고",
+        },
+        {
+          id: 74,
+          name: "하트만용액",
+        },
+      ]);
+  }, []);
   return (
     <Container>
       <Grid
@@ -79,40 +216,46 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
           }
           $color="var(--blakc-color-300)"
         />
-        <StyledForm noValidate>
-          <Input
-            // $value={input}
-            _onChange={onChange}
-            $haveToCheckValid={false}
-            $isValid={true}
-            $height="auto"
-          />
-          <AddCircleOutlineIcon
-            onClick={onClickAddBtn}
-            sx={{ color: "var(--main-orange-color)", fontSize: 30 }}
-          />
-        </StyledForm>
-        {form === "disease"
-          ? medCdisInputs &&
-            medCdisInputs.map((d, i) => {
-              return (
-                <Text
-                  key={d.cdInfoId}
-                  children={d.cdName}
-                  $color="var(--black-color-300)"
-                />
-              );
-            })
-          : drugInputs &&
-            drugInputs.map((m, i) => {
-              return (
-                <Text
-                  key={m.medicineId}
-                  children={m.medicineName}
-                  $color="var(--black-color-300)"
-                />
-              );
-            })}
+        <Button {...btnStyles} />
+        <StyledList>
+          {form === "disease"
+            ? medCdisInputs &&
+              medCdisInputs.map((item, i) => (
+                <InputBox
+                  key={i}
+                  id={item.id}
+                  name={item.name}
+                  onClick={() => {
+                    onClickAddBtn(item.name);
+                  }}
+                  value={item.name}
+                >
+                  <Text $size="1.4rem" children={item.name} $padding="1rem" />
+
+                  <EditIcon />
+                </InputBox>
+              ))
+            : drugInputs &&
+              drugInputs.map((item, i) => (
+                <InputBox
+                  key={i}
+                  id={item.id}
+                  name={item.name}
+                  onClick={() => {
+                    onClickAddBtn(item.name);
+                  }}
+                  value={item.name}
+                >
+                  <Text
+                    $size="1.5rem"
+                    children={item.name}
+                    $padding="2rem"
+                    $lineHeight=""
+                  />
+                  <EditIcon />
+                </InputBox>
+              ))}
+        </StyledList>
       </Grid>
       <NextPageButton
         isError={false}
@@ -131,12 +274,27 @@ const Container = styled.div`
   height: 100vh;
   width: 100vw;
 `;
-const StyledForm = styled.form`
+const StyledList = styled.div`
   display: flex;
   justify-content: center;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   margin-left: 2rem;
   margin-right: 2rem;
   gap: 1.5rem;
+`;
+const InputBox = styled.div`
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  // width: 50vw;
+  gap: 2rem;
+  justify-content: space-between;
+  padding: 0 0.1rem 10px 5px;
+  padding: 16px;
+  box-sizing: border-box;
+  outline: none;
+  border-bottom: 1px solid var(--dark-blue-color);
+
+  z-index: 3;
 `;

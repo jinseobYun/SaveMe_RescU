@@ -38,7 +38,7 @@ export default TabBar;
 const Wrapper = styled.div`
   display: flex;
   width: 100%;
-  // height: 10vh;
+  height: 7vh;
   justify-content: center;
   position: fixed;
   bottom: 0px;

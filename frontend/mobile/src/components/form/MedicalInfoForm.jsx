@@ -9,14 +9,13 @@ import useForm from "@/hooks/useForm";
 
 const MedicalInfoForm = () => {
   const { userName, userMedicalInfo } = useUserStore();
-
   const { updateInputs, inputs } = useFormInputStore();
   const navigate = useNavigate();
   const { values, errors, isLoading, handleChange, handleSubmit } = useForm({
     initialValues: {
-      aboType: inputs.aboType || "",
-      rhType: inputs.rhType || "",
-      otherSignificant: inputs.otherSignificant || "",
+      bloodType1: inputs.bloodType1 || "",
+      bloodType2: inputs.bloodType2 || "",
+      otherInfo: inputs.otherInfo || "",
     },
     onSubmit: (values) => {
       console.log(values);
@@ -86,9 +85,9 @@ const MedicalInfoForm = () => {
               <StyledRadio
                 value="RH+"
                 type="radio"
-                name="rhType"
+                name="bloodType2"
                 onChange={onChangeRhRadio}
-                checked={values.rhType === "RH+"}
+                checked={values.bloodType2 === "RH+"}
               />
               <Text
                 children="RH-"
@@ -99,9 +98,9 @@ const MedicalInfoForm = () => {
               <StyledRadio
                 value="RH-"
                 type="radio"
-                name="rhType"
+                name="bloodType2"
                 onChange={onChangeRhRadio}
-                checked={values.rhType === "RH-"}
+                checked={values.bloodType2 === "RH-"}
               />
             </Grid>
           </Grid>
@@ -137,9 +136,9 @@ const MedicalInfoForm = () => {
               <StyledRadio
                 value="A"
                 type="radio"
-                name="aboType"
+                name="bloodType1"
                 onChange={onChangeAboRadio}
-                checked={values.aboType === "A"}
+                checked={values.bloodType1 === "A"}
               />
               <Text
                 children="B"
@@ -150,9 +149,9 @@ const MedicalInfoForm = () => {
               <StyledRadio
                 value="B"
                 type="radio"
-                name="aboType"
+                name="bloodType1"
                 onChange={onChangeAboRadio}
-                checked={values.aboType === "B"}
+                checked={values.bloodType1 === "B"}
               />
               <Text
                 children="AB"
@@ -163,9 +162,9 @@ const MedicalInfoForm = () => {
               <StyledRadio
                 value="AB"
                 type="radio"
-                name="aboType"
+                name="bloodType1"
                 onChange={onChangeAboRadio}
-                checked={values.aboType === "AB"}
+                checked={values.bloodType1 === "AB"}
               />
               <Text
                 children="O"
@@ -176,9 +175,9 @@ const MedicalInfoForm = () => {
               <StyledRadio
                 value="O"
                 type="radio"
-                name="aboType"
+                name="bloodType1"
                 onChange={onChangeAboRadio}
-                checked={values.aboType === "O"}
+                checked={values.bloodType1 === "O"}
               />
             </Grid>
           </Grid>
@@ -197,11 +196,11 @@ const MedicalInfoForm = () => {
               $lineHeight="16px"
             />
             <StyledTextarea
-              name="otherSignificant"
+              name="otherInfo"
               rows="5"
               cols="33"
               maxLength={"1000"}
-              value={values.otherSignificant}
+              value={values.otherInfo}
               onChange={handleChange}
             />
           </Grid>

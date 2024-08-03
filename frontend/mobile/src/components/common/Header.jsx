@@ -7,7 +7,8 @@ import { Grid, Button, Text } from "@components/elements";
 import useFormInputStore from "@/store/useFormInputStore";
 const Header = ({ navText, backAlert }) => {
   const navigate = useNavigate();
-  const { clearInputs } = useFormInputStore();
+  const { clearAllInput } = useFormInputStore();
+
   const onClickGoBack = () => {
     backAlert
       ? Swal.fire({
@@ -21,7 +22,7 @@ const Header = ({ navText, backAlert }) => {
         }).then((result) => {
           if (result.isDismissed) {
             navigate(-1);
-            clearInputs();
+            clearAllInput();
           }
         })
       : navigate(-1);
