@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -49,15 +51,15 @@ public class DutyInfo {
     private String phpid;
 
     // 위도
-    @Column
-    private Double latitude;
+    @Column(name = "latitude")
+    private BigDecimal latitude;
 
     // 경도
-    @Column
-    private Double longitude;
+    @Column(name = "longitude")
+    private BigDecimal longitude;
 
     @Builder
-    public DutyInfo(Integer rnum, String dutyAddr, String dutyEmcls, String dutyEmclsName, String dutyName, String dutyTel1, String dutyTel3, String hpid, String phpid, Double latitude, Double longitude) {
+    public DutyInfo(Integer rnum, String dutyAddr, String dutyEmcls, String dutyEmclsName, String dutyName, String dutyTel1, String dutyTel3, String hpid, String phpid, BigDecimal latitude, BigDecimal longitude) {
         this.rnum = rnum;
         this.dutyAddr = dutyAddr;
         this.dutyEmcls = dutyEmcls;

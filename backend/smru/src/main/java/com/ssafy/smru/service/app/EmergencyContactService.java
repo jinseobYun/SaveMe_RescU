@@ -37,8 +37,6 @@ public class EmergencyContactService {
         AppMember appMember = appMemberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new ResourceNotFoundException("등록된 사용자가 아닙니다."));
 
-
-
         EmergencyContact emergencyContact = request.toEntity(appMember);
         emergencyContact = emergencyContactRepository.save(emergencyContact);
 
