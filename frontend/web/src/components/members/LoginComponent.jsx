@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useCustomLogin from "../../hooks/useCustomLogin";
 
 import Button from "../../components/elements/Button";
 import Input from "../../components/elements/Input";
-import { loginPost } from "../../api/membersApi";
+// import { loginPost } from "../../api/membersApi";
 
 import "./LoginComponent.css";
 
@@ -15,6 +16,7 @@ const initState = {
 export default function LoginComponent() {
   const [loginParam, setLoginParam] = useState({ ...initState });
   const navigate = useNavigate();
+  const { doLogin } = useCustomLogin();
 
   const handleInputChange = (e) => {
     setLoginParam((prevState) => ({
@@ -24,8 +26,21 @@ export default function LoginComponent() {
   };
   const handleSubmit = () => {
     console.log(loginParam);
-    loginPost(loginParam);
-    navigate("/main");
+
+    doLogin(loginParam).then((data) => {
+      console.log(data)
+      if(data.error) {
+        alert("이메일,패스워드 확인")
+      }
+      else {
+        alert("로그인성공")
+        navigate("/main")
+      }
+
+    });
+
+    // loginPost(loginParam);
+    // navigate("/main");
   };
 
   return (
