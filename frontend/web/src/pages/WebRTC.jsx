@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Button from "../components/elements/Button";
-import WebRTC from "../components/webRTC/WebRTC";
+// import WebRTC from "../components/webRTC/WebRTC";
 import styled from "styled-components";
 import FirstInfo from "../components/webRTC/FirstInfo";
 import SecondInfo from "../components/webRTC/SecondInfo";
@@ -29,7 +29,7 @@ const WebRtcPage = () => {
       </div>
       <div className="center">
         {/* RTC component */}
-        <WebRTC />
+        {/* <WebRTC /> */}
       </div>
       <div className="right-side">
         {/* Chatting component */}
