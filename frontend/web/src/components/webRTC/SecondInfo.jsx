@@ -5,6 +5,13 @@ import Button from "../elements/Button";
 import Radio from "../elements/Radio";
 import Select from "../elements/Select";
 
+import { useDispatch, useSelector } from "react-redux";
+import { postSecondInfoAsync } from "../../slices/reportSlice";
+
+// useLocation을 사용해 dispatchOrderId를 전달
+import { useLocation } from "react-router-dom";
+
+// mock
 const mockTagData = {
   hospitals: ["가장 가까운 응급실 기본값 설정", "응급실 1", "응급실 2"],
   patientName: "김싸피",
@@ -18,7 +25,7 @@ const mockTagData = {
   reporterName: "신고자",
   reporterPhone: "010-1234-5678",
 };
-
+// mock2
 const mockReporterData = {
   patientName: "김신고자",
   gender: "여",
@@ -37,8 +44,15 @@ const mockReporterData = {
 };
 
 const SecondInfo = () => {
+  // api 연결
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const { dispatchOrderId } = location.state;
+  const reportData = useSelector((state) => state.reportSlice);
+
   const [formData, setFormData] = useState({
     hospital: "",
+    hpid: "",
     patientName: "",
     gender: "",
     birthDate: "",
@@ -53,13 +67,36 @@ const SecondInfo = () => {
 
   const [hospitalOptions, setHospitalOptions] = useState([]);
 
+  // mock 용 데이터 저장 ★★★★★★★★★★★★★★★★★★★★★★★★
+  // useEffect(() => {
+  //   setHospitalOptions(mockTagData.hospitals);
+  //   setFormData((prevFormData) => ({
+  //     ...prevFormData,
+  //     hospital: mockTagData.hospitals[0],
+  //   }));
+  // }, []);
+  // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+  // api 호출 데이터 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
   useEffect(() => {
-    setHospitalOptions(mockTagData.hospitals);
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      hospital: mockTagData.hospitals[0],
-    }));
-  }, []);
+    if (reportData) {
+      setHospitalOptions(
+        reportData.hospitals.map((hospital) => hospital.hospitalName)
+      );
+      setFormData({
+        hospital: reportData.hospitals[0].hospitalName,
+        hpid: reportData.hospitals[0].hpid,
+        patientName: reportData.medicalInformation.memberName,
+        gender: reportData.medicalInformation.gender,
+        birthDate: reportData.medicalInformation.birth,
+        bloodType: reportData.medicalInformation.bloodType1,
+        rhType: reportData.medicalInformation.bloodType2,
+        diseases: reportData.medicalInformation.chronicDisease,
+        medications: reportData.medicalInformation.drugInfos,
+        specialNotes: reportData.medicalInformation.otherInfo.split(", "), // assuming otherInfo is a comma-separated string
+      });
+    }
+  }, [reportData]);
 
   const handleInputChange = (e) => {
     setFormData((prevState) => ({
@@ -83,6 +120,7 @@ const SecondInfo = () => {
   const handleClearAll = () => {
     setFormData({
       hospital: "",
+      hpid: "",
       patientName: "",
       gender: "",
       birthDate: "",
@@ -110,8 +148,28 @@ const SecondInfo = () => {
     });
   };
 
+  // const handleSubmit = () => {
+  //   console.log(formData);
+  // };
+
+  // 데이터 전송
   const handleSubmit = () => {
-    console.log(formData);
+    const payload = {
+      dispatchOrderId: dispatchOrderId,
+      hpid: formData.hpid,
+      hospitalName: formData.hospital,
+      medicalInformation: {
+        medicalInfoId: reportData.medicalInformation.medicalInfoId,
+        bloodType1: formData.bloodType,
+        bloodType2: formData.rhType,
+        otherInfo: formData.specialNotes.join(", "),
+        chronicDisease: formData.diseases,
+        drugInfos: formData.medications,
+      },
+    };
+
+    dispatch(postSecondInfoAsync(payload));
+    console.log(payload);
   };
 
   return (
@@ -122,9 +180,12 @@ const SecondInfo = () => {
           name="hospitals"
           options={hospitalOptions}
           selectedValue={formData.hospital}
-          setSelectedValue={(value) =>
-            handleInputChange({ target: { name: "hospital", value } })
-          }
+          setSelectedValue={(value, index) => {
+            handleInputChange({ target: { name: "hospital", value } });
+            handleInputChange({
+              target: { name: "hpid", value: reportData.hospitals[index].hpid },
+            });
+          }}
         />
         <div>
           <Button _onClick={handleClearAll}>환자정보 일괄삭제</Button>

@@ -2,8 +2,8 @@ import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import Text from "./Text";
 
-// import VisibilityIcon from "@mui/icons-material/Visibility";
-// import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 const Input = ({
   type = "text",
@@ -23,8 +23,8 @@ const Input = ({
   errorMessage = "유효한 값을 입력해주세요",
   defaultMessage = "",
   showClearButton = false,
+  isError = false,
 }) => {
-  const [isError, setIsError] = useState(false);
   const [helperText, setHelperText] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const ref = useRef();
@@ -35,42 +35,31 @@ const Input = ({
 
   // 추가
   const handleChange = (e) => {
-    onChange(e)
-  }
-  // const onChange = (e) => {
-  //   setValue(e.target.value);
-  //   _onChange(e);
-  // };
+    onChange(e);
+  };
+
   const onBlur = (e) => {
     _onBlur(e);
     //최대값이 지정되어있으면 value를 저장하지 않는다.
     if (maxLen && maxLen < e.target.value.length) {
       e.target.value = e.target.value.slice(0, maxLen);
     }
-    // setValue(e.target.value);
 
     //공백인 경우 defaultMessage로 바꾼다.
     if (required && e.target.value === "") {
-      setIsError(true);
       ref.current.focus();
-      return setHelperText("필수 값입니다");
+      setHelperText("필수 값입니다");
     } else {
-      setIsError(false);
       setHelperText(defaultMessage);
     }
 
     if (regexCheck) {
       // 정규표현식체크가 통과되면 successText를 송출하고 아니면 errorText를 송출한다
       if (regexCheck.test(e.target.value)) {
-        setIsError(false);
-        // e.target.classList.remove("invalid");
-        // e.target.classList.add("valid");
-        return setHelperText(successMessage);
+        setHelperText(successMessage);
       }
       if (!regexCheck.test(e.target.value)) {
-        setIsError(true);
         ref.current.focus();
-        // e.target.classList.add("invalid");
         setHelperText(errorMessage);
       }
     }
@@ -79,9 +68,7 @@ const Input = ({
   // 추가
   const clearValue = () => {
     onChange({ target: { name, value: "" } });
-    // setValue("");
   };
-  // console.log(value.length, isError);
   return (
     <>
       <InputContainer>
@@ -95,8 +82,7 @@ const Input = ({
             />
           )}
         </Label>
-        {/* 수정 InputWrapper*/}
-        <InputWrapper>
+        <InputWrapper isError={isError}>
           <BasicInput
             value={value}
             disabled={disabled}
@@ -107,19 +93,17 @@ const Input = ({
             name={name}
             required={required}
             onBlur={onBlur}
-            // 수정 onChange
             onChange={handleChange}
-            // onChange={onChange}
             ref={ref}
           />
-          {/* 추가 */}
-          {showClearButton && <ClearButton onClick={clearValue}>X</ClearButton>}
+          {type === "password" ? (
+            <TogglePasswordButton onClick={handleTogglePassword}>
+              {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+            </TogglePasswordButton>
+          ) : (
+            showClearButton && <ClearButton onClick={clearValue}>X</ClearButton>
+          )}
         </InputWrapper>
-        {type === "password" && (
-          <div className="input_icon" onClick={handleTogglePassword}>
-            {/* {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />} */}
-          </div>
-        )}
 
         <HelpText>
           <Text
@@ -189,6 +173,14 @@ const ClearButton = styled.button`
   border: none;
   cursor: pointer;
   // color: #ff0000;
+`;
+
+const TogglePasswordButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 `;
 
 // 임시

@@ -5,13 +5,19 @@ import Button from "../elements/Button";
 import Select from "../elements/Select";
 import Textarea from "../elements/Textarea";
 
+// Api 연결
+import { useDispatch, useSelector } from "react-redux";
+import { getReportAsync, postFirstInfoAsync } from "../../slices/reportSlice";
+
+import { useNavigate } from "react-router-dom";
+
 const mockData = {
   gwanhals: ["대전 중구청 소방", "서울 강남구청 소방", "부산 해운대구청 소방"],
   jibunLocationInfo: "덕명동 593 싸피빌리지",
   doroLocationInfo: "한밭대로 1234 싸피빌리지",
   emergencyType: "질병",
   reporterName: "김싸피",
-  reportedTime : "2024-01-01 12:35:56",
+  reportedTime: "2024-01-01 12:35:56",
   reporterPhone: "010-1234-5678",
   reportDetail: "환자가 고열로 의식이 없습니다.",
 };
@@ -23,25 +29,59 @@ const FirstInfo = () => {
     doroLocationInfo: "",
     emergencyType: "",
     reporterName: "",
-    reportedTime:"",
+    reportedTime: "",
     reporterPhone: "",
     reportDetail: "",
   });
 
-  const [rescueTeamNameOptions, setrescueTeamNameOptions] = useState([]);
+  // api를 위한 호출
+  const dispacth = useDispatch();
+  const reportData = useSelector((state) => state.reportSlice);
+  const navigate = useNavigate();
 
+  const [rescueTeamNameOptions, setrescueTeamNameOptions] = useState([]);
+  const [dispatchOrderId, setDispatchOrderId] = useState(null);
+
+  // Api 호출 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
   useEffect(() => {
-    setrescueTeamNameOptions(mockData.gwanhals);
-    setFormData({
-      rescueTeamName: mockData.gwanhals[0],
-      jibunLocationInfo: mockData.jibunLocationInfo,
-      doroLocationInfo: mockData.doroLocationInfo,
-      emergencyType: mockData.emergencyType,
-      reportDetail: mockData.reportDetail,
-      reporterName: mockData.reporterName,
-      reporterPhone: mockData.reporterPhone,
-    });
-  }, []);
+    const memberId = 1;
+    dispacth(getReportAsync(memberId));
+  }, [dispacth]);
+
+  // mockData를 이용한 코드 ★★★★★★★★★★★★★★★★★★★★★★★★★★★
+  // useEffect(() => {
+  //   setrescueTeamNameOptions(mockData.gwanhals);
+  //   setFormData({
+  //     rescueTeamName: mockData.gwanhals[0],
+  //     jibunLocationInfo: mockData.jibunLocationInfo,
+  //     doroLocationInfo: mockData.doroLocationInfo,
+  //     emergencyType: mockData.emergencyType,
+  //     reportDetail: mockData.reportDetail,
+  //     reporterName: mockData.reporterName,
+  //     reporterPhone: mockData.reporterPhone,
+  //   });
+  // }, []);
+  // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+  // Api 호출 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+  useEffect(() => {
+    if (reportData) {
+      setrescueTeamNameOptions(
+        reportData.gwanhals.map((team) => team.rescueTeamName)
+      );
+      setFormData({
+        rescueTeamId: reportData.gwanhals[1].rescueTeamId,
+        rescueTeamName: reportData.gwanhals[0].rescueTeamName,
+        jibunLocationInfo: reportData.jibunLocationInfo,
+        doroLocationInfo: reportData.doroLocationInfo,
+        emergencyType: reportData.emergencyType,
+        reporterName: reportData.reporterName,
+        reporterPhone: reportData.reporterPhone,
+        reportedTime: reportData.reportedTime,
+        reportDetail: reportData.reportDetail,
+      });
+    }
+  }, [reportData]);
 
   const handleInputChange = (e) => {
     setFormData((prevState) => ({
@@ -50,9 +90,27 @@ const FirstInfo = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    console.log(formData);
-  };
+  // 반환이 없는 경우 요청만 ★★★★★★★★★★★★★★★★★★
+  // const handleSubmit = () => {
+  //   dispatch(postFirstInfoAsync(formData));
+  //   console.log(formData);
+  // };
+  // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+  // 반환 필요
+  const handleSubmit = async () => {
+    const result = await dispacth(postFirstInfoAsync(formData));
+    if (result.payload && result.payload.dispatchOrderId) {
+      setDispatchOrderId(result.payload.dispatchOrderId);
+
+      // 페이지네비게이션 수정필요※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
+      navigate("/second-info", { state: {dispatchOrderId:result.payload.dispatchOrderId}})
+    }
+    console.log(result.payload)
+  }
+
+
+
 
   return (
     <FormContainer>
@@ -61,7 +119,9 @@ const FirstInfo = () => {
         name="gwanhals"
         options={rescueTeamNameOptions}
         selectedValue={formData.rescueTeamName}
-        setSelectedValue={(value) => handleInputChange({ target: { name: "rescueTeamName", value } })}
+        setSelectedValue={(value) =>
+          handleInputChange({ target: { name: "rescueTeamName", value } })
+        }
       />
       <Input
         label="신고위치 - 지번"
