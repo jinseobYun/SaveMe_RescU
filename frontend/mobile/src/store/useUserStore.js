@@ -50,12 +50,30 @@ const store = (set) => ({
   setUserMedicalInfo: (userData) => {
     set({ userMedicalInfo: userData });
 
-    const { setMedCdisInput, setDrugInputs } = useFormInputStore.getState();
-
+    const { updateInputs, setMedCdisInput, setDrugInputs } = useFormInputStore.getState();
+    updateInputs(userData);
     setMedCdisInput(userData.medCdis);
     setDrugInputs(userData.drugInfos);
   },
   clearUserMedicalInfo: () => set({ userMedicalInfo: null }),
+
+  emergencyContactList: [],
+  setEmergencyContactList: (userData) => {
+    set({ emergencyContactList: userData });
+  },
+  addEmergencyContact: (newContact) => {
+    set((state) => ({
+      emergencyContactList: [...state.emergencyContactList, newContact],
+    }));
+  },
+  deleteEmergencyContact: (id) => {
+    set((state) => ({
+      emergencyContactList: state.emergencyContactList.filter(
+        (contact) => contact.emergency_contact_id !== id
+      ),
+    }));
+  },
+  clearEmergencyContactList: () => set({ emergencyContactList: [] }),
 
   isLogined: false,
   login: () => set({ isLogined: true }),
@@ -68,6 +86,8 @@ const store = (set) => ({
   refreshToken: null,
   setReFreshToken: (token) => set({ refreshToken: token }),
   clearreFreshToken: () => set({ refreshToken: null }),
+
+
 });
 
 const useUserStore = create(

@@ -61,4 +61,20 @@ function SignUpValidationLoginInfo({ id, password, confirmPassword }) {
 
   return errors;
 }
-export { SignUpValidationUserInfo, SignUpValidationLoginInfo };
+
+
+function EmergencyContactValidation({ relation, phoneNumber }) {
+  const errors = {};
+  if (!relation) {
+    errors.relation = "관계를 입력해주세요.";
+  } else if (!/^[가-힣]+$/.test(relation)) {
+    errors.relation = "한글 최대 20자로 입력해주세요.";
+  }
+  if (!phoneNumber) {
+    errors.phoneNumber = "전화번호를 입력해주세요.";
+  } else if (!/^01(0|1|[6-9])[0-9]{3,4}[0-9]{4}$/.test(phoneNumber)) {
+    errors.phoneNumber = "유효한 전화 번호를 입력해주세요.";
+  }
+  return errors;
+}
+export { SignUpValidationUserInfo, SignUpValidationLoginInfo, EmergencyContactValidation };

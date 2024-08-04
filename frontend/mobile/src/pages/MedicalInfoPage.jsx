@@ -7,13 +7,15 @@ import { Header, TabBar } from "@components/common";
 import { Grid, Button, Text } from "@components/elements";
 import useUserStore from "@/store/useUserStore";
 import { getMedicalInfo } from "@api/medicalInfoApi";
+
+//TODO - 의료정보 삭제
 const MedicalInfoPage = () => {
   const userMedicalInfo = useUserStore((state) => state.userMedicalInfo);
   const setUserMedicalInfo = useUserStore((state) => state.setUserMedicalInfo);
   const navigate = useNavigate();
   const btnStyles = {
     _onClick: () => navigate("/medicalinfo/edit?form=basic"),
-    children: "등록하기",
+    children: "등록하기 >",
     $radius: "8px",
     $bg: {
       default: "var(--orange-op50-color)",

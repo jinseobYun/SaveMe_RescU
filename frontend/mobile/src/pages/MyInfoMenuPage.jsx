@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
@@ -11,7 +11,7 @@ import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import MedicalServicesOutlinedIcon from "@mui/icons-material/MedicalServicesOutlined";
 
 import { Header, TabBar } from "@components/common";
-
+import useFormInputStore from "@/store/useFormInputStore";
 const MyInfoMenuPage = () => {
   const navigate = useNavigate();
   const items = [
@@ -50,7 +50,10 @@ const MyInfoMenuPage = () => {
   const handleNavigation = (path) => {
     navigate(path);
   };
-
+  const { clearAllInputs } = useFormInputStore();
+  useEffect(() => {
+    clearAllInputs();
+  }, []);
   return (
     <Container>
       <Header navText={"내 정보"} />

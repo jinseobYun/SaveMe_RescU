@@ -3,7 +3,7 @@ import { loginAxios } from "@/api/http-commons";
 const http = loginAxios();
 
 async function registerMedicalInfo(data, success, fail) {
-  await http.post(`medical-info`, data).then(success).catch(fail);
+  await http.post(`/medical-info`, data).then(success).catch(fail);
 }
 
 async function getMedicalInfo(success, fail) {
@@ -11,12 +11,12 @@ async function getMedicalInfo(success, fail) {
 }
 
 async function updateMedicalInfo(data, success, fail) {
-  await http.put(`medical-info`, data).then(success).catch(fail);
+  await http.put(`/medical-info`, data).then(success).catch(fail);
 }
 
 async function deleteMedicalInfo(medicalInfoId, success, fail) {
   await http
-    .delete(`medical-info?medicalInfoId=${medicalInfoId}`, data)
+    .delete(`/medical-info?medicalInfoId=${medicalInfoId}`)
     .then(success)
     .catch(fail);
 }

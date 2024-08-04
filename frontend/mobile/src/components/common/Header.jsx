@@ -7,7 +7,7 @@ import { Grid, Button, Text } from "@components/elements";
 import useFormInputStore from "@/store/useFormInputStore";
 const Header = ({ navText, backAlert }) => {
   const navigate = useNavigate();
-  const { clearAllInput } = useFormInputStore();
+  const { clearAllInputs } = useFormInputStore();
 
   const onClickGoBack = () => {
     backAlert
@@ -16,13 +16,13 @@ const Header = ({ navText, backAlert }) => {
           text: "뒤로 가시겠습니까?",
           showCancelButton: true,
           confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
+          cancelButtonColor: "#FF4C4C",
           confirmButtonText: "취소",
           cancelButtonText: "뒤로가기",
         }).then((result) => {
           if (result.isDismissed) {
             navigate(-1);
-            clearAllInput();
+            clearAllInputs();
           }
         })
       : navigate(-1);

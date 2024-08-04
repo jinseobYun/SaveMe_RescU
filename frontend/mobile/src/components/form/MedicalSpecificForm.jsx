@@ -5,7 +5,7 @@ import styled from "styled-components";
 import Swal from "sweetalert2";
 import EditIcon from "@mui/icons-material/Edit";
 import { Grid, Button, Text, NextPageButton } from "@components/elements";
-import AutoCompleteInput from "@components//MedicalInfo/AutoCompleteInput";
+import AutoCompleteInput from "@components//input/AutoCompleteInput";
 import useUserStore from "@/store/useUserStore";
 import useFormInputStore from "@/store/useFormInputStore";
 import useSearchStore from "@/store/useSearchStore";
@@ -20,6 +20,8 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
     isFormEdit,
     inputs,
     clearAllInput,
+    deleteMedCdisInput,
+    deleteDrugInput,
   } = useFormInputStore();
   const { setUserMedicalInfo } = useUserStore();
   const { searchResults, setSearchResults } = useSearchStore();
@@ -92,12 +94,11 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
   const onClickAddBtn = (name) => {
     if (name == "[object Object]") name = "";
     Swal.fire({
-      // title: " 을 .",
       // title: `<h5>의약품 명을 적어주세요</h5>`,
       html: '<div id="swal-react-container"></div>',
       didOpen: () => {
         const container = document.getElementById("swal-react-container");
-        const root = createRoot(container); // React 18의 createRoot 사용
+        const root = createRoot(container);
         root.render(
           <AutoCompleteInput
             $onChange={Swal.resetValidationMessage}
@@ -124,14 +125,26 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
         if (existsInInputs) {
           Swal.showValidationMessage("이미 추가된 항목입니다.");
           return false;
+        } else {
+          if (name && inputValue !== name) {
+            const prevIndex = (
+              form === "disease" ? medCdisInputs : drugInputs
+            ).findIndex((item) => item.name === name);
+            if (prevIndex !== -1) {
+              if (form === "disease") {
+                deleteMedCdisInput(prevIndex);
+              } else {
+                deleteDrugInput(prevIndex);
+              }
+            }
+          }
         }
-
         // 추가 처리 로직
         const newItem = searchResults.find((item) => item.name === inputValue);
 
         return inputValue
           ? Promise.resolve(newItem)
-          : Promise.reject("의약품 명을 입력해 주세요.");
+          : Promise.reject("입력해 주세요.");
       },
       width: "30em",
       confirmButtonText: "저장하기",
@@ -145,7 +158,7 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
 
   const btnStyles = {
     _onClick: onClickAddBtn,
-    children: <>추가하기</>,
+    children: "추가하기",
     $radius: "10px",
     $bg: {
       default: "var(--main-orange-color)",

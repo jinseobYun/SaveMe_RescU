@@ -16,6 +16,7 @@ import {
   MyInfoMenuPage,
   MedicalInfoPage,
   EditMedicalInfoPage,
+  EmergencycontactsPage,
 } from "@/pages";
 import GlobalStyle from "@/globalStyles.js";
 function App() {
@@ -41,11 +42,11 @@ function App() {
           <Route path="/medicalinfo" element={<MedicalInfoPage />} />
           <Route path="/medicalinfo/edit/*" element={<EditMedicalInfoPage />} />
 
-          {/* <Route
-            path="/emergency-contacts"
-            element={<emergencyContactsPage />}
-            />
-            <Route path="/nfc-info" element={<NfcInfoPage />} />
+          <Route
+            path="/emergencycontacts"
+            element={<EmergencycontactsPage />}
+          />
+          {/*  <Route path="/nfc-info" element={<NfcInfoPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/privacy-agreement" element={<PrivacyAgreementPage />} />
           <Route

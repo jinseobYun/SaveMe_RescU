@@ -7,11 +7,11 @@ import { Header } from "@components/common";
 import useForm from "@/hooks/useForm";
 import { loginApi } from "@/api/userApi";
 import useUserStore from "@/store/useUserStore";
-
+import useFormInputStore from "@/store/useFormInputStore";
 const Login = () => {
   const navigate = useNavigate();
   const { setAccessToken, setReFreshToken, login, setUserId } = useUserStore();
-
+  const { clearInputs } = useFormInputStore();
   const { values, errors, isLoading, handleChange, handleSubmit } = useForm({
     initialValues: { id: "", password: "" },
     onSubmit: (values) => {
@@ -28,8 +28,9 @@ const Login = () => {
       //   setReFreshToken(response.data.refreshToken);
       //   setUserId(values.id);
       //   login();
-      // }
+      //clearInputs()
       //     navigate("/");
+      // }
       //   },
       // (error) => {
       //   console.log(error);

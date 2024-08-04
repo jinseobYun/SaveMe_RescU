@@ -65,7 +65,7 @@ const useSSNFields = (phoneNumber, setIsVerify) => {
 };
 
 const VerifyCodeForm = () => {
-  const { inputs } = useFormInputStore();
+  const { inputs, clearInputs } = useFormInputStore();
   const navigate = useNavigate();
   const location = useLocation();
   const { type } = location.state || {};
@@ -92,7 +92,10 @@ const VerifyCodeForm = () => {
   const formatTime = (timeInSeconds) => {
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = timeInSeconds % 60;
-    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+      2,
+      "0"
+    )}`;
   };
 
   const onClickResend = () => {
@@ -105,6 +108,7 @@ const VerifyCodeForm = () => {
   };
 
   const onClickBtn = () => {
+    clearInputs();
     switch (type) {
       case "signup":
         navigate("/signup/logininfo");

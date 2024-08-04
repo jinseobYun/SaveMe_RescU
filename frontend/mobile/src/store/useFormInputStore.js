@@ -34,7 +34,7 @@ const store = (set) => ({
     })),
   deleteMedCdisInput: (inputId) =>
     set((state) => ({
-      medCdisInputs: state.medCdisInputs.filter((i) => i.cdInfoId !== inputId),
+      medCdisInputs: state.medCdisInputs.filter((i) => i.id !== inputId),
     })),
   clearMedCdisInputs: () => set({ medCdisInputs: [] }),
 
@@ -52,12 +52,12 @@ const store = (set) => ({
     })),
   deleteDrugInput: (inputId) =>
     set((state) => ({
-      drugInputs: state.drugInputs.filter((i) => i.medicineId !== inputId),
+      drugInputs: state.drugInputs.filter((i) => i.id !== inputId),
     })),
 
   clearDrugInputs: () => set({ drugInputs: [] }),
 
-  clearAllInput: () =>
+  clearAllInputs: () =>
     set((state) => ({
       inputs: {},
       medCdisInputs: [],
