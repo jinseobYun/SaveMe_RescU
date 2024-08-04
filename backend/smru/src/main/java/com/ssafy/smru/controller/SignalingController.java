@@ -1,4 +1,3 @@
-/*
 package com.ssafy.smru.controller;
 
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +14,10 @@ public class SignalingController {
 //    Session control messages : 통신의 초기화, 종료, 그리고 에러 메시지
 //    Network configuration : 외부에서 바라보는 IP와 포트 정보
 //    Media capabilities : 상호 두 단말의 브라우저에서 사용 가능한 코덱, 해상도
+    //camKey : 각 요청하는 캠 key
+    // roomId : 룸 아이디
 
-    //offer 정보를 주고 받기 위한 websocket
-    //camKey : 각 요청하는 캠의 key , roomId : 룸 아이디
+    //offer 메시지를 주고 받기 위한 websocket 핸들러
     @MessageMapping("/peer/offer/{camKey}/{roomId}")
     @SendTo("/topic/peer/offer/{camKey}/{roomId}")
     public String PeerHandleOffer(@Payload String offer, @DestinationVariable(value = "roomId") String roomId,
@@ -27,6 +27,7 @@ public class SignalingController {
     }
 
     //iceCandidate 정보를 주고 받기 위한 webSocket
+    // ice 후보자 메시지 처리
     //camKey : 각 요청하는 캠의 key , roomId : 룸 아이디
     @MessageMapping("/peer/iceCandidate/{camKey}/{roomId}")
     @SendTo("/topic/peer/iceCandidate/{camKey}/{roomId}")
@@ -36,8 +37,7 @@ public class SignalingController {
         return candidate;
     }
 
-    //
-
+    // answer 정보를 주고 받기 위한 websocket 핸들러
     @MessageMapping("/peer/answer/{camKey}/{roomId}")
     @SendTo("/topic/peer/answer/{camKey}/{roomId}")
     public String PeerHandleAnswer(@Payload String answer, @DestinationVariable(value = "roomId") String roomId,
@@ -46,7 +46,7 @@ public class SignalingController {
         return answer;
     }
 
-    //camKey 를 받기위해 신호를 보내는 webSocket
+    //camKey 를 받기위해 신호를 보내는 webSocket 핸들러
     @MessageMapping("/call/key")
     @SendTo("/topic/call/key")
     public String callKey(@Payload String message) {
@@ -54,11 +54,12 @@ public class SignalingController {
         return message;
     }
 
-    //자신의 camKey 를 모든 연결된 세션에 보내는 webSocket
+    //자신의 camKey 를 모든 연결된 세션에 보내는 webSocket 핸들러
+    // 혹시나 화상통화 여러 명이서 할 때
     @MessageMapping("/send/key")
     @SendTo("/topic/send/key")
     public String sendKey(@Payload String message) {
         return message;
     }
 
-}*/
+}
