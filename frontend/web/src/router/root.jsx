@@ -33,7 +33,7 @@ const root = createBrowserRouter([
   },
 ],
 {
-  basename: "/web",
+  basename: "/rescu",
 }
 );
 
