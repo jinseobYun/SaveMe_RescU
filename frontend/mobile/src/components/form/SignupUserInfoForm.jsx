@@ -139,8 +139,8 @@ const SignupUserInfoForm = () => {
           </Grid>
           <Input
             $name="phoneNumber"
-            $placeholder="전화번호"
-            $label="전화번호*"
+            $placeholder="휴대폰 번호"
+            $label="휴대폰 번호*"
             $type="tel"
             $value={values.phoneNumber}
             _onChange={handleChange}

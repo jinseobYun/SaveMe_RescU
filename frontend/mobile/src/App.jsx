@@ -19,6 +19,7 @@ import {
   EmergencycontactsPage,
   FirstAidPage,
   FindIdPwPage,
+  ChangePwPage,
 } from "@/pages";
 import GlobalStyle from "@/globalStyles.js";
 function App() {
@@ -40,7 +41,7 @@ function App() {
           <Route path="/findid" element={<FindIdPwPage />} />
           <Route path="/findid/result" element={<HomePage />} />
           <Route path="/findpassword" element={<FindIdPwPage />} />
-          <Route path="/changepassword" element={<HomePage />} />
+          <Route path="/changepassword" element={<ChangePwPage />} />
 
           <Route path="/menu" element={<MenuPage />} />
           <Route path="/medicalinfo" element={<MedicalInfoPage />} />

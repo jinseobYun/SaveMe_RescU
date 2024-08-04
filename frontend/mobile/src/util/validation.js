@@ -50,7 +50,7 @@ function SignUpValidationLoginInfo({ id, password, confirmPassword }) {
     errors.password = "비밀번호가 입력되지 않았습니다.";
   } else if (!/^(?=.*[a-zA-Z])(?=.*[0-9]).{8,20}$/.test(password)) {
     errors.password =
-      ": 8~20 자 이내 1개 이상의 영문과 1개 이상의 숫자로 조합.";
+      "영대소문, 숫자를 포함한 8~20자를 입력해주세요.";
   }
 
   if (!confirmPassword) {
@@ -77,4 +77,25 @@ function EmergencyContactValidation({ relation, phoneNumber }) {
   }
   return errors;
 }
-export { SignUpValidationUserInfo, SignUpValidationLoginInfo, EmergencyContactValidation };
+
+function ChangePwValidation({ newPassword, newPasswordConfirm }) {
+  const errors = {};
+
+  if (!newPassword) {
+    errors.newPassword = "비밀번호가 입력되지 않았습니다.";
+  } else if (!/^(?=.*[a-zA-Z])(?=.*[0-9]).{8,20}$/.test(newPassword)) {
+    errors.newPassword =
+      "영대소문, 숫자를 포함한 8~20자를 입력해주세요";
+  }
+
+  if (!newPasswordConfirm) {
+    errors.newPasswordConfirm = "비밀번호가 입력되지 않았습니다.";
+  } else if (newPasswordConfirm !== newPassword) {
+    errors.newPasswordConfirm = "비밀번호와  일치하지 않습니다.";
+  }
+
+  return errors;
+}
+
+
+export { SignUpValidationUserInfo, SignUpValidationLoginInfo, EmergencyContactValidation, ChangePwValidation };
