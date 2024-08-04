@@ -13,17 +13,19 @@ import {
   SignupPage,
   ReportCallPage,
   AgreeTermsPage,
-  MyInfoMenuPage,
+  MenuPage,
   MedicalInfoPage,
   EditMedicalInfoPage,
   EmergencycontactsPage,
+  FirstAidPage,
+  FindIdPwPage,
 } from "@/pages";
 import GlobalStyle from "@/globalStyles.js";
 function App() {
   return (
     <Container>
       <GlobalStyle />
-      <Router>
+      <Router basename="/app">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/signup/*" element={<SignupPage />}>
@@ -35,10 +37,12 @@ function App() {
           <Route path="/agreeterms" element={<AgreeTermsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/report" element={<ReportCallPage />} />
-          <Route path="/findId" element={<HomePage />} />
-          <Route path="/findPassword" element={<HomePage />} />
+          <Route path="/findid" element={<FindIdPwPage />} />
+          <Route path="/findid/result" element={<HomePage />} />
+          <Route path="/findpassword" element={<FindIdPwPage />} />
+          <Route path="/changepassword" element={<HomePage />} />
 
-          <Route path="/menu" element={<MyInfoMenuPage />} />
+          <Route path="/menu" element={<MenuPage />} />
           <Route path="/medicalinfo" element={<MedicalInfoPage />} />
           <Route path="/medicalinfo/edit/*" element={<EditMedicalInfoPage />} />
 
@@ -46,6 +50,7 @@ function App() {
             path="/emergencycontacts"
             element={<EmergencycontactsPage />}
           />
+          <Route path="/firstaid" element={<FirstAidPage />} />
           {/*  <Route path="/nfc-info" element={<NfcInfoPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/privacy-agreement" element={<PrivacyAgreementPage />} />

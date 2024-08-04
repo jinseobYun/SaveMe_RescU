@@ -12,7 +12,7 @@ import MedicalServicesOutlinedIcon from "@mui/icons-material/MedicalServicesOutl
 
 import { Header, TabBar } from "@components/common";
 import useFormInputStore from "@/store/useFormInputStore";
-const MyInfoMenuPage = () => {
+const MenuPage = () => {
   const navigate = useNavigate();
   const items = [
     {
@@ -72,7 +72,7 @@ const MyInfoMenuPage = () => {
   );
 };
 
-export default MyInfoMenuPage;
+export default MenuPage;
 
 const Container = styled.div`
   display: flex;

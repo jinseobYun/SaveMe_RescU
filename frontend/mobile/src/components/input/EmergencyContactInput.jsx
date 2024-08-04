@@ -1,9 +1,6 @@
 import React from "react";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 
 import { Grid, Button, Text, Input } from "@components/elements";
-import useUserStore from "@/store/useUserStore";
 import useForm from "@/hooks/useForm";
 import { EmergencyContactValidation } from "@/util/validation";
 
