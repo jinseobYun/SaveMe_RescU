@@ -10,7 +10,7 @@ const TabBar = () => {
   return (
     <Wrapper>
       <TabItem>
-        <Link to="/firstAid">긴급 대처 요령</Link>
+        <Link to="/firstaid">긴급 대처 요령</Link>
       </TabItem>
       <TabItem>
         <Link to="/">홈</Link>

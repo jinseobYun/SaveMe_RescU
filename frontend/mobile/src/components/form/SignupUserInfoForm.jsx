@@ -51,108 +51,107 @@ const SignupUserInfoForm = () => {
     <>
       <Header navText="회원가입" backAlert={true} />
 
-      <FormWrapper>
-        <Grid
-          $display="flex"
-          $width="100%"
-          $height="100%"
-          $padding="10vh 4px"
-          $flex_direction="column"
-        >
-          <StyledForm noValidate>
+      <Grid
+        $display="flex"
+        $width="100%"
+        $height="100%"
+        $padding="10vh 4px"
+        $flex_direction="column"
+      >
+        <StyledForm noValidate>
+          <Input
+            $name="name"
+            $placeholder="이름"
+            $value={values.name}
+            _onChange={handleChange}
+            $errorMessage={errors.name}
+            $haveToCheckValid={true}
+            $isValid={errors.name && false}
+            $label="이름*"
+          />
+          <Grid
+            $width="90%"
+            $display="flex"
+            $flex_direction="row"
+            $align_items="flex-start"
+            $gap="2rem"
+          >
             <Input
-              $name="name"
-              $placeholder="이름"
-              $value={values.name}
+              $name="birth"
+              $value={values.birth}
               _onChange={handleChange}
-              $errorMessage={errors.name}
+              $label="생년월일*"
+              $type="date"
+              $errorMessage={errors.birth}
               $haveToCheckValid={true}
-              $isValid={errors.name && false}
-              $label="이름*"
+              $isValid={errors.birth && false}
             />
             <Grid
-              $width="90%"
+              // $width="40%"
               $display="flex"
-              $flex_direction="row"
+              $flex_direction="column"
+              $marign="0 0 2rem 0"
+              $gap="0.5rem"
               $align_items="flex-start"
-              $gap="2rem"
             >
-              <Input
-                $name="birth"
-                $value={values.birth}
-                _onChange={handleChange}
-                $label="생년월일*"
-                $type="date"
-                $errorMessage={errors.birth}
-                $haveToCheckValid={true}
-                $isValid={errors.birth && false}
+              <Text
+                children="성별*"
+                $color="var(--label-gray-color)"
+                $size="12px"
+                $lineHeight="16px"
               />
               <Grid
-                // $width="40%"
                 $display="flex"
-                $flex_direction="column"
-                $marign="0 0 2rem 0"
-                $gap="0.5rem"
-                $align_items="flex-start"
+                $flex_direction="row"
+                $align_items="center"
+                $padding="8px"
+                $height="38px"
+                $border="1px solid var(--main-orange-color)"
+                $radius="5px"
               >
                 <Text
-                  children="성별*"
+                  children="남성"
                   $color="var(--label-gray-color)"
                   $size="12px"
                   $lineHeight="16px"
                 />
-                <Grid
-                  $display="flex"
-                  $flex_direction="row"
-                  $align_items="center"
-                  $padding="8px"
-                  $height="38px"
-                  $border="1px solid var(--main-orange-color)"
-                  $radius="5px"
-                >
-                  <Text
-                    children="남성"
-                    $color="var(--label-gray-color)"
-                    $size="12px"
-                    $lineHeight="16px"
-                  />
-                  <StyledRadio
-                    value="남성"
-                    type="radio"
-                    name="gender"
-                    onChange={onChangeGender}
-                    defaultChecked
-                  />
-                  <Text
-                    children="여성"
-                    $color="var(--label-gray-color)"
-                    $size="12px"
-                    $lineHeight="16px"
-                  />
-                  <StyledRadio
-                    value="여성"
-                    type="radio"
-                    name="gender"
-                    onChange={onChangeGender}
-                  />
-                </Grid>
+                <StyledRadio
+                  value="남성"
+                  type="radio"
+                  name="gender"
+                  onChange={onChangeGender}
+                  defaultChecked
+                />
+                <Text
+                  children="여성"
+                  $color="var(--label-gray-color)"
+                  $size="12px"
+                  $lineHeight="16px"
+                />
+                <StyledRadio
+                  value="여성"
+                  type="radio"
+                  name="gender"
+                  onChange={onChangeGender}
+                />
               </Grid>
             </Grid>
-            <Input
-              $name="phoneNumber"
-              $placeholder="전화번호"
-              $label="전화번호*"
-              $type="tel"
-              $value={values.phoneNumber}
-              _onChange={handleChange}
-              $errorMessage={errors.phoneNumber}
-              $haveToCheckValid={true}
-              $isValid={errors.phoneNumber && false}
-              $maxLen={12}
-            />
-          </StyledForm>
-        </Grid>
-      </FormWrapper>
+          </Grid>
+          <Input
+            $name="phoneNumber"
+            $placeholder="전화번호"
+            $label="전화번호*"
+            $type="tel"
+            $value={values.phoneNumber}
+            _onChange={handleChange}
+            $errorMessage={errors.phoneNumber}
+            $haveToCheckValid={true}
+            $isValid={errors.phoneNumber && false}
+            $maxLen={12}
+          />
+        </StyledForm>
+      </Grid>
+
       <NextPageButton
         isError={isTextOnce != (Object.keys(errors).length === 0)}
         text="인증 번호 받기"
@@ -196,12 +195,4 @@ const StyledRadio = styled.input`
     // 그림자로 테두리를 직접 만들어야 함 (퍼지는 정도를 0으로 주면 테두리처럼 보입니다.)
     // 그림자가 없으면 그냥 설정한 색상이 꽉 찬 원으로만 나옵니다.
   }
-`;
-const FormWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex-shrink: 0;
-  position: relative;
 `;
