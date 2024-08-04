@@ -6,4 +6,5 @@ import AgreeTermsPage from "./AgreeTermsPage";
 import MyInfoMenuPage from './MyInfoMenuPage';
 import MedicalInfoPage from './MedicalInfoPage';
 import EditMedicalInfoPage from './EditMedicalInfoPage';
-export { HomePage, LoginPage, SignupPage, ReportCallPage, AgreeTermsPage, MyInfoMenuPage, MedicalInfoPage, EditMedicalInfoPage };
+import EmergencycontactsPage from './EmergencycontactsPage';
+export { HomePage, LoginPage, SignupPage, ReportCallPage, AgreeTermsPage, MyInfoMenuPage, MedicalInfoPage, EditMedicalInfoPage, EmergencycontactsPage };

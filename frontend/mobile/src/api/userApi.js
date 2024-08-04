@@ -17,7 +17,7 @@ async function checkIdDuplication(id, success, fail) {
   const data = {
     memberId: id,
   };
-  await http.post(`members/id-validate`, data).then(success).catch(fail);
+  await http.post(`/members/id-validate`, data).then(success).catch(fail);
 }
 
 async function reqVerifyCode(phoneNumber, success, fail) {
