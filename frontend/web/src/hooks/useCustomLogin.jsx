@@ -20,7 +20,7 @@ const useCustomLogin = () => {
   const loginState = useSelector((state) => state.loginSlice);
 
   // 로그인 여부 확인
-  const isLogin = !!loginState.memberId;
+  const isLogin = loginState.memberId ? true :false;
 
   // 로그인 실행 hooks
   const doLogin = async (loginParam) => {

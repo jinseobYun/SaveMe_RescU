@@ -1,26 +1,40 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { loginPost } from "../api/membersApi";
+import { loginPost, updatePassword } from "../api/membersApi";
 
 import { getCookie, setCookie, removeCookie } from "../util/cookieUtil";
 
 const initState = {
   memberId: "",
+  accessToken: "",
+  refreshToken: "",
 };
 
-export const loginPostAsync = createAsyncThunk("loginPostAsync", (param) => {
-  return loginPost(param);
-});
+export const loginPostAsync = createAsyncThunk(
+  "loginPostAsync",
+  async (param) => {
+    return await loginPost(param);
+  }
+);
+
+// password 요청
+export const updatePasswordAsync = createAsyncThunk(
+  "updatePasswordAsync",
+  async (param) => {
+    return await updatePassword(param);
+  }
+);
 
 //쿠키에서 로그인 정보 로드
 const loadMemberCookie = () => {
   const memberInfo = getCookie("member");
+  return memberInfo ? JSON.parse(memberInfo) : null;
 
-  //닉네임 처리
+  //닉네임 처리 수정전 ★★★★★★★★★★★★★★★★★★
   if (memberInfo && memberInfo.memberId) {
     memberInfo.memberId = decodeURIComponent(memberInfo.memberId);
   }
-
   return memberInfo;
+  // ★★★★★★★★★★★★★★★★★★★★★★★★★
 };
 
 const loginSlice = createSlice({
@@ -33,11 +47,14 @@ const loginSlice = createSlice({
       const data = action.payload;
 
       //새로운 상태
-      return { memberId: data.memberId };
+      return {
+        memberId: data.memberId,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      };
     },
     logout: (state, action) => {
       console.log("logout....");
-
       removeCookie("member");
       return { ...initState };
     },
@@ -49,14 +66,15 @@ const loginSlice = createSlice({
 
         const payload = action.payload;
 
-        if (payload.nickname) {
-          payload.nickname = encodeURIComponent(payload.nickname);
-        }
-
-        //정상적인 로그인시에만 저장
-        if (!payload.error) {
-          setCookie("member", JSON.stringify(payload), 1); //1일
-        }
+        setCookie(
+          "member",
+          JSON.stringify({
+            memberId: state.memberId,
+            accessToken: payload.accessToken,
+            refreshToken: payload.refreshToken,
+          }),
+          1
+        );
 
         return payload;
       })
@@ -66,6 +84,13 @@ const loginSlice = createSlice({
       })
       .addCase(loginPostAsync.rejected, (state, action) => {
         console.log("rejected");
+      })
+      .addCase(updatePasswordAsync.fulfilled, (state, action) => {
+        console.log("비밀번호 변경 성공");
+      })
+      .addCase(updatePasswordAsync.rejected, (state, action) => {
+        console.log("비밀번호 변경 실패");
+        throw action.error;
       });
   },
 });
