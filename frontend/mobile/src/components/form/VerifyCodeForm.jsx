@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
+import Swal from "sweetalert2";
+
 import { Grid, Text, NextPageButton } from "@components/elements";
 import useFormInputStore from "@/store/useFormInputStore";
 import { reqVerifyCode, checkVerifyCode } from "@/api/userApi";
@@ -8,7 +10,7 @@ import { Header } from "@components/common";
 
 const numOfFields = 6;
 
-const useSSNFields = (phoneNumber, setIsVerify) => {
+const useSSNFields = (setIsVerify) => {
   const [ssnValues, setValue] = useState({
     n1: "",
     n2: "",
@@ -47,14 +49,6 @@ const useSSNFields = (phoneNumber, setIsVerify) => {
     const code = Object.values(allValues).join("");
     if (code.length === numOfFields) {
       setIsVerify(true);
-      //TODO - api 연결
-      // checkVerifyCode(
-      //   { phoneNumber, code },
-      //   ({ data }) => {
-      //     if (data.status === "200") setIsVerify(true);
-      //   },
-      //   (error) => {}
-      // );
     }
   };
 
@@ -73,10 +67,7 @@ const VerifyCodeForm = () => {
   const [isVerify, setIsVerify] = useState(false);
   const initialTime = 180;
   const [remainingTime, setRemainingTime] = useState(initialTime);
-  const { handleChange, ssnValues } = useSSNFields(
-    inputs.phoneNumber,
-    setIsVerify
-  );
+  const { handleChange, ssnValues } = useSSNFields(setIsVerify);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -108,20 +99,69 @@ const VerifyCodeForm = () => {
   };
 
   const onClickBtn = () => {
-    clearInputs();
+    // clearInputs();
+    const data = {
+      phoneNumber: inputs.phoneNumber,
+      verifyCode: ssnValues,
+    };
     switch (type) {
-      case "signup":
-        navigate("/signup/logininfo");
-        break;
       case "findid":
-        navigate("/signup/findid");
+        data.memberName = inputs.name;
         break;
       case "findpassword":
-        navigate("/signup/modifypassword");
-        break;
-      default:
+        data.memberId = inputs.id;
         break;
     }
+    //TODO - api 연결
+    checkVerifyCode(
+      data,
+      ({ data }) => {
+        if (data.status === "200") {
+          switch (type) {
+            case "signup":
+              navigate("/signup/logininfo");
+              break;
+            case "findid":
+              clearInputs();
+              Swal.fire({
+                title: "인증되었습니다. 회원님의 아이디는 ",
+                text: `${data.memberName}입니다`,
+                confirmButtonColor: "#FFCC70",
+                cancelButtonColor: "#FFFCE3",
+                confirmButtonText: "로그인하러 가기",
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  navigate("/login");
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                  navigate("/");
+                }
+              });
+              break;
+            case "findpassword":
+              navigate("/changepassword");
+              break;
+          }
+        } else if (data.status === "400") {
+          Swal.fire({
+            title: "인증번호가 일치하지 않습니다.",
+            text: "다시 입력해주세요.",
+            icon: "error",
+            confirmButtonText: "확인",
+          });
+        }
+        // else if (data.status === "404") {
+        //   Swal.fire({
+        //     title: "인증번호가 일치하지 않습니다.",
+        //     text: "다시 입력해주세요.",
+        //     icon: "error",
+        //     confirmButtonText: "확인",
+        //   });
+        // }
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   };
   return (
     <>
@@ -157,6 +197,7 @@ const VerifyCodeForm = () => {
                 // type="number"
                 name={`ssn-${index + 1}`}
                 inputMode="numeric"
+                autoComplete={false}
               />
             ))}
           </Grid>

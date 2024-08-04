@@ -9,4 +9,5 @@ import EditMedicalInfoPage from './EditMedicalInfoPage';
 import EmergencycontactsPage from './EmergencycontactsPage';
 import FirstAidPage from './FirstAidPage';
 import FindIdPwPage from "./FindIdPwPage";
-export { HomePage, LoginPage, SignupPage, ReportCallPage, AgreeTermsPage, MenuPage, MedicalInfoPage, EditMedicalInfoPage, EmergencycontactsPage, FirstAidPage, FindIdPwPage };
+import ChangePwPage from "./ChangePwPage";
+export { HomePage, LoginPage, SignupPage, ReportCallPage, AgreeTermsPage, MenuPage, MedicalInfoPage, EditMedicalInfoPage, EmergencycontactsPage, FirstAidPage, FindIdPwPage, ChangePwPage };

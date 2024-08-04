@@ -15,7 +15,6 @@ const Login = () => {
   const { values, errors, isLoading, handleChange, handleSubmit } = useForm({
     initialValues: { id: "", password: "" },
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
       //TODO - api test
       // loginApi(
       //   values.id,
@@ -41,11 +40,11 @@ const Login = () => {
     validate: () => {},
   });
   return (
-    <FormWrapper>
+    <Container>
       <Header navText="로그인" />
       <Grid
         $display="flex"
-        $width="360px"
+        $width="100vw"
         $height="580px"
         $padding="100px 4px"
         $flex_direction="column"
@@ -99,12 +98,12 @@ const Login = () => {
           </TextBox>
         </StyledForm>
       </Grid>
-    </FormWrapper>
+    </Container>
   );
 };
 
 export default Login;
-const FormWrapper = styled.div`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
