@@ -25,7 +25,7 @@ function App() {
   return (
     <Container>
       <GlobalStyle />
-      <Router>
+      <Router basename="/app">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/signup/*" element={<SignupPage />}>
