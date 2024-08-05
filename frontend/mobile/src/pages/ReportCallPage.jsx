@@ -16,9 +16,8 @@ import { Button, Input, Grid, Text } from "@components/elements";
 import {
   socket,
   initSocketConnection,
-  joinRoom,
-  getCameras,
   getMedia,
+  getCameras,
   myPeerConnection,
   localStream,
   remoteVideoStream,
@@ -134,7 +133,7 @@ const ReportCallPage = () => {
     event.preventDefault();
     if (messageInput.trim() !== "") {
       // 메시지 전송
-      handleReceiveMessage(messageInput);
+      handleSendMessage(messageInput);
       setChat([...chat, { alignment: "right", message: messageInput }]);
       setMessageInput("");
       setChatWrapperHeight(chatWrapperRef.current.offsetHeight); // 채팅 높이 업데이트
@@ -153,15 +152,31 @@ const ReportCallPage = () => {
   //SECTION - 신고방 접속
 
   useEffect(() => {
+    initSocketConnection();
     //SECTION - 신고 요청 api
     //만약 로그인 되잇다면 로그인id도 같이
-    //res로 받은 roodId넣기
-    initSocketConnection();
-    getCameras().then(setCameras);
-    initCall();
-    // joinRoom(roomId);
-    joinRoom(1);
+    //res로 받은 roodId넣어서 방에 들어갈 수 있는지 요청
+    // socket.emit('check_room',roomId);
+    socket.emit("check_room", "1");
+    //TODO - 신고 전달 내용 채우기
+    const data = {
+      userId: userId,
+      roomId: "1",
+      type: "report",
+      content: "신고할 내용",
+      reportReason: "신고 이유",
+      reportTarget: "신고 대상",
+    };
+    socket.emit("message", { type: "send_report_info", data }, "1");
+    localVideoRef.current.srcObject = localStream;
     remoteVideoRef.current.srcObject = remoteVideoStream;
+
+    getCameras().then(setCameras);
+    getMedia().then((stream) => {
+      if (stream && localVideoRef.current) {
+        localVideoRef.current.srcObject = stream;
+      }
+    });
 
     // window.addEventListener("chatMessage", (event) => {
     //   setChatMessages((prevMessages) => [
@@ -171,21 +186,23 @@ const ReportCallPage = () => {
     // });
     return () => {
       if (socket.readyState === 1) {
-        // <-- This is important
         socket.disconnect();
         socket.close();
       }
     };
   }, []);
-
-  const initCall = async () => {
-    const stream = await getMedia();
-    localVideoRef.current.srcObject = stream;
-    socket.emit("message", { type: "ready" });
-  };
-
+  useEffect(() => {
+    console.log(myPeerConnection);
+    if (myPeerConnection) {
+      remoteVideoRef.current.srcObject = remoteVideoStream;
+    }
+  }, [remoteVideoStream]);
   const onClickCallEnd = () => {
-    leaveCall();
+    hangup();
+    remoteVideoRef.current.srcObject.getVideoTracks().forEach((track) => {
+      track.stop();
+      remoteVideoRef.current.srcObject.removeTrack(track);
+    });
     socket.disconnect();
 
     navigate("/");
