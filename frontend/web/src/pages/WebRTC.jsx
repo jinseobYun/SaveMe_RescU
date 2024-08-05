@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import Button from "../components/elements/Button";
-// import WebRTC from "../components/webRTC/WebRTC";
+import WebRTC from "../components/webRTC/WebRTC";
 import styled from "styled-components";
 import FirstInfo from "../components/webRTC/FirstInfo";
 import SecondInfo from "../components/webRTC/SecondInfo";
+import Chat from "../components/webRTC/Chat";
 import "./WebRTC.css";
 
 const WebRtcPage = () => {
@@ -28,30 +29,14 @@ const WebRtcPage = () => {
         />
       </div>
       <div className="center">
-        {/* RTC component */}
-        {/* <WebRTC /> */}
+        <WebRTC />
       </div>
       <div className="right-side">
-        {/* Chatting component */}
-        <SocketChat>
-          {/* 채팅 심기. */}
-          <p>채팅 심기</p>
-        </SocketChat>
+        <Chat />
       </div>
     </div>
   );
 };
 
-const Component1 = styled.div`
-  /* Component 1 styles */
-`;
-
-const Component2 = styled.div`
-  /* Component 2 styles */
-`;
-
-const SocketChat = styled.div`
-  /* Socket chat styles */
-`;
 
 export default WebRtcPage;

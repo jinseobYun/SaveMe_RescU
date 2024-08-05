@@ -1,0 +1,28 @@
+.remote-position {
+    width: 100%;
+    height: 90%;
+    background-color: white;
+     /* transform 좌우반전 적용 */
+    transform: scaleX(-1);
+    position :relative;
+}
+
+.local-position {
+    position: absolute;
+    bottom: 100px;
+    right: 50px;
+}
+
+.control-panel{
+    display: flex;
+    justify-content: space-around;
+    bottom: 1rem;
+    left: 1rem;
+    z-index: 3;
+}
+.rtc-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+}

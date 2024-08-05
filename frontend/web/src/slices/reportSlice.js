@@ -22,7 +22,30 @@ export const postSecondInfoAsync = createAsyncThunk(
   }
 );
 
-const initState = [];
+const initState = {
+  emergencyType: null,
+  latitude: "",
+  longitude: "",
+  reportedTime: "",
+  hospitals: [],
+  reporterName: "",
+  reporterPhone: "",
+  reportDetail: "",
+  gwanhals: [],
+  jibunLocationInfo: "",
+  doroLocationInfo: "",
+  medicalInformation: {
+    memberName: "",
+    birth: "",
+    phone: "",
+    chronicDisease: [],
+    bloodType1: "",
+    bloodType2: "",
+    drugInfos: [],
+    otherInfo: ""
+  }
+};
+
 
 const reportSlice = createSlice({
   name: "reportSlice",

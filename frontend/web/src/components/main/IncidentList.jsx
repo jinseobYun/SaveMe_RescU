@@ -16,13 +16,13 @@ import ListItem from "./IncidentListItem";
 // };
 
 // 필터된 데이터를 받아오기
-const IncidentList = ({ data }) => {
+const IncidentList = ({ data, onIncidentClick }) => {
   // const filteredData = data;
 
   return (
     <div className="incident-list">
       {data.map((item) => (
-        <ListItem key={item.emergencyId} item={item} />
+        <ListItem key={item.emergencyId} item={item} onIncidentClick={onIncidentClick}/>
       ))}
     </div>
   );
