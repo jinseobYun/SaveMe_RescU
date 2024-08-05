@@ -7,8 +7,9 @@ import com.ssafy.smru.dto.app.PasswordResetDto;
 import com.ssafy.smru.dto.app.PhoneVerificationDto;
 import com.ssafy.smru.exception.ResourceConflictException;
 import com.ssafy.smru.exception.ResourceNotFoundException;
+import com.ssafy.smru.exception.UnauthorizedException;
 import com.ssafy.smru.service.AppMemberService;
-import com.ssafy.smru.service.PhoneVerificationService;
+import com.ssafy.smru.service.app.PhoneVerificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -110,7 +111,7 @@ public class AppMemberController {
     public ResponseEntity<?> verifyPhoneNumber(@RequestBody PhoneVerificationDto.Request request) {
         if (request.getPhoneNumber() == null || request.getPhoneNumber().trim().isEmpty() ||
                 request.getVerifyCode() == null || request.getVerifyCode().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("휴대폰 번호와 인증번호를 입력하세요");
+            return ResponseEntity.badRequest().body("입력값을 확인하세요.");
         }
         try {
             boolean isValid = phoneVerificationService.commonVerifyPhoneNumber(request.getPhoneNumber(), request.getVerifyCode());
@@ -119,10 +120,12 @@ public class AppMemberController {
                 phoneVerificationService.deleteVerificationCode(request.getPhoneNumber());
                 return ResponseEntity.ok().body("인증번호 일치");
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증번호가 틀렸습니다.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("인증번호가 일치하지 않습니다.");
             }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (UnauthorizedException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
@@ -131,26 +134,26 @@ public class AppMemberController {
     public ResponseEntity<?> verifyPhoneAndGetMemberId(@RequestBody PhoneVerificationDto.Request request) {
         if (request.getPhoneNumber() == null || request.getPhoneNumber().trim().isEmpty() ||
                 request.getVerifyCode() == null || request.getVerifyCode().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("휴대폰 번호와 인증번호를 입력하세요");
+            return ResponseEntity.badRequest().body("입력값을 확인하세요.");
         }
 
         try {
             boolean isValid = phoneVerificationService.commonVerifyPhoneNumber(request.getPhoneNumber(), request.getVerifyCode());
             if (isValid) {
-                AppMemberDto.Response member = appMemberService.getMemberByPhoneNumber(request.getPhoneNumber());
-                if (!member.getMemberName().equals(request.getMemberName())) {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("회원 정보가 일치하지 않습니다.");
-                }
+                AppMemberDto.Response member = appMemberService.getMemberByPhoneNumberAndMemberName(request.getPhoneNumber(), request.getMemberName());
+
                 // 인증 완료 되었으므로 인증번호테이블에서 값 삭제
                 phoneVerificationService.deleteVerificationCode(request.getPhoneNumber());
                 return ResponseEntity.ok().body(member.getMemberId());
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증번호가 틀렸습니다.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("인증번호가 일치하지 않습니다.");
             }
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (UnauthorizedException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
@@ -161,24 +164,24 @@ public class AppMemberController {
                 request.getVerifyCode() == null || request.getVerifyCode().trim().isEmpty() ||
                 request.getMemberId() == null || request.getMemberId().trim().isEmpty() ||
                 request.getMemberName() == null || request.getMemberName().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("모든 필드를 입력하세요");
+            return ResponseEntity.badRequest().body("입력값을 확인하세요.");
         }
 
         try {
             boolean isValid = phoneVerificationService.commonVerifyPhoneNumber(request.getPhoneNumber(), request.getVerifyCode());
             if (isValid) {
-                AppMemberDto.Response member = appMemberService.getMemberByPhoneNumber(request.getPhoneNumber());
-                if (!member.getMemberName().equals(request.getMemberName()) || !member.getMemberId().equals(request.getMemberId())) {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("회원 정보가 일치하지 않습니다.");
-                }
+                AppMemberDto.Response member = appMemberService.getMemberByPhoneNumberAndMemberIdAndMemberName(request.getPhoneNumber(), request.getMemberId(), request.getMemberName());
+
                 return ResponseEntity.ok().body(true);
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증번호가 틀렸습니다.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("인증번호가 일치하지 않습니다.");
             }
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (UnauthorizedException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
@@ -191,7 +194,7 @@ public class AppMemberController {
                 request.getNewPasswordConfirm() == null || request.getNewPasswordConfirm().trim().isEmpty() ||
                 request.getMemberId() == null || request.getMemberId().trim().isEmpty() ||
                 request.getMemberName() == null || request.getMemberName().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("모든 필드를 입력하세요");
+            return ResponseEntity.badRequest().body("입력값을 확인하세요.");
         }
 
         if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {
@@ -201,10 +204,8 @@ public class AppMemberController {
         try {
             boolean isValid = phoneVerificationService.commonVerifyPhoneNumber(request.getPhoneNumber(), request.getVerifyCode());
             if (isValid) {
-                AppMemberDto.Response member = appMemberService.getMemberByPhoneNumber(request.getPhoneNumber());
-                if (!member.getMemberName().equals(request.getMemberName()) || !member.getMemberId().equals(request.getMemberId())) {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("회원 정보가 일치하지 않습니다.");
-                }
+
+                AppMemberDto.Response member = appMemberService.getMemberByPhoneNumberAndMemberIdAndMemberName(request.getPhoneNumber(),request.getMemberId(),request.getMemberName());
                 appMemberService.updatePassword(member.getMemberId(), request.getNewPassword());
                 // 인증 성공 후 비밀번호 변경이 끝났으므로
                 // 인증번호 테이블에서 정보 삭제
@@ -228,7 +229,7 @@ public class AppMemberController {
         if (request.getCurrentPassword() == null || request.getCurrentPassword().trim().isEmpty() ||
                 request.getNewPassword() == null || request.getNewPassword().trim().isEmpty() ||
                 request.getNewPasswordConfirm() == null || request.getNewPasswordConfirm().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("모든 필드를 입력하세요");
+            return ResponseEntity.badRequest().body("입력값을 확인하세요");
         }
 
         if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {

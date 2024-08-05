@@ -37,7 +37,7 @@ public class AppMemberServiceImpl implements AppMemberService {
 
 
             if(checkPhoneNumberDuplicate(dto.getPhone())){
-                throw new ResourceConflictException("같은 번호로 가입한 회원이 존재합니다.");
+                throw new ResourceConflictException("같은 휴대폰 번호로 가입한 회원이 존재합니다.");
             }
 
             if(!checkMemberIdDuplicate(dto.getMemberId())){
@@ -78,10 +78,27 @@ public class AppMemberServiceImpl implements AppMemberService {
 
 
 
+    // 회원가입 인증시 휴대폰번호로
     @Override
     public AppMemberDto.Response getMemberByPhoneNumber(String phoneNumber) {
         AppMember appMember = appMemberRepository.findByPhone(phoneNumber)
-                .orElseThrow(() -> new ResourceNotFoundException("해당 휴대폰 번호로 등록된 사용자가 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException(""));
+        return AppMemberDto.Response.fromEntity(appMember);
+    }
+
+
+    // 아이디 찾기시 입력값으로 member조회
+    @Override
+    public AppMemberDto.Response getMemberByPhoneNumberAndMemberName(String phoneNumber,String memberName) {
+        AppMember appMember = appMemberRepository.findByPhoneAndMemberName(phoneNumber,memberName)
+                .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
+        return AppMemberDto.Response.fromEntity(appMember);
+    }
+
+    @Override
+    public AppMemberDto.Response getMemberByPhoneNumberAndMemberIdAndMemberName(String phoneNumber, String memberId, String memberName) {
+        AppMember appMember = appMemberRepository.findByPhoneAndMemberIdAndMemberName(phoneNumber,memberId,memberName)
+                .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
         return AppMemberDto.Response.fromEntity(appMember);
     }
 
@@ -99,7 +116,7 @@ public class AppMemberServiceImpl implements AppMemberService {
     public void updatePassword(String memberId, String newPassword) {
 
         AppMember member = appMemberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new ResourceNotFoundException("해당 ID로 등록된 사용자가 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
         member.changePassword(passwordEncoder.encode(newPassword));
         appMemberRepository.save(member);
     }
@@ -107,7 +124,7 @@ public class AppMemberServiceImpl implements AppMemberService {
     @Override
     public boolean checkPasswordMatchMemberId(String memberId, String currentPassword) {
         AppMember member = appMemberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new ResourceNotFoundException("해당 ID로 등록된 사용자가 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
         return passwordEncoder.matches(currentPassword, member.getPassword());
     }
 
@@ -120,7 +137,7 @@ public class AppMemberServiceImpl implements AppMemberService {
     @Override
     public void updatePhoneNumber(String memberId, String newPhoneNumber) {
         AppMember member = appMemberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new ResourceNotFoundException("해당 ID로 등록된 사용자가 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
         if(checkPhoneNumberDuplicate(newPhoneNumber)){
             throw new ResourceConflictException("이미 등록된 휴대폰 번호입니다.");
         }
