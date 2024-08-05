@@ -12,11 +12,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Table(name = "duty_info")
 public class DutyInfo {
-
-    // 기본 키
+    // hpid
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer rnum;
+    private String hpid;
 
     // 병원 주소
     @Column(columnDefinition = "TEXT")
@@ -42,10 +40,6 @@ public class DutyInfo {
     @Column(columnDefinition = "TEXT")
     private String dutyTel3;
 
-    // hpid
-    @Column(columnDefinition = "TEXT")
-    private String hpid;
-
     // phpid
     @Column(columnDefinition = "TEXT")
     private String phpid;
@@ -59,15 +53,14 @@ public class DutyInfo {
     private BigDecimal longitude;
 
     @Builder
-    public DutyInfo(Integer rnum, String dutyAddr, String dutyEmcls, String dutyEmclsName, String dutyName, String dutyTel1, String dutyTel3, String hpid, String phpid, BigDecimal latitude, BigDecimal longitude) {
-        this.rnum = rnum;
+    public DutyInfo(String hpid, String dutyAddr, String dutyEmcls, String dutyEmclsName, String dutyName, String dutyTel1, String dutyTel3, String phpid, BigDecimal latitude, BigDecimal longitude) {
+        this.hpid = hpid;
         this.dutyAddr = dutyAddr;
         this.dutyEmcls = dutyEmcls;
         this.dutyEmclsName = dutyEmclsName;
         this.dutyName = dutyName;
         this.dutyTel1 = dutyTel1;
         this.dutyTel3 = dutyTel3;
-        this.hpid = hpid;
         this.phpid = phpid;
         this.latitude = latitude;
         this.longitude = longitude;

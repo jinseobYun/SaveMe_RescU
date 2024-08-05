@@ -31,14 +31,13 @@ public class DutyInfoService {
                 )))
                 .limit(5)
                 .map(h -> new HospitalDTO(
-                        h.getRnum(),
+                        h.getHpid(),
                         h.getDutyAddr(),
                         h.getDutyEmcls(),
                         h.getDutyEmclsName(),
                         h.getDutyName(),
                         h.getDutyTel1(),
                         h.getDutyTel3(),
-                        h.getHpid(),
                         h.getPhpid(),
                         h.getLatitude(),
                         h.getLongitude(),
