@@ -1,27 +1,19 @@
-import { io } from 'socket.io-client';
+import { io } from "socket.io-client";
 
 export let socket = io.connect(import.meta.env.VITE_SOCKET_SERVER_URL, {
-  transports: ['websocket'],
+  transports: ["websocket"],
+  autoConnect: false,
 });
 
-export let myStream;
+export let localStream;
+export let remoteVideoStream;
 export let myPeerConnection;
-let roomName;
-let myDataChannel;
+let roomId;
+let localChatChannel;
 
 export const initSocketConnection = () => {
   if (socket) return;
   socket.connect();
-};
-
-export const handleSendMsg = (roomId, msg, userId) => {
-  if (!socket) return;
-  socket.emit('message', {
-    roomId,
-    message: msg,
-    userId,
-    timestamp: Date.now(),
-  });
 };
 
 export const disconnectSocket = () => {
@@ -31,14 +23,14 @@ export const disconnectSocket = () => {
 };
 
 export const joinRoom = async (room) => {
-  roomName = room;
-  socket.emit('join_room', roomName);
+  roomId = room;
+  socket.emit("join_room", roomId);
 };
 
 export const getCameras = async () => {
   try {
     const devices = await navigator.mediaDevices.enumerateDevices();
-    const cameras = devices.filter(device => device.kind === 'videoinput');
+    const cameras = devices.filter((device) => device.kind === "videoinput");
     return cameras;
   } catch (error) {
     console.log(error);
@@ -48,114 +40,183 @@ export const getCameras = async () => {
 export const getMedia = async (deviceId) => {
   const initialConstraints = {
     audio: true,
-    video: { facingMode: 'user' },
+    video: { facingMode: "user" },
   };
   const cameraConstraints = {
     audio: true,
     video: { deviceId: { exact: deviceId } },
   };
   try {
-    myStream = await navigator.mediaDevices.getUserMedia(
+    localStream = await navigator.mediaDevices.getUserMedia(
       deviceId ? cameraConstraints : initialConstraints
     );
-    return myStream;
+    return localStream;
   } catch (error) {
     console.log(error);
   }
 };
 
-export const makeConnection = () => {
-  if (!myStream) {
-    console.error("Stream is not initialized");
+socket.on("message", (e) => {
+  if (!localStream) {
+    console.log("not ready yet");
     return;
   }
-
-  myPeerConnection = new RTCPeerConnection({
-    iceServers: [
-      {
-        urls: [
-          'stun:stun.l.google.com:19302',
-          'stun:stun1.l.google.com:19302',
-          'stun:stun2.l.google.com:19302',
-          'stun:stun3.l.google.com:19302',
-          'stun:stun4.l.google.com:19302',
-        ],
-      },
-    ],
-  });
-
-  myPeerConnection.addEventListener('icecandidate', handleIceEvent);
-  myPeerConnection.addEventListener('addstream', handleAddStream);
-
-  myStream.getTracks().forEach(track => myPeerConnection.addTrack(track, myStream));
-};
-
-export const leaveCall = () => {
-  socket.emit('leave_call', roomName);
-};
-
-const handleIceEvent = (data) => {
-  socket.emit('ice', data.candidate, roomName);
-};
-
-const handleAddStream = (data) => {
-  const event = new CustomEvent('addStream', { detail: { stream: data.streams[0] } });
-  window.dispatchEvent(event);
-};
-// 메시지 전송 함수
-export const sendMessage = (roomId, message, userId) => {
-  socket.emit('new_message', { roomId, message, userId });
-};
-
-// 메시지 수신 이벤트
-export const receiveMessage = (callback) => {
-  socket.on('new_message', (data) => {
-    callback(data);
-  });
-};
-
-socket.on('welcome', async () => {
-  myDataChannel = myPeerConnection.createDataChannel('chat');
-  myDataChannel.addEventListener('message', (event) => {
-    console.log(event.data);
-  });
-
-  const offer = await myPeerConnection.createOffer();
-  myPeerConnection.setLocalDescription(offer);
-  socket.emit('offer', offer, roomName);
+  switch (e.type) {
+    case "offer":
+      handleOffer(e);
+      break;
+    case "answer":
+      handleAnswer(e);
+      break;
+    case "candidate":
+      handleCandidate(e);
+      break;
+    case "ready":
+      if (myPeerConnection) {
+        return;
+      }
+      makeCall();
+      break;
+    case "leave":
+      if (myPeerConnection) {
+        hangup();
+      }
+      break;
+    default:
+      console.log("unhandled", e);
+      break;
+  }
 });
+async function makeCall() {
+  try {
+    myPeerConnection = new RTCPeerConnection({
+      iceServers: [
+        {
+          urls: import.meta.env.VITE_ICE_SERVERS,
+        },
+      ],
+    });
+    myPeerConnection.onicecandidate = (e) => {
+      const message = {
+        type: "candidate",
+        candidate: null,
+      };
+      if (e.candidate) {
+        message.candidate = e.candidate.candidate;
+        message.roomId = roomId;
+      }
+      socket.emit("message", message);
+    };
+    myPeerConnection.ontrack = (e) => (remoteVideo = e.streams[0]);
+    localStream
+      .getTracks()
+      .forEach((track) => myPeerConnection.addTrack(track, localStream));
+    const offer = await myPeerConnection.createOffer({
+      offerToReceiveAudio: true,
+      offerToReceiveVideo: true,
+    });
+    socket.emit("message", { type: "offer", roomId: offer.roomId });
+    await myPeerConnection.setLocalDescription(offer);
 
-socket.on('offer', async (offer) => {
-  myPeerConnection.setRemoteDescription(offer);
-  const answer = await myPeerConnection.createAnswer();
-  myPeerConnection.setLocalDescription(answer);
-  socket.emit('answer', answer, roomName);
-});
+    localChatChannel = myPeerConnection.createDataChannel("chat");
+    localChatChannel.addEventListener("message", (event) => {
+      //TODO - 화면에 메세지 온거 보여주기
+      console.log(event.data);
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
 
-socket.on('answer', (answer) => {
-  myPeerConnection.setRemoteDescription(answer);
-});
+async function handleOffer(offer) {
+  // if (myPeerConnection) {
+  //   console.error("existing peerconnection");
+  //   return;
+  // }
 
-socket.on('ice', (ice) => {
-  myPeerConnection.addIceCandidate(ice);
-});
-socket.on('join_chat', (partnerNickname) => {
-  myPeerConnection.addEventListener('datachannel', (event) => {
-    myDataChannel = event.channel;
-    myDataChannel.addEventListener('message', (event) => {
-      const chatEvent = new CustomEvent('chatMessage', { detail: { message: event.data, alignment: 'left' } });
-      window.dispatchEvent(chatEvent);
+  //   myPeerConnection = new RTCPeerConnection(configuration);
+  //   myPeerConnection.onicecandidate = (e) => {
+  //     const message = {
+  //       type: "candidate",
+  //       candidate: null,
+  //     };
+  //     if (e.candidate) {
+  //       message.candidate = e.candidate.candidate;
+  //       message.roomId = e.candidate.roomId;
+  //     }
+  //     socket.emit("message", message);
+  //   };
+  //   myPeerConnection.ontrack = (e) =>
+  //     (remoteVideo.current.srcObject = e.streams[0]);
+  //   localStream
+  //     .getTracks()
+  //     .forEach((track) => myPeerConnection.addTrack(track, localStream));
+
+  myPeerConnection.addEventListener("datachannel", (event) => {
+    localChatChannel = event.channel;
+    localChatChannel.addEventListener("message", (event) => {
+      //TODO - 화면에 메세지 온거 보여주기
+      console.log(event.data);
+      handleReceiveMessage(event.data);
     });
   });
-});
+  await myPeerConnection.setRemoteDescription(offer);
+  const answer = await myPeerConnection.createAnswer();
+  await myPeerConnection.setLocalDescription(answer);
+  socket.emit("message", { type: "answer", roomId: answer.roomId });
+}
 
-socket.on('leave_call', () => {
+async function handleAnswer(answer) {
+  if (!myPeerConnection) {
+    console.error("no peerconnection");
+    return;
+  }
+  try {
+    await myPeerConnection.setRemoteDescription(answer);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+async function handleCandidate(candidate) {
+  try {
+    if (!myPeerConnection) {
+      console.error("no peerconnection");
+      return;
+    }
+    if (!candidate) {
+      await myPeerConnection.addIceCandidate(null);
+    } else {
+      await myPeerConnection.addIceCandidate(candidate);
+    }
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export const handleSendMessage = async (data) => {
+  //TODO - 작성한 메세지 보여주기
+  try {
+    localChatChannel.send(data);
+  } catch (e) {
+    console.log(e);
+  }
+};
+const handleReceiveMessage = async (data) => {
+  //TODO - 작성한 메세지 보여주기
+  // const chatEvent = new CustomEvent("chatMessage", {
+  //   detail: { message: event.data, alignment: "left" },
+  // });
+  // window.dispatchEvent(chatEvent);
+};
+
+async function hangup() {
   if (myPeerConnection) {
     myPeerConnection.close();
     myPeerConnection = null;
   }
-  if (myStream) {
-    myStream.getTracks().forEach(track => track.stop());
-    myStream = null;
+  if (localStream) {
+    localStream.getTracks().forEach((track) => track.stop());
+    localStream = null;
   }
-});
+}

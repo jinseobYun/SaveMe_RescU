@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState, forwardRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import io from "socket.io-client";
 import styled from "styled-components";
 
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
@@ -20,15 +19,12 @@ import {
   joinRoom,
   getCameras,
   getMedia,
-  makeConnection,
   myPeerConnection,
-  myStream,
-  leaveCall,
-  sendMessage,
-  receiveMessage,
+  localStream,
+  remoteVideoStream,
+  handleSendMessage,
 } from "@/util/socket";
 
-let roomId = 1;
 const ReportCallPage = () => {
   //SECTION - user settings
   const userId = "userID";
@@ -47,13 +43,13 @@ const ReportCallPage = () => {
 
   const handleMuteClick = () => {
     const enabled = !muted;
-    myStream.getAudioTracks()[0].enabled = enabled;
+    localStream.getAudioTracks()[0].enabled = enabled;
     setMuted(enabled);
   };
 
   const handleCameraClick = () => {
     const enabled = !cameraOff;
-    myStream.getVideoTracks()[0].enabled = enabled;
+    localStream.getVideoTracks()[0].enabled = enabled;
     setCameraOff(enabled);
   };
 
@@ -65,7 +61,7 @@ const ReportCallPage = () => {
     setIsCameraFront(!isCameraFront);
     await getMedia(cameras[index].deviceId);
     if (myPeerConnection) {
-      const videoTrack = myStream.getVideoTracks()[0];
+      const videoTrack = localStream.getVideoTracks()[0];
       const videoSender = myPeerConnection
         .getSenders()
         .find((sender) => sender.track.kind === "video");
@@ -124,21 +120,21 @@ const ReportCallPage = () => {
     }
   };
   useEffect(() => {
-    // 새로운 메시지를 수신할 때마다 chat 상태를 업데이트
-    receiveMessage((data) => {
-      setChat((prevChat) => [
-        ...prevChat,
-        { alignment: "left", message: data.message },
-      ]);
-      console.log(chatWrapperRef.current.offsetHeight);
-      setChatWrapperHeight(chatWrapperRef.current.offsetHeight); // 채팅 높이 업데이트
-    });
+    //TODO - 새로운 메시지를 수신할 때마다 chat 상태를 업데이트
+    // receiveMessage((data) => {
+    //   setChat((prevChat) => [
+    //     ...prevChat,
+    //     { alignment: "left", message: data.message },
+    //   ]);
+    //   console.log(chatWrapperRef.current.offsetHeight);
+    //   setChatWrapperHeight(chatWrapperRef.current.offsetHeight); // 채팅 높이 업데이트
+    // });
   }, []);
   const handleMessageSubmit = (event) => {
     event.preventDefault();
     if (messageInput.trim() !== "") {
       // 메시지 전송
-      sendMessage(roomId, messageInput, userId);
+      handleReceiveMessage(messageInput);
       setChat([...chat, { alignment: "right", message: messageInput }]);
       setMessageInput("");
       setChatWrapperHeight(chatWrapperRef.current.offsetHeight); // 채팅 높이 업데이트
@@ -157,37 +153,41 @@ const ReportCallPage = () => {
   //SECTION - 신고방 접속
 
   useEffect(() => {
+    //SECTION - 신고 요청 api
+    //만약 로그인 되잇다면 로그인id도 같이
+    //res로 받은 roodId넣기
     initSocketConnection();
     getCameras().then(setCameras);
     initCall();
-    joinRoom(roomId, userId);
-    window.addEventListener("addStream", (event) => {
-      peerFaceRef.current.srcObject = event.detail.stream;
-    });
+    // joinRoom(roomId);
+    joinRoom(1);
+    remoteVideoRef.current.srcObject = remoteVideoStream;
 
-    window.addEventListener("chatMessage", (event) => {
-      setChatMessages((prevMessages) => [
-        ...prevMessages,
-        { message: event.detail.message, alignment: event.detail.alignment },
-      ]);
-    });
+    // window.addEventListener("chatMessage", (event) => {
+    //   setChatMessages((prevMessages) => [
+    //     ...prevMessages,
+    //     { message: event.detail.message, alignment: event.detail.alignment },
+    //   ]);
+    // });
+    return () => {
+      if (socket.readyState === 1) {
+        // <-- This is important
+        socket.disconnect();
+        socket.close();
+      }
+    };
   }, []);
 
   const initCall = async () => {
     const stream = await getMedia();
     localVideoRef.current.srcObject = stream;
-    makeConnection();
+    socket.emit("message", { type: "ready" });
   };
-  //NOTE - socket state가 변경되기 전이나 페이지가 unmount되었을 때 동작하며 소켓 연결을 끊음
-  useEffect(() => {
-    return () => {
-      if (socket) {
-        socket.disconnect();
-      }
-    };
-  }, [socket]);
+
   const onClickCallEnd = () => {
     leaveCall();
+    socket.disconnect();
+
     navigate("/");
   };
   return (
