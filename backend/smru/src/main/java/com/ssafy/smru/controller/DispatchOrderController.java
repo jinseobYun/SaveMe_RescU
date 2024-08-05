@@ -61,19 +61,15 @@ public class DispatchOrderController {
 
 
 //    @PostMapping("/1st-info")
-//    public ResponseEntity<?> createDispatchOrder(@RequestBody FirstDispatchOrderDto.FirstInfoRequest dto) {
-//        try {
+//    public ResponseEntity<?> firstReportReceived(@RequestBody FirstDispatchOrderDto.FirstInfoRequest dto) {
+//
 //            FirstDispatchOrderDto.Response response = dispatchOrderServiceImpl.createDispatchOrder(dto);
 //            return new ResponseEntity<>(response, HttpStatus.OK);
-//        } catch (IllegalArgumentException e) {
-//            return new ResponseEntity<>("Invalid data: " + e.getMessage(), HttpStatus.BAD_REQUEST);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>("An unexpected error occurred.", HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
 //
+//    }
+
 //    @PostMapping("/2nd-info")
-//    public ResponseEntity<?> createDispatchOrder2(@RequestBody SecondDispatchOrderDto.Request dto) {
+//    public ResponseEntity<?> secondReportReceived(@RequestBody SecondDispatchOrderDto.Request dto) {
 //        return ResponseEntity.ok(dispatchOrderServiceImpl.createDispatchOrder2(dto));
 //    }
 }
