@@ -54,6 +54,9 @@ const BasicButton = styled.button`
   border-radius: ${(props) => props.$radius};
   box-sizing: border-box;
   font-size: ${(props) => props.$size};
+  display:flex;
+  align-items: center;
+  justify-content:center;
   ${(props) =>
     props.$margin
       ? css`

@@ -47,7 +47,8 @@ const SecondInfo = () => {
   // api 연결
   const dispatch = useDispatch();
   const location = useLocation();
-  const { dispatchOrderId } = location.state;
+  // 없는경우 {}
+  const { dispatchOrderId } = location.state || {};
   const reportData = useSelector((state) => state.reportSlice);
 
   const [formData, setFormData] = useState({
@@ -79,7 +80,7 @@ const SecondInfo = () => {
 
   // api 호출 데이터 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
   useEffect(() => {
-    if (reportData) {
+    if (reportData && reportData.hospital) {
       setHospitalOptions(
         reportData.hospitals.map((hospital) => hospital.hospitalName)
       );
@@ -154,6 +155,12 @@ const SecondInfo = () => {
 
   // 데이터 전송
   const handleSubmit = () => {
+
+    if (!dispatchOrderId) {
+      alert("dispatchOrderId가 없습니다. 1차 정보를 먼저 입력해주세요.");
+      return;
+    }
+
     const payload = {
       dispatchOrderId: dispatchOrderId,
       hpid: formData.hpid,

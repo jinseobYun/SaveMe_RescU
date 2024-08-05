@@ -65,7 +65,7 @@ const FirstInfo = () => {
 
   // Api 호출 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
   useEffect(() => {
-    if (reportData) {
+    if (reportData && reportData.gwanhals.length > 0) {
       setrescueTeamNameOptions(
         reportData.gwanhals.map((team) => team.rescueTeamName)
       );

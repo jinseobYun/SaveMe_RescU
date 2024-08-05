@@ -4,14 +4,16 @@ const GlobalStyles = createGlobalStyle`
         --main-red-color: #FF4C4C;
         --main-orange-color:#FFB22C;
         --orange-op50-color:rgba(255, 178, 44, 0.50);
+				--orange-color-100:#FFCC70;
         --main-yellow-color:#ffde4d;
         --dark-blue-color:#2D4059;
         --bg-baige-color:#FFFCE3;
-        --label-gray-color:##7A7D84;
+        --label-gray-color:#7A7D84;
         --chat-pink-color:#FF9393;
         
         --red-color-100: #CD3D64;
         --red-color-200: #A41C4E;
+		--button-red-color: #FF2929;
         
         --green-color-100: #09825D;
         --green-color-200: #0E6245;
@@ -20,7 +22,7 @@ const GlobalStyles = createGlobalStyle`
         --white-color-200: #f4f4f4;
         --white-color-300: #f7f7f7;
         
-        --gray-color-100: #ddd;62
+        --gray-color-100: #ddd;
         --gray-color-200: #C0C0C0;
         --gray-color-300: #b5b5b5;
         --gray-color-400:##697386
@@ -73,6 +75,7 @@ const GlobalStyles = createGlobalStyle`
 		-webkit-text-size-adjust:none;
 		width: 100%;
   	height: 100%;
+		overflow: hidden;
 	}
 	ol, ul {
 		list-style: none;
@@ -90,7 +93,7 @@ const GlobalStyles = createGlobalStyle`
 		border-spacing: 0;
 	}
 	html {
-		font-size: 100%;
+		font-size: 62.5%;
 		font-family: 'NotoSans';
 		overflow-x: hidden;
 		width: 100%;
