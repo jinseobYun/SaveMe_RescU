@@ -8,14 +8,13 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 public class HospitalDTO {
-    private Integer rnum;
+    private String hpid;
     private String dutyAddr;
     private String dutyEmcls;
     private String dutyEmclsName;
     private String dutyName;
     private String dutyTel1;
     private String dutyTel3;
-    private String hpid;
     private String phpid;
     private BigDecimal latitude;
     private BigDecimal longitude;
