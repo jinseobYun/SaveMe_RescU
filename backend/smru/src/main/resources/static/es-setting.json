@@ -1,0 +1,24 @@
+{
+  "analysis": {
+    "tokenizer": {
+      "my_ngram_tokenizer": {
+        "type": "edge_ngram",
+        "min_gram": 1,
+        "max_gram": 33
+      }
+    },
+    "filter": {
+      "stopwords": {
+        "type": "stop",
+        "stopwords": [" "]
+      }
+    },
+    "analyzer": {
+      "my_ngram_analyzer": {
+        "type": "custom",
+        "tokenizer": "my_ngram_tokenizer",
+        "filter": ["trim", "stopwords"]
+      }
+    }
+  }
+}
