@@ -2,23 +2,22 @@ package com.ssafy.smru.dto;
 
 import com.ssafy.smru.entity.DispatchOrder;
 import com.ssafy.smru.entity.WebMember;
-import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.sql.Timestamp;
 
 public class DispatchOrderDto {
+
     @Getter
     @NoArgsConstructor
-    @Setter
     public static class Request {
+        private int dispatchOrderId;
         private String firestation;
         private String doroLocationInfo;
         private String jibunLocationInfo;
-        private Integer emergencyType;
+        private int emergencyType;
         private Timestamp reportedTime;
         private String reporterName;
         private String reporterPhone;
@@ -29,9 +28,16 @@ public class DispatchOrderDto {
         private String bloodType2;
         private String drugInfos;
         private String otherInfo;
+        private Long webMemberId;
+        private String createdBy;
 
         @Builder
-        public Request(String firestation, String doroLocationInfo, String jibunLocationInfo, Integer emergencyType, Timestamp reportedTime, String reporterName, String reporterPhone, String reportDetails, String hospital, String chronicDisease, String bloodType1, String bloodType2, String drugInfos, String otherInfo) {
+        public Request(int dispatchOrderId, String firestation, String doroLocationInfo,
+                       String jibunLocationInfo, int emergencyType, Timestamp reportedTime,
+                       String reporterName, String reporterPhone, String reportDetails,
+                       String hospital, String chronicDisease, String bloodType1, String bloodType2,
+                       String drugInfos, String otherInfo, Long webMemberId, String createdBy) {
+            this.dispatchOrderId = dispatchOrderId;
             this.firestation = firestation;
             this.doroLocationInfo = doroLocationInfo;
             this.jibunLocationInfo = jibunLocationInfo;
@@ -46,10 +52,13 @@ public class DispatchOrderDto {
             this.bloodType2 = bloodType2;
             this.drugInfos = drugInfos;
             this.otherInfo = otherInfo;
+            this.webMemberId = webMemberId;
+            this.createdBy = createdBy;
         }
 
         public DispatchOrder toEntity(WebMember webMember) {
             return DispatchOrder.builder()
+                    .dispatchOrderId(dispatchOrderId)
                     .firestation(firestation)
                     .doroLocationInfo(doroLocationInfo)
                     .jibunLocationInfo(jibunLocationInfo)
@@ -65,21 +74,24 @@ public class DispatchOrderDto {
                     .drugInfos(drugInfos)
                     .otherInfo(otherInfo)
                     .webMember(webMember)
+                    .createdBy(createdBy)
                     .build();
         }
     }
+
     @Getter
     @NoArgsConstructor
     public static class Response {
-        private Integer emergencyType;
+        private int dispatchOrderId;
+        private String firestation;
+        private String doroLocationInfo;
+        private String jibunLocationInfo;
+        private int emergencyType;
         private Timestamp reportedTime;
-        private String hospital;
         private String reporterName;
         private String reporterPhone;
-        private String reportDetail;
-        private String firestation;
-        private String jibunLocationInfo;
-        private String doroLocationInfo;
+        private String reportDetails;
+        private String hospital;
         private String chronicDisease;
         private String bloodType1;
         private String bloodType2;
@@ -87,23 +99,23 @@ public class DispatchOrderDto {
         private String otherInfo;
         private String createdBy;
 
-        @Builder
         public Response(DispatchOrder dispatchOrder) {
+            this.dispatchOrderId = dispatchOrder.getDispatchOrderId();
+            this.firestation = dispatchOrder.getFirestation();
+            this.doroLocationInfo = dispatchOrder.getDoroLocationInfo();
+            this.jibunLocationInfo = dispatchOrder.getJibunLocationInfo();
             this.emergencyType = dispatchOrder.getEmergencyType();
             this.reportedTime = dispatchOrder.getReportedTime();
-            this.hospital = dispatchOrder.getHospital();
             this.reporterName = dispatchOrder.getReporterName();
             this.reporterPhone = dispatchOrder.getReporterPhone();
-            this.reportDetail = dispatchOrder.getReportDetails();
-            this.firestation = dispatchOrder.getFirestation();
-            this.jibunLocationInfo = dispatchOrder.getJibunLocationInfo();
-            this.doroLocationInfo = dispatchOrder.getDoroLocationInfo();
+            this.reportDetails = dispatchOrder.getReportDetails();
+            this.hospital = dispatchOrder.getHospital();
             this.chronicDisease = dispatchOrder.getChronicDisease();
             this.bloodType1 = dispatchOrder.getBloodType1();
             this.bloodType2 = dispatchOrder.getBloodType2();
             this.drugInfos = dispatchOrder.getDrugInfos();
             this.otherInfo = dispatchOrder.getOtherInfo();
-            this.createdBy = dispatchOrder.getWebMember().getName();
+            this.createdBy = dispatchOrder.getCreatedBy();
         }
     }
 }

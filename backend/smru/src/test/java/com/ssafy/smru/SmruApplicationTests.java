@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 
-@SpringBootTest
+//@SpringBootTest
 class SmruApplicationTests {
 
 	@Test

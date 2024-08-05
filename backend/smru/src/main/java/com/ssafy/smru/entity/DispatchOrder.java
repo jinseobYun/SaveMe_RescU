@@ -1,87 +1,72 @@
 package com.ssafy.smru.entity;
 
-import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+import jakarta.persistence.*;
 import java.sql.Timestamp;
 
-@Entity
 @Getter
 @NoArgsConstructor
-@Table(name="dispatch_order")
+@Entity
+@Table(name = "dispatch_order")
 public class DispatchOrder {
-    // 출동지령 기본키 , 52
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long dispatchOrderId;
+    private int dispatchOrderId;
 
-    // 소방서 이름
     @Column(nullable = false)
     private String firestation;
 
-    // 도로 위치 정보
     @Column(nullable = false)
     private String doroLocationInfo;
 
-    // 지번 위치 정보
     @Column(nullable = false)
     private String jibunLocationInfo;
 
-    // 긴급 상황 유형
     @Column(nullable = false)
-    private Integer emergencyType;
+    private int emergencyType;
 
-    // 신고 시간
     @Column(nullable = false)
     private Timestamp reportedTime;
 
-    // 신고자 이름
     @Column(nullable = false)
     private String reporterName;
 
-    // 신고자 전화번호
     @Column(nullable = false)
     private String reporterPhone;
 
-    // 신고 세부 사항
     @Column
     private String reportDetails;
 
-    // 병원 정보
     @Column
     private String hospital;
 
-    // 만성 질환 정보
     @Column
     private String chronicDisease;
 
-    // 혈액형 정보 1
     @Column
     private String bloodType1;
 
-    // 혈액형 정보 2
     @Column
     private String bloodType2;
 
-    // 약물 정보
     @Column
     private String drugInfos;
 
-    // 기타 정보
     @Column
     private String otherInfo;
 
-    @ManyToOne
-    @JoinColumn(name="web_member_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "web_member_id", nullable = false)
     private WebMember webMember;
 
-
+    private String createdBy;
 
     @Builder
-    public DispatchOrder(Long dispatchOrderId, String firestation, String doroLocationInfo, String jibunLocationInfo, Integer emergencyType, Timestamp reportedTime, String reporterName, String reporterPhone, String reportDetails, String hospital, String chronicDisease, String bloodType1, String bloodType2, String drugInfos, String otherInfo, WebMember webMember) {
+    public DispatchOrder(int dispatchOrderId, String firestation, String doroLocationInfo, String jibunLocationInfo, int emergencyType, Timestamp reportedTime, String reporterName, String reporterPhone, String reportDetails, String hospital, String chronicDisease, String bloodType1, String bloodType2, String drugInfos, String otherInfo, WebMember webMember, String createdBy) {
         this.dispatchOrderId = dispatchOrderId;
         this.firestation = firestation;
         this.doroLocationInfo = doroLocationInfo;
@@ -98,7 +83,17 @@ public class DispatchOrder {
         this.drugInfos = drugInfos;
         this.otherInfo = otherInfo;
         this.webMember = webMember;
+        this.createdBy = createdBy;
     }
-
-
 }
+
+
+//    public void setSecondInfo(SecondDispatchOrderDto.Request dto) {
+//        this.hospital = dto.getHospitalName();
+//        this.bloodType1 = dto.getMedicalInformation().getBloodType1();
+//        this.bloodType2 = dto.getMedicalInformation().getBloodType2();
+//        this.otherInfo = dto.getMedicalInformation().getOtherInfo();
+//        this.chronicDisease = ChronicDiseaseUtil.toString(dto.getMedicalInformation().getChronicDisease());
+//        this.drugInfos = DrugUtil.toString(dto.getMedicalInformation().getDrugInfos());
+//    }
+
