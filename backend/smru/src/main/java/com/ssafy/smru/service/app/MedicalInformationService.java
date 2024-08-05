@@ -10,6 +10,7 @@ import com.ssafy.smru.exception.EntityExistsException;
 import com.ssafy.smru.exception.ResourceNotFoundException;
 import com.ssafy.smru.repository.AppMemberRepository;
 import com.ssafy.smru.repository.app.*;
+import com.ssafy.smru.service.elasticsearch.ElasticSearchService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,11 @@ public class MedicalInformationService {
     private final DrugInfoRepository drugInfoRepository;
     private final MedCdiRepository medCdiRepository;
     private final MedicineRepository medicineRepository;
+    private final ElasticSearchService elasticSearchService;
 
 
 
+    @Transactional
     public void createMedicalInformation(MedicalInformationDto.Request request) {
         AppMember appMember = appMemberRepository.findByMemberId(request.getMemberId())
                 .orElseThrow(() -> new ResourceNotFoundException(request.getMemberId() + "는 등록되지 않은 사용자입니다."));
@@ -53,9 +56,10 @@ public class MedicalInformationService {
 
     @Transactional
     public void createMedCdi(MedicalInformation medicalInformation , List<Long> cdInfoIds) {
+
+
         // cdInfoIds 리스트의 아이디에 맞는 CdInfo를 DB에서 조회
         List<CdInfo> cdInfos = cdInfoRepository.findAllById(cdInfoIds);
-        System.out.println(cdInfos);
         // DB에서 받은 지병 정보의 고유 아이디를 받아옴
         List<Long> foundCdInfoIds = cdInfos.stream().map(CdInfo::getCdInfoId).collect(Collectors.toList());
         // filter로 요청시 들어온 지병 코드와 db에서 불러온 지병 코드를 비교 해서
@@ -75,19 +79,30 @@ public class MedicalInformationService {
                 .collect(Collectors.toList());
         medCdiRepository.saveAll(medCdis);
     }
+
+    @Transactional
     public void createDrucInfo(MedicalInformation medicalInformation , List<Long> medicineIds){
 
-        List<Medicine> medicines = medicineRepository.findAllById(medicineIds);
-        List<Long> foundMedicineIds = medicines.stream().map(Medicine::getMedicineId).collect(Collectors.toList());
+
+        // ES 서버에서 id 로 검색
+        List<MedicineEs> medicines = elasticSearchService.searchByMedicineIds(medicineIds);
+
+        // 검색한 Medicine ES 결과값에서 다시 아이디를 받아옴
+        List<Long> foundMedicineIds = medicines.stream().map(MedicineEs::getMedicineId).collect(Collectors.toList());
+        // 요청시에 포함된 id 와 es에 검색한 결과의 id 들을 비교해서
+        // 없는 것들만 리스트에 넣어줌
         List<Long> invalidMedicineIds = medicineIds.stream()
                 .filter(id -> !foundMedicineIds.contains(id))
                 .collect(Collectors.toList());
-        // 비어있지 않으면 예외처리
+        // 리스트가 비어있지 않으면 예외처리
         if (!invalidMedicineIds.isEmpty()) {
             throw new ResourceNotFoundException(invalidMedicineIds + " 는 존재하지 않는 약품 코드입니다." );
         }
 
-        List<DrugInfo> drugInfos = medicines.stream()
+        // ES Document 객체인  medicinees를 entity인 medicine으로 변환
+        List<Medicine> toMedicines = medicines.stream().map(MedicineEs::toMedicine).collect(Collectors.toList());
+        // 사용자의 drugInfos( 투약 정보 ) 에 담아줌
+        List<DrugInfo> drugInfos = toMedicines.stream()
                 .map(medicine -> DrugInfo.builder()
                         .medicalInformation(medicalInformation)
                         .medicine(medicine)
@@ -107,7 +122,6 @@ public class MedicalInformationService {
             throw new ResourceNotFoundException("등록된 의료 정보가 없습니다.");
         }
         MedicalInformation medicalInformation = member.getMedicalInformation();
-        System.out.println(medicalInformation.getMedicalInformationId());
 
 
 
@@ -115,6 +129,7 @@ public class MedicalInformationService {
         List<MedCdi> medCdis = medicalInformation.getMedCdis();
         for (MedCdi medCdi : medCdis) {
             System.out.println(medCdi.getCdInfo().getCdInfoId());
+            System.out.println(medCdi.getCdInfo().getCdName());
         }
         MedicalInformationDto.Response response = MedicalInformationDto.Response.fromEntity(medicalInformation);
         response.setDrugInfos(drugInfos.stream().map(DrugInfoDto.Response::fromEntity).collect(Collectors.toList()));

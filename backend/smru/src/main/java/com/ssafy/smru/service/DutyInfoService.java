@@ -21,9 +21,7 @@ public class DutyInfoService {
     public List<HospitalDTO> findNearestHospitals(String lat, String lon) {
         BigDecimal latitude = new BigDecimal(lat);
         BigDecimal longitude = new BigDecimal(lon);
-
         List<DutyInfo> hospitals = dutyInfoRepository.findAll();
-
         return hospitals.stream()
                 .sorted(Comparator.comparing(h -> DistanceUtil.calculateDistance(
                         latitude, 

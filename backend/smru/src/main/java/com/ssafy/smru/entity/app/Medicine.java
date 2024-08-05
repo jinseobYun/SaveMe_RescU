@@ -1,11 +1,15 @@
 package com.ssafy.smru.entity.app;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Table(name = "medicine")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Medicine {
 
     // 약 정보
@@ -19,6 +23,7 @@ public class Medicine {
     
     @Column(name = "medicine_name", nullable = false)
     private String medicineName;
+
 
 
 }

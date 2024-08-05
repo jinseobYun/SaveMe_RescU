@@ -6,5 +6,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 // 약 table
 public interface MedicineRepository extends JpaRepository<Medicine, Long> {
-
 }
