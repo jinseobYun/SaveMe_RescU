@@ -1,161 +1,264 @@
-import { io } from 'socket.io-client';
+// import { io } from "socket.io-client";
+// import useSocketStore from "@/store/useSocketStore";
+// export let socket = io.connect("ws://localhost:3000", {
+//   transports: ["websocket"],
+//   autoConnect: false,
+// });
+// const configuration = {
+//   iceServers: [
+//     {
+//       urls: import.meta.env.VITE_ICE_SERVERS,
+//     },
+//   ],
+// };
+// export let localStream;
+// export let remoteVideoStream;
+// export let myPeerConnection;
+// let roomId;
+// let chatChannel;
 
-export let socket = io.connect(import.meta.env.VITE_SOCKET_SERVER_URL, {
-  transports: ['websocket'],
-});
+// socket.on("message", (e) => {
+//   if (!localStream) {
+//     console.log("not ready yet");
+//     return;
+//   }
+//   switch (e.type) {
+//     case "offer":
+//       handleOffer(e.offer);
+//       break;
+//     case "answer":
+//       handleAnswer(e.answer);
+//       break;
+//     case "candidate":
+//       handleCandidate(e.candidate);
+//       break;
+//     case "leave":
+//       if (myPeerConnection) {
+//         hangup();
+//       }
+//       break;
+//     case "send_report_info":
+//       if (myPeerConnection) {
+//         handleReceiveReportInfo(e.data);
+//       }
+//     default:
+//       console.log("unhandled", e);
+//       break;
+//   }
+// });
+// async function makeCall() {
+//   try {
+//     myPeerConnection = new RTCPeerConnection(configuration);
+//     myPeerConnection.addEventListener("icecandidate", (data) => {
+//       const message = {
+//         type: "candidate",
+//         candidate: data.candidate,
+//       };
+//       socket.emit("message", message, roomId);
+//     });
 
-export let myStream;
-export let myPeerConnection;
-let roomName;
-let myDataChannel;
+//     myPeerConnection.addEventListener(
+//       "addstream",
+//       (data) => (remoteVideoStream = data.stream)
+//     );
+//     // myPeerConnection.onicecandidate = (e) => {
+//     //   const message = {
+//     //     type: "candidate",
+//     //     candidate: null,
+//     //   };
+//     //   if (e.candidate) {
+//     //     message.candidate = e.candidate.candidate;
+//     //     message.sdpMid = e.candidate.sdpMid;
+//     //     message.sdpMLineIndex = e.candidate.sdpMLineIndex;
+//     //   }
+//     //   socket.emit("message", message, roomId);
+//     // };
 
-export const initSocketConnection = () => {
-  if (socket) return;
-  socket.connect();
-};
+//     // myPeerConnection.ontrack = (e) => (remoteVideo = e.streams[0]);
 
-export const handleSendMsg = (roomId, msg, userId) => {
-  if (!socket) return;
-  socket.emit('message', {
-    roomId,
-    message: msg,
-    userId,
-    timestamp: Date.now(),
-  });
-};
+//     // localStream
+//     //   .getTracks()
+//     //   .forEach((track) => myPeerConnection.addTrack(track, localStream));
 
-export const disconnectSocket = () => {
-  if (!socket || socket.connected === false) return;
-  socket.disconnect();
-  socket = undefined;
-};
+//     const offer = await myPeerConnection.createOffer({
+//       offerToReceiveAudio: true,
+//       offerToReceiveVideo: true,
+//     });
+//     await myPeerConnection.setLocalDescription(offer);
+//     socket.emit("message", { type: "offer", offer: offer }, roomId);
+//   } catch (e) {
+//     console.log(e);
+//   }
+// }
 
-export const joinRoom = async (room) => {
-  roomName = room;
-  socket.emit('join_room', roomName);
-};
+// async function handleOffer(offer) {
+//   // if (myPeerConnection) {
+//   //   console.error("existing peerconnection");
+//   //   return;
+//   // }
+//   try {
+//     myPeerConnection = new RTCPeerConnection(configuration);
+//     myPeerConnection.addEventListener("icecandidate", (data) => {
+//       const message = {
+//         type: "candidate",
+//         candidate: data.candidate,
+//       };
+//       socket.emit("message", message, roomId);
+//     });
 
-export const getCameras = async () => {
-  try {
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const cameras = devices.filter(device => device.kind === 'videoinput');
-    return cameras;
-  } catch (error) {
-    console.log(error);
-  }
-};
+//     await myPeerConnection.setRemoteDescription(offer);
+//     const answer = await myPeerConnection.createAnswer();
+//     await myPeerConnection.setLocalDescription(answer);
+//     socket.emit("message", { type: "answer", answer: answer }, roomId);
+//   } catch (e) {
+//     console.log(e);
+//   }
+// }
 
-export const getMedia = async (deviceId) => {
-  const initialConstraints = {
-    audio: true,
-    video: { facingMode: 'user' },
-  };
-  const cameraConstraints = {
-    audio: true,
-    video: { deviceId: { exact: deviceId } },
-  };
-  try {
-    myStream = await navigator.mediaDevices.getUserMedia(
-      deviceId ? cameraConstraints : initialConstraints
-    );
-    return myStream;
-  } catch (error) {
-    console.log(error);
-  }
-};
+// async function handleAnswer(answer) {
+//   if (!myPeerConnection) {
+//     console.error("no peerconnection");
+//     return;
+//   }
+//   try {
+//     await myPeerConnection.setRemoteDescription(answer);
+//   } catch (e) {
+//     console.log(e);
+//   }
+// }
 
-export const makeConnection = () => {
-  if (!myStream) {
-    console.error("Stream is not initialized");
-    return;
-  }
+// async function handleCandidate(candidate) {
+//   try {
+//     if (!myPeerConnection) {
+//       console.error("no peerconnection");
+//       return;
+//     }
+//     if (!candidate) {
+//       await myPeerConnection.addIceCandidate(null);
+//     } else {
+//       await myPeerConnection.addIceCandidate(candidate);
+//     }
+//   } catch (e) {
+//     console.log(e);
+//   }
+// }
 
-  myPeerConnection = new RTCPeerConnection({
-    iceServers: [
-      {
-        urls: [
-          'stun:stun.l.google.com:19302',
-          'stun:stun1.l.google.com:19302',
-          'stun:stun2.l.google.com:19302',
-          'stun:stun3.l.google.com:19302',
-          'stun:stun4.l.google.com:19302',
-        ],
-      },
-    ],
-  });
+// export const handleSendMessage = async (data) => {
+//   try {
+//     chatChannel.send(data);
+//   } catch (e) {
+//     console.log(e);
+//   }
+// };
+// const handleReceiveMessage = async (data) => {
+//   //TODO - 작성한 메세지 보여주기
+//   // const chatEvent = new CustomEvent("chatMessage", {
+//   //   detail: { message: event.data, alignment: "left" },
+//   // });
+//   // window.dispatchEvent(chatEvent);
+// };
 
-  myPeerConnection.addEventListener('icecandidate', handleIceEvent);
-  myPeerConnection.addEventListener('addstream', handleAddStream);
+// async function hangup() {
+//   if (myPeerConnection) {
+//     myPeerConnection.close();
+//     myPeerConnection = null;
+//   }
+//   if (localStream) {
+//     localStream.getTracks().forEach((track) => track.stop());
+//     localStream = null;
+//   }
+//   //TODO - web에서는 재연결해주기? 아니면 애초에 나가지 않기, 신고가 종료되었을때 로직 수행
+//   await restartCall();
+// }
 
-  myStream.getTracks().forEach(track => myPeerConnection.addTrack(track, myStream));
-};
+// async function restartCall() {
+//   makeCall();
+//   await getMedia();
+//   socket.emit("join_room", roomId);
+// }
 
-export const leaveCall = () => {
-  socket.emit('leave_call', roomName);
-};
+// async function handleReceiveReportInfo(data) {
+//   //FIXME - 상휘님이 적을 부분
+//   console.log(data);
+// }
 
-const handleIceEvent = (data) => {
-  socket.emit('ice', data.candidate, roomName);
-};
+// export const initSocketConnection = () => {
+//   socket.connect();
+// };
 
-const handleAddStream = (data) => {
-  const event = new CustomEvent('addStream', { detail: { stream: data.streams[0] } });
-  window.dispatchEvent(event);
-};
-// 메시지 전송 함수
-export const sendMessage = (roomId, message, userId) => {
-  socket.emit('new_message', { roomId, message, userId });
-};
+// const initCall = async () => {
+//   await getMedia();
+//   makeCall();
+// };
+// export const disconnectSocket = () => {
+//   if (!socket || socket.connected === false) return;
+//   socket.disconnect();
+//   socket = undefined;
+// };
 
-// 메시지 수신 이벤트
-export const receiveMessage = (callback) => {
-  socket.on('new_message', (data) => {
-    callback(data);
-  });
-};
+// export const getCameras = async () => {
+//   try {
+//     const devices = await navigator.mediaDevices.enumerateDevices();
+//     const cameras = devices.filter((device) => device.kind === "videoinput");
+//     return cameras;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
-socket.on('welcome', async () => {
-  myDataChannel = myPeerConnection.createDataChannel('chat');
-  myDataChannel.addEventListener('message', (event) => {
-    console.log(event.data);
-  });
+// export const getMedia = async (deviceId) => {
+//   const initialConstraints = {
+//     audio: true,
+//     video: { facingMode: "user" },
+//   };
+//   const cameraConstraints = {
+//     audio: true,
+//     video: { deviceId: { exact: deviceId } },
+//   };
+//   try {
+//     localStream = await navigator.mediaDevices.getUserMedia(
+//       deviceId ? cameraConstraints : initialConstraints
+//     );
 
-  const offer = await myPeerConnection.createOffer();
-  myPeerConnection.setLocalDescription(offer);
-  socket.emit('offer', offer, roomName);
-});
+//     return localStream;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
-socket.on('offer', async (offer) => {
-  myPeerConnection.setRemoteDescription(offer);
-  const answer = await myPeerConnection.createAnswer();
-  myPeerConnection.setLocalDescription(answer);
-  socket.emit('answer', answer, roomName);
-});
+// socket.on("already_in_room", () =>
+//   alert(`You are already in the other room.\nYou can enter only one room.`)
+// );
 
-socket.on('answer', (answer) => {
-  myPeerConnection.setRemoteDescription(answer);
-});
+// socket.on("is_full", (roomId) => {
+//   alert(`${roomId} is full.`);
+//   //TODO - 룸 아이디 재요청 api
+// });
+// //데이터 채널을 열은 쪽 peerA
+// socket.on("start_chat", () => {
+//   chatChannel = myPeerConnection.createDataChannel("chat");
+//   console.log("보내는쪽 datachannel: " + chatChannel);
+//   chatChannel.addEventListener("message", (event) => {
+//     //TODO - 메세지 오는거
+//   });
+//   socket.emit("join_chat", roomId);
+// });
+// //peer B
+// socket.on("join_chat", () => {
+//   myPeerConnection.addEventListener("datachannel", (event) => {
+//     chatChannel = event.channel;
+//     console.log("받는쪽: " + chatChannel);
+//     chatChannel.addEventListener("message", (event) => {
+//       //TODO - 메세지 오는거
+//     });
+//   });
+// });
 
-socket.on('ice', (ice) => {
-  myPeerConnection.addIceCandidate(ice);
-});
-socket.on('join_chat', (partnerNickname) => {
-  myPeerConnection.addEventListener('datachannel', (event) => {
-    myDataChannel = event.channel;
-    myDataChannel.addEventListener('message', (event) => {
-      const chatEvent = new CustomEvent('chatMessage', { detail: { message: event.data, alignment: 'left' } });
-      window.dispatchEvent(chatEvent);
-    });
-  });
-});
+// socket.on("is_available", async (id) => {
+//   await initCall();
+//   roomId = id;
+//   console.log("방에 들어간다");
+//   socket.emit("join_room", id);
+// });
 
-socket.on('leave_call', () => {
-  if (myPeerConnection) {
-    myPeerConnection.close();
-    myPeerConnection = null;
-  }
-  if (myStream) {
-    myStream.getTracks().forEach(track => track.stop());
-    myStream = null;
-  }
-});
+export const setSocketEvent = (socket) => {};

@@ -16,26 +16,25 @@ const Login = () => {
     initialValues: { id: "", password: "" },
     onSubmit: (values) => {
       //TODO - api test
-      // loginApi(
-      //   values.id,
-      //   values.password,
-      //   (response) => {
-      // //TODO - 토큰 저장하기
-      // if(response.status ===200)
-      // {
-      //   setAccessToken(response.data.accessToken);
-      //   setReFreshToken(response.data.refreshToken);
-      //   setUserId(values.id);
-      //   login();
-      //clearInputs()
-      //     navigate("/");
-      // }
-      //   },
-      // (error) => {
-      //   console.log(error);
-      //   errorAlert(error.response.status);
-      // }
-      // );
+      loginApi(
+        values.id,
+        values.password,
+        (response) => {
+          //TODO - 토큰 저장하기
+          if (response.status === 200) {
+            setAccessToken(response.data.accessToken);
+            setReFreshToken(response.data.refreshToken);
+            setUserId(values.id);
+            login();
+            clearInputs();
+            navigate("/");
+          }
+        },
+        (error) => {
+          console.log(error);
+          // errorAlert(error.response.status);
+        }
+      );
     },
     validate: () => {},
   });
