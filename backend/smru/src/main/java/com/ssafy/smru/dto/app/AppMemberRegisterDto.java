@@ -6,7 +6,7 @@ import com.ssafy.smru.entity.AppMember;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class AppMemberRegisterDto {
 
@@ -21,14 +21,14 @@ public class AppMemberRegisterDto {
         private String password;
         private String passwordConfirm;
         private String memberName;
-        private Date birth;
+        private LocalDate birth;
         private boolean gender;
         private String phone;
         private boolean deleted;
         private MedicalInfoDto medicalInfoDto;
 
         @Builder
-        public Request(Long appMemberId, String memberId, String password, String memberName, Date birth, boolean gender, String phone, boolean deleted, MedicalInfoDto medicalInfoDto) {
+        public Request(Long appMemberId, String memberId, String password, String memberName, LocalDate birth, boolean gender, String phone, boolean deleted, MedicalInfoDto medicalInfoDto) {
             this.appMemberId = appMemberId;
             this.memberId = memberId;
             this.password = password;
