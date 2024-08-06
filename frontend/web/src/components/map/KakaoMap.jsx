@@ -1,9 +1,9 @@
 /* global kakao */
 import React, { useEffect, useState, useRef } from "react";
 
-const KakaoMap = ({ markerPositions = [], size = [70, 100] }) => {
+const KakaoMap = ({ markerPositions = [], route=null, size = [70, 100] }) => {
   const [kakaoMap, setKakaoMap] = useState(null);
-  const [ markers ,setMarkers ] = useState([]);
+  const [markers, setMarkers] = useState([]);
   const container = useRef();
 
   useEffect(() => {
@@ -24,7 +24,6 @@ const KakaoMap = ({ markerPositions = [], size = [70, 100] }) => {
     };
 
     return () => {
-      // Clean up script and map instances when component unmounts
       document.head.removeChild(script);
       setKakaoMap(null);
     };
@@ -45,11 +44,15 @@ const KakaoMap = ({ markerPositions = [], size = [70, 100] }) => {
   useEffect(() => {
     if (kakaoMap === null) return;
 
-    const positions = markerPositions.map((pos) => new kakao.maps.LatLng(...pos));
+    const positions = markerPositions.map(
+      (pos) => new kakao.maps.LatLng(...pos)
+    );
 
     setMarkers((markers) => {
       markers.forEach((marker) => marker.setMap(null));
-      return positions.map((position) => new kakao.maps.Marker({ map: kakaoMap, position }));
+      return positions.map(
+        (position) => new kakao.maps.Marker({ map: kakaoMap, position })
+      );
     });
 
     if (positions.length > 0) {
@@ -60,6 +63,36 @@ const KakaoMap = ({ markerPositions = [], size = [70, 100] }) => {
       kakaoMap.setBounds(bounds);
     }
   }, [kakaoMap, markerPositions]);
+
+  // ★★★★ 지도에 경로 그리기 ★★★★★★★★★★★★★★★★★★★★★★★
+  useEffect(() => {
+    if (kakaoMap === null || route === null) return;
+
+    const linePath = route.routes[0].sections[0].roads.flatMap((road) => {
+      return road.vertexes.reduce((result, _, index, array) => {
+        if (index % 2 === 0) {
+          result.push(new kakao.maps.LatLng(array[index + 1], array[index]));
+        }
+        return result;
+      }, []);
+    });
+
+    const polyline = new kakao.maps.Polyline({
+      path: linePath,
+      strokeWeight: 5,
+      strokeColor: "#FF4C4C",
+      strokeOpacity: 0.8,
+      strokeStyle: "solid",
+    });
+
+    polyline.setMap(kakaoMap);
+
+    return () => {
+      polyline.setMap(null);
+    };
+  }, [kakaoMap, route]);
+
+  // ★★★★★★★★★★★★★★★★★★★★★★★★★★
 
   return <div ref={container} style={{ width: "100%", height: "100%" }} />;
 };
