@@ -7,7 +7,7 @@ import { Grid, Text, NextPageButton } from "@components/elements";
 import useFormInputStore from "@/store/useFormInputStore";
 import { reqVerifyCode, checkVerifyCode } from "@/api/userApi";
 import { Header } from "@components/common";
-
+import { errorAlert } from "@/util/notificationAlert";
 const numOfFields = 6;
 
 const useSSNFields = (setIsVerify) => {
@@ -29,10 +29,9 @@ const useSSNFields = (setIsVerify) => {
       return;
     }
     // 해당 필드의 값을 업데이트
-    setValue((prevValues) => ({
-      ...prevValues,
-      [`n${fieldIndex}`]: value,
-    }));
+    setValue((prev) => {
+      return { ...prev, [`n${fieldIndex}`]: value };
+    });
 
     // 다음 필드로 포커스 이동
     if (value.length >= maxLength && parseInt(fieldIndex, 10) < numOfFields) {
@@ -43,18 +42,39 @@ const useSSNFields = (setIsVerify) => {
         nextSibling.focus();
       }
     }
+    const code = Object.values(ssnValues).join("");
+    console.log(ssnValues);
+    console.log(code);
 
-    // 모든 필드가 채워지면 검증 코드를 호출
-    const allValues = { ...ssnValues, [`n${fieldIndex}`]: value };
-    const code = Object.values(allValues).join("");
     if (code.length === numOfFields) {
+      console.log("code");
       setIsVerify(true);
+    } else setIsVerify(false);
+  };
+  const handleKeyDown = (e) => {
+    const { name } = e.target;
+    const fieldIndex = parseInt(name.split("-")[1], 10);
+
+    if (e.key === "Backspace") {
+      setValue((prevValues) => {
+        const newValues = { ...prevValues, [`n${fieldIndex}`]: "" };
+
+        if (fieldIndex > 1 && !prevValues[`n${fieldIndex - 1}`]) {
+          const previousSibling = document.querySelector(
+            `input[name=ssn-${fieldIndex - 1}]`
+          );
+          if (previousSibling !== null) {
+            previousSibling.focus();
+          }
+        }
+        return newValues;
+      });
     }
   };
-
   return {
     handleChange,
     ssnValues,
+    handleKeyDown,
   };
 };
 
@@ -67,7 +87,7 @@ const VerifyCodeForm = () => {
   const [isVerify, setIsVerify] = useState(false);
   const initialTime = 180;
   const [remainingTime, setRemainingTime] = useState(initialTime);
-  const { handleChange, ssnValues } = useSSNFields(setIsVerify);
+  const { handleChange, ssnValues, handleKeyDown } = useSSNFields(setIsVerify);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -92,17 +112,29 @@ const VerifyCodeForm = () => {
   const onClickResend = () => {
     reqVerifyCode(
       { phoneNumber: inputs.phoneNumber },
-      ({ data }) => {},
-      (error) => {}
+      (response) => {
+        console.log(response);
+        if (response.status === 200) {
+          //FIXME - 인증코드 저장 없애기
+          updateInputs({ temporyCode: response.data });
+        } else {
+          console.log(response);
+        }
+      },
+      (error) => {
+        console.log(error);
+      }
     );
     setRemainingTime(initialTime);
   };
 
   const onClickBtn = () => {
     // clearInputs();
+
+    const code = Object.values(ssnValues).join("");
     const data = {
       phoneNumber: inputs.phoneNumber,
-      verifyCode: ssnValues,
+      verifyCode: code,
     };
     switch (type) {
       case "findid":
@@ -141,28 +173,14 @@ const VerifyCodeForm = () => {
               navigate("/changepassword");
               break;
           }
-        } else if (data.status === "400") {
-          Swal.fire({
-            title: "인증번호가 일치하지 않습니다.",
-            text: "다시 입력해주세요.",
-            icon: "error",
-            confirmButtonText: "확인",
-          });
         }
-        // else if (data.status === "404") {
-        //   Swal.fire({
-        //     title: "인증번호가 일치하지 않습니다.",
-        //     text: "다시 입력해주세요.",
-        //     icon: "error",
-        //     confirmButtonText: "확인",
-        //   });
-        // }
       },
       (error) => {
-        console.log(error);
+        errorAlert(error.response.data);
       }
     );
   };
+
   return (
     <>
       <FormWrapper>
@@ -192,12 +210,14 @@ const VerifyCodeForm = () => {
               <StyledInput
                 key={index}
                 autoFocus={index === 0}
-                maxLength={1}
+                maxLength="1"
                 onChange={handleChange}
                 // type="number"
                 name={`ssn-${index + 1}`}
                 inputMode="numeric"
-                autoComplete={false}
+                autoComplete="off"
+                onKeyDown={handleKeyDown}
+                disabled={index > 1 && !ssnValues[`n${index - 1}`]}
               />
             ))}
           </Grid>
@@ -229,7 +249,7 @@ const VerifyCodeForm = () => {
         </Grid>
         <NextPageButton
           isError={!isVerify}
-          text="다음"
+          text="인증하기"
           handleClick={onClickBtn}
         />
       </FormWrapper>

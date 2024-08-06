@@ -21,11 +21,11 @@ async function checkIdDuplication(id, success, fail) {
 }
 
 async function reqVerifyCode(phoneNumber, success, fail) {
-  await http.get(`/members/phone-verify-code-req`).then(success).catch(fail);
+  await http.post(`/members/phone-verify-code-req`, { phoneNumber: phoneNumber }).then(success).catch(fail);
 }
 
 async function checkVerifyCode(data, success, fail) {
-  await http.get(`/members/phone-verify-code-check`).then(success).catch(fail);
+  await http.post(`/members/phone-verify-code-check`, data).then(success).catch(fail);
 }
 //TODO - 아이디 찾기
 //TODO - 비밀번호 찾기

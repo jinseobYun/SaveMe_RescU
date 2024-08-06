@@ -10,9 +10,9 @@ function SignUpValidationUserInfo({ name, birth, gender, phoneNumber }) {
   if (!birth) {
     errors.birth = "생년월일을 설정해주세요.";
   }
-  // if (!gender) {
-  //   errors.gender = "성별을 선택해주세요.";
-  // }
+  if (!gender) {
+    errors.gender = "성별을 선택해주세요.";
+  }
   if (!phoneNumber) {
     errors.phoneNumber = "전화번호를 입력해주세요.";
   } else if (!/^01(0|1|[6-9])[0-9]{3,4}[0-9]{4}$/.test(phoneNumber)) {
