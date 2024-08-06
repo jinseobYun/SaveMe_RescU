@@ -98,10 +98,17 @@ public class AppMemberController {
             return ResponseEntity.badRequest().body("휴대폰 번호를 입력하세요");
         }
 
+
         PhoneVerificationDto.Response response = phoneVerificationService.generateAndSaveVerificationCode(request);
-
-        // 휴대폰 번호로 문자 보내는 메서드 작성
-
+// -------------------------------실제 휴대폰 문자 보내는 매서드 -----------------------------------
+//            // 휴대폰 번호로 문자 보내는 메서드 작성
+//        try {
+//            SingleMessageSentResponse result = phoneVerificationService.sendVerificationCode(response.getPhoneNumber(),response.getVerifyCode());
+//
+//        }catch (Exception e){
+//            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("인증번호 발송 오류");
+//        }
+// -----------------------------------------------------------------------------------------------
 
 
         return ResponseEntity.ok().body("OK");

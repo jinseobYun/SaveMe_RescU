@@ -57,6 +57,7 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-websocket' // 시그널링 서버 구축을 위한 websocket
 
+	implementation 'net.nurigo:sdk:4.3.0'
 }
 
 tasks.named('test') {
