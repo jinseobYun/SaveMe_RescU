@@ -19,7 +19,7 @@ import java.util.Map;
 
 @Component
 @RestController
-@RequestMapping("/stun")
+@RequestMapping("/api/stun")
 public class StunServer implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(StunServer.class);
