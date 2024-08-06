@@ -40,3 +40,4 @@ security.properties
 openAPI.properties
 elastic.properties
 redis.properties
+application-prod.properties
