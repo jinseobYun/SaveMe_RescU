@@ -25,6 +25,9 @@ public class DutyInfoController {
         }
         try {
             List<HospitalDTO> hospitals = dutyInfoService.findNearestHospitals(lat, lon);
+            if(hospitals!= null && !hospitals.isEmpty()){
+                hospitals = dutyInfoService.getHospitalListWithEmergencyRoom(hospitals);
+            }
             return ResponseEntity.ok(hospitals);
         } catch (NumberFormatException ex) {
             return ResponseEntity.badRequest().body("유효한 좌표 값을 입력하세요");

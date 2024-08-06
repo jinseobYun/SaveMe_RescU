@@ -1,12 +1,16 @@
 package com.ssafy.smru.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.ssafy.smru.entity.EmergencyRoom;
+import lombok.*;
 
 import java.math.BigDecimal;
 
-@Data
+
+@Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class HospitalDTO {
     private String hpid;
     private String dutyAddr;
@@ -19,4 +23,18 @@ public class HospitalDTO {
     private BigDecimal latitude;
     private BigDecimal longitude;
     private String distance;
+    // 가용 병상
+    private int hvec;
+    // 가용 수술실
+    private int hvoc;
+
+    public void addEmergencyRoomInfo(EmergencyRoom emergencyRoom){
+        if(emergencyRoom.getHvec() != null){
+            this.hvec = emergencyRoom.getHvec();
+
+        }
+        if(emergencyRoom.getHvoc() != null){
+            this.hvoc = emergencyRoom.getHvoc();
+        }
+    }
 }
