@@ -13,7 +13,7 @@ public class DispatchOrderDto {
     @Getter
     @NoArgsConstructor
     public static class Request {
-        private int dispatchOrderId;
+        private Long dispatchOrderId;
         private String firestation;
         private String doroLocationInfo;
         private String jibunLocationInfo;
@@ -22,7 +22,7 @@ public class DispatchOrderDto {
         private String reporterName;
         private String reporterPhone;
         private String reportDetails;
-        private String hospital;
+        private String hospitalName;
         private String chronicDisease;
         private String bloodType1;
         private String bloodType2;
@@ -32,10 +32,10 @@ public class DispatchOrderDto {
         private String createdBy;
 
         @Builder
-        public Request(int dispatchOrderId, String firestation, String doroLocationInfo,
+        public Request(Long dispatchOrderId, String firestation, String doroLocationInfo,
                        String jibunLocationInfo, int emergencyType, Timestamp reportedTime,
                        String reporterName, String reporterPhone, String reportDetails,
-                       String hospital, String chronicDisease, String bloodType1, String bloodType2,
+                       String hospitalName, String chronicDisease, String bloodType1, String bloodType2,
                        String drugInfos, String otherInfo, Long webMemberId, String createdBy) {
             this.dispatchOrderId = dispatchOrderId;
             this.firestation = firestation;
@@ -46,7 +46,7 @@ public class DispatchOrderDto {
             this.reporterName = reporterName;
             this.reporterPhone = reporterPhone;
             this.reportDetails = reportDetails;
-            this.hospital = hospital;
+            this.hospitalName = hospitalName;
             this.chronicDisease = chronicDisease;
             this.bloodType1 = bloodType1;
             this.bloodType2 = bloodType2;
@@ -67,7 +67,7 @@ public class DispatchOrderDto {
                     .reporterName(reporterName)
                     .reporterPhone(reporterPhone)
                     .reportDetails(reportDetails)
-                    .hospital(hospital)
+                    .hospitalName(hospitalName)
                     .chronicDisease(chronicDisease)
                     .bloodType1(bloodType1)
                     .bloodType2(bloodType2)
@@ -82,7 +82,7 @@ public class DispatchOrderDto {
     @Getter
     @NoArgsConstructor
     public static class Response {
-        private int dispatchOrderId;
+        private Long dispatchOrderId;
         private String firestation;
         private String doroLocationInfo;
         private String jibunLocationInfo;
@@ -91,7 +91,9 @@ public class DispatchOrderDto {
         private String reporterName;
         private String reporterPhone;
         private String reportDetails;
-        private String hospital;
+        private String hospitalName;
+        private String gender;
+        private String birth;
         private String chronicDisease;
         private String bloodType1;
         private String bloodType2;
@@ -109,7 +111,9 @@ public class DispatchOrderDto {
             this.reporterName = dispatchOrder.getReporterName();
             this.reporterPhone = dispatchOrder.getReporterPhone();
             this.reportDetails = dispatchOrder.getReportDetails();
-            this.hospital = dispatchOrder.getHospital();
+            this.hospitalName = dispatchOrder.getHospitalName();
+            this.gender = dispatchOrder.getGender();
+            this.birth = dispatchOrder.getBirth();
             this.chronicDisease = dispatchOrder.getChronicDisease();
             this.bloodType1 = dispatchOrder.getBloodType1();
             this.bloodType2 = dispatchOrder.getBloodType2();

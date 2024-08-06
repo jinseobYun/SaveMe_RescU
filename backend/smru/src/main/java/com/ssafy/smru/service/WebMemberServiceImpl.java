@@ -105,4 +105,18 @@ public class WebMemberServiceImpl implements WebMemberService {
                 .collect(Collectors.toList());
     }
 
+    // 토큰에서 조회
+    @Override
+    public String getMembername(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberId = authentication.getName();
+//        System.out.println("1. 토큰에서 멤버아이디값 : " + memberId);
+        WebMember webmember = webMemberRepository.findByMemberId(memberId)
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 아이디 입니다 "));
+        System.out.println(webmember.getMemberId());
+        System.out.println(webmember.getName());
+        return webmember.getName();
+
+    }
+
 }
