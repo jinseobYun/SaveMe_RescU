@@ -38,3 +38,5 @@ out/
 
 security.properties
 openAPI.properties
+elastic.properties
+redis.properties

@@ -13,6 +13,7 @@ public interface AppMemberService {
     AppMemberDto.Response getMemberByMemberId(String memberId);
     boolean checkPasswordMatchMemberId(String memberId, String currentPassword);
     boolean checkPhoneNumberDuplicate(String phone);
-
+    AppMemberDto.Response getMemberByPhoneNumberAndMemberName(String phoneNumber, String memberName);
+    AppMemberDto.Response getMemberByPhoneNumberAndMemberIdAndMemberName(String phoneNumber, String memberId, String memberName);
     void updatePhoneNumber(String currentUserName, String phone);
 }

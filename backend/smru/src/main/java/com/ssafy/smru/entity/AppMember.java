@@ -2,13 +2,16 @@ package com.ssafy.smru.entity;
 
 import com.ssafy.smru.entity.app.MedicalInformation;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -30,7 +33,7 @@ public class AppMember implements UserDetails {
     private String memberName;
 
     @Column
-    private Date birth;
+    private LocalDate birth;
 
     @Column
     private boolean gender;
@@ -64,7 +67,7 @@ public class AppMember implements UserDetails {
 
 
     @Builder
-    public AppMember(Long appMemberId, String memberId, String password, String memberName, Date birth, boolean gender, String phone, boolean deleted, MedicalInformation medicalInformation) {
+    public AppMember(Long appMemberId, String memberId, String password, String memberName, LocalDate birth, boolean gender, String phone, boolean deleted, MedicalInformation medicalInformation) {
         this.appMemberId = appMemberId;
         this.memberId = memberId;
         this.password = password;

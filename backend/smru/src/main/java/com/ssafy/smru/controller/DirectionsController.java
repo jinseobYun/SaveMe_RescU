@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 
 
 @RestController
-@RequestMapping("/api/v1/app")
+@RequestMapping("/api/v1/web")
 @RequiredArgsConstructor
 public class DirectionsController {
 

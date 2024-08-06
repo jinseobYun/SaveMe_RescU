@@ -4,7 +4,7 @@ import com.ssafy.smru.dto.HospitalDTO;
 import com.ssafy.smru.entity.DutyInfo;
 import com.ssafy.smru.repository.DutyInfoRepository;
 import com.ssafy.smru.util.DistanceUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -13,17 +13,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class DutyInfoService {
 
-    @Autowired
-    private DutyInfoRepository dutyInfoRepository;
+    private final DutyInfoRepository dutyInfoRepository;
 
     public List<HospitalDTO> findNearestHospitals(String lat, String lon) {
         BigDecimal latitude = new BigDecimal(lat);
         BigDecimal longitude = new BigDecimal(lon);
-
         List<DutyInfo> hospitals = dutyInfoRepository.findAll();
-
         return hospitals.stream()
                 .sorted(Comparator.comparing(h -> DistanceUtil.calculateDistance(
                         latitude, 
@@ -33,14 +31,13 @@ public class DutyInfoService {
                 )))
                 .limit(5)
                 .map(h -> new HospitalDTO(
-                        h.getRnum(),
+                        h.getHpid(),
                         h.getDutyAddr(),
                         h.getDutyEmcls(),
                         h.getDutyEmclsName(),
                         h.getDutyName(),
                         h.getDutyTel1(),
                         h.getDutyTel3(),
-                        h.getHpid(),
                         h.getPhpid(),
                         h.getLatitude(),
                         h.getLongitude(),

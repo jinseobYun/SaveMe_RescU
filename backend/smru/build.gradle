@@ -41,14 +41,19 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2' //스웨거
-	implementation 'com.google.code.gson:gson:2.10.1'
-	// https://mvnrepository.com/artifact/io.springfox/springfox-swagger2
-	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '3.0.0'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis' // redis
+	implementation 'org.springframework:spring-context-support'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml' // xml 파싱
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 
 
 	// JSON
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+
 
 	implementation 'org.springframework.boot:spring-boot-starter-websocket' // 시그널링 서버 구축을 위한 websocket
 
