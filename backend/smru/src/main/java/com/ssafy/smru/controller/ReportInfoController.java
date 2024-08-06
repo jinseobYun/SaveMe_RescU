@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/v1/app")
+@RequestMapping("api/v1/web")
 @RequiredArgsConstructor
 public class ReportInfoController {
 
