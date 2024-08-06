@@ -27,7 +27,9 @@ export const updatePasswordAsync = createAsyncThunk(
 //쿠키에서 로그인 정보 로드
 const loadMemberCookie = () => {
   const memberInfo = getCookie("member");
-  return memberInfo ? JSON.parse(memberInfo) : null;
+  return memberInfo;
+  // 수정 필요 코드 ★★★★★★★★★★★★★★★★★★★★★★★★★★
+  // return memberInfo ? JSON.parse(memberInfo) : null;
 
   //닉네임 처리 수정전 ★★★★★★★★★★★★★★★★★★
   if (memberInfo && memberInfo.memberId) {

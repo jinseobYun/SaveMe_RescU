@@ -2,6 +2,7 @@ import { io } from 'socket.io-client';
 
 export let socket = io.connect(import.meta.env.VITE_SOCKET_SERVER_URL, {
   transports: ['websocket'],
+  autoConnect: false,
 });
 
 export let myStream;
