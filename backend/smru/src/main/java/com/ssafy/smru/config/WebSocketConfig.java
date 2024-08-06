@@ -21,7 +21,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/signaling")// 클라이언트 접속시 엔드포인트
+        registry.addEndpoint("/api/signaling")// 클라이언트 접속시 엔드포인트
                 .setAllowedOriginPatterns("*") // CORS
                 .withSockJS(); // 브라우저에서 WebSocket 을 지원하지 않는 경우 sockjs 사용함
     }
