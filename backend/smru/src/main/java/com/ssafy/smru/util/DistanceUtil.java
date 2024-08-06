@@ -19,6 +19,7 @@ public class DistanceUtil {
                         .multiply(BigDecimal.valueOf(Math.sin(dLon.divide(BigDecimal.valueOf(2), MATH_CONTEXT).doubleValue())).pow(2)));
 
         BigDecimal c = BigDecimal.valueOf(2).multiply(BigDecimal.valueOf(Math.atan2(Math.sqrt(a.doubleValue()), Math.sqrt(BigDecimal.ONE.subtract(a, MATH_CONTEXT).doubleValue()))));
+
         return EARTH_RADIUS.multiply(c, MATH_CONTEXT).setScale(2, RoundingMode.HALF_UP);
 
     }

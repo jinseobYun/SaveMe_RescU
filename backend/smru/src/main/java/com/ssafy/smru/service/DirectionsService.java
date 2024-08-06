@@ -40,12 +40,12 @@ public class DirectionsService {
     }
 
     // 하나의 출발지와 하나의 도착지상의 경로를 불러오는 API
-    public Mono<String> getDirections(String latitudeA, String longtitudeA, String latitudeB, String longtitudeB) {
+    public Mono<String> getDirections(String latitudeA, String longitudeA, String latitudeB, String longitudeB) {
         // UriComponentsBuilder 로 httpUrl 을 생성 후 쿼리 파라미터 추가
         // 완성된 URI를 문자열로 만듦
         String uriString = UriComponentsBuilder.fromHttpUrl(baseURL + onePath)
-                .queryParam("origin", longtitudeA + "," + latitudeA)
-                .queryParam("destination", longtitudeB + "," + latitudeB)
+                .queryParam("origin", longitudeA + "," + latitudeA)
+                .queryParam("destination", longitudeB + "," + latitudeB)
                 .queryParam("priority", "TIME")
                 .toUriString();
 

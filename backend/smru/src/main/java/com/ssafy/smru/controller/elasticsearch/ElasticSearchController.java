@@ -23,13 +23,7 @@ public class ElasticSearchController {
     @GetMapping
     public ResponseEntity<?> searchByMedicineName(@RequestParam String medicineName) {
         try {
-            System.out.println("------------------inES-------------------");
-
-            Long start = System.currentTimeMillis();
             List<MedicineEs> medicineList = elasticSearchService.searchByMedicineName(medicineName);
-            Long end = System.currentTimeMillis();
-            System.out.println(end-start);
-
             return new ResponseEntity<>(medicineList,HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

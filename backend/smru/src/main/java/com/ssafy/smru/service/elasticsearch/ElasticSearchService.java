@@ -1,7 +1,7 @@
 package com.ssafy.smru.service.elasticsearch;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
 import com.ssafy.smru.entity.app.MedicineEs;
 import com.ssafy.smru.repository.app.MedicineRepository;
 import com.ssafy.smru.repository.elasticsearch.ElasticSearchRepository;
@@ -31,9 +31,8 @@ public class ElasticSearchService {
 
     public NativeQuery createNativeQuery(String keyword) {
         BoolQuery boolQuery = BoolQuery.of(b -> b
-                .should(MatchQuery.of(m -> m.field("medicine_name").query(keyword))._toQuery())
-//                .should(MatchQuery.of(m -> m.field("medicine_name.nori").query(keyword))._toQuery())
-                .should(MatchQuery.of(m -> m.field("medicine_name.ngram").query(keyword))._toQuery())
+                .should(TermQuery.of(t -> t.field("medicine_name").value(keyword))._toQuery())
+                .should(TermQuery.of(t -> t.field("medicine_name.ngram").value(keyword))._toQuery())
         );
 
         return NativeQuery.builder()
@@ -47,16 +46,18 @@ public class ElasticSearchService {
         List<MedicineEs> contentList = searchHits.getSearchHits().stream()
                 .map(SearchHit::getContent)
                 .collect(Collectors.toList());
+        for (MedicineEs medicineEs : contentList) {
+            System.out.println(medicineEs.getMedicineId());
+            System.out.println(medicineEs.getMedicineName());
+        }
+
         return contentList;
     }
 
 
     public List<MedicineEs> searchByMedicineIds(List<Long> medicineIds) {
         List<MedicineEs> result = (List<MedicineEs>) elasticSearchRepository.findAllById(medicineIds);
-        for (MedicineEs medicineEs : result) {
-            System.out.println(medicineEs.getMedicineName());
-            System.out.println(medicineEs.getMedicineId());
-        }
+
         return result;
     }
 }
