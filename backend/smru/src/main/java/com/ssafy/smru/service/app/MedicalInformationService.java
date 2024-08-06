@@ -109,8 +109,6 @@ public class MedicalInformationService {
         MedicalInformation medicalInformation = member.getMedicalInformation();
         System.out.println(medicalInformation.getMedicalInformationId());
 
-
-
         List<DrugInfo> drugInfos = medicalInformation.getDrugInfos();
         List<MedCdi> medCdis = medicalInformation.getMedCdis();
         for (MedCdi medCdi : medCdis) {

@@ -1,51 +1,59 @@
 package com.ssafy.smru.entity;
 
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import jakarta.persistence.*;
 import java.sql.Timestamp;
 
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "dispatch_order")
 public class DispatchOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int dispatchOrderId;
+    private Long dispatchOrderId;
 
-    @Column(nullable = false)
+    @Column
     private String firestation;
 
-    @Column(nullable = false)
+    @Column
     private String doroLocationInfo;
 
-    @Column(nullable = false)
+    @Column
     private String jibunLocationInfo;
 
-    @Column(nullable = false)
+    @Column
     private int emergencyType;
 
-    @Column(nullable = false)
+    @Column
     private Timestamp reportedTime;
 
-    @Column(nullable = false)
+    @Column
     private String reporterName;
 
-    @Column(nullable = false)
+    @Column
     private String reporterPhone;
 
     @Column
     private String reportDetails;
 
     @Column
-    private String hospital;
+    private String createdBy;
 
     @Column
-    private String chronicDisease;
+    private String hospitalName;
+
+    @Column
+    private String memberName;
+
+    @Column
+    private String gender;
+
+    @Column
+    private String birth;
 
     @Column
     private String bloodType1;
@@ -54,19 +62,21 @@ public class DispatchOrder {
     private String bloodType2;
 
     @Column
+    private String chronicDisease;
+
+    @Column
     private String drugInfos;
 
     @Column
     private String otherInfo;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "web_member_id", nullable = false)
     private WebMember webMember;
 
-    private String createdBy;
-
     @Builder
-    public DispatchOrder(int dispatchOrderId, String firestation, String doroLocationInfo, String jibunLocationInfo, int emergencyType, Timestamp reportedTime, String reporterName, String reporterPhone, String reportDetails, String hospital, String chronicDisease, String bloodType1, String bloodType2, String drugInfos, String otherInfo, WebMember webMember, String createdBy) {
+    public DispatchOrder(Long dispatchOrderId, String firestation, String doroLocationInfo, String jibunLocationInfo, int emergencyType, Timestamp reportedTime, String reporterName, String reporterPhone, String reportDetails, String createdBy, String hospitalName, String memberName, String gender, String birth, String bloodType1, String bloodType2, String chronicDisease, String drugInfos, String otherInfo, WebMember webMember) {
         this.dispatchOrderId = dispatchOrderId;
         this.firestation = firestation;
         this.doroLocationInfo = doroLocationInfo;
@@ -76,24 +86,50 @@ public class DispatchOrder {
         this.reporterName = reporterName;
         this.reporterPhone = reporterPhone;
         this.reportDetails = reportDetails;
-        this.hospital = hospital;
-        this.chronicDisease = chronicDisease;
+        this.createdBy = createdBy;
+        this.hospitalName = hospitalName;
+        this.memberName = memberName;
+        this.gender = gender;
+        this.birth = birth;
         this.bloodType1 = bloodType1;
         this.bloodType2 = bloodType2;
+        this.chronicDisease = chronicDisease;
         this.drugInfos = drugInfos;
         this.otherInfo = otherInfo;
         this.webMember = webMember;
-        this.createdBy = createdBy;
+    }
+
+    // Setter 메서드 추가
+    public void setHospitalName(String hospitalName) {
+        this.hospitalName = hospitalName;
+    }
+
+    public void setMemberName(String memberName){this.memberName=memberName;}
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setBirth(String birth) {
+        this.birth = birth;
+    }
+
+    public void setBloodType1(String bloodType1) {
+        this.bloodType1 = bloodType1;
+    }
+
+    public void setBloodType2(String bloodType2) {
+        this.bloodType2 = bloodType2;
+    }
+
+    public void setChronicDisease(String chronicDisease) {
+        this.chronicDisease = chronicDisease;
+    }
+
+    public void setDrugInfos(String drugInfos) {
+        this.drugInfos = drugInfos;
+    }
+
+    public void setOtherInfo(String otherInfo) {
+        this.otherInfo = otherInfo;
     }
 }
-
-
-//    public void setSecondInfo(SecondDispatchOrderDto.Request dto) {
-//        this.hospital = dto.getHospitalName();
-//        this.bloodType1 = dto.getMedicalInformation().getBloodType1();
-//        this.bloodType2 = dto.getMedicalInformation().getBloodType2();
-//        this.otherInfo = dto.getMedicalInformation().getOtherInfo();
-//        this.chronicDisease = ChronicDiseaseUtil.toString(dto.getMedicalInformation().getChronicDisease());
-//        this.drugInfos = DrugUtil.toString(dto.getMedicalInformation().getDrugInfos());
-//    }
-

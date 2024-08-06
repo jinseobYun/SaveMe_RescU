@@ -42,7 +42,9 @@ public class AppMemberController {
         if(dto.getPassword() == null || dto.getPassword().trim().equals("")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("아이디 또는 비밀번호를 입력하세요");
         }
+
         log.info("로그인 요청");
+
         try {
             return ResponseEntity.ok(appMemberService.login(dto));
         } catch (BadCredentialsException e) {

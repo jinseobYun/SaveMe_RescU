@@ -24,6 +24,7 @@ public class MedicalInformationController {
     public ResponseEntity<?> getMedicalInformation() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
+
         try {
             MedicalInformationDto.Response  response = medicalInformationService.getMedicalInformationByMemberId(memberId);
             return ResponseEntity.ok(response);
