@@ -10,11 +10,11 @@ public class DispatchOrderListDto {
     @Getter
     @NoArgsConstructor
     public static class Response {
-        private int dispatchOrderId;
+        private Long dispatchOrderId;
         private Timestamp reportedTime;
         private String createdBy;
 
-        public Response(int dispatchOrderId, Timestamp reportedTime, String createdBy) {
+        public Response(Long dispatchOrderId, Timestamp reportedTime, String createdBy) {
             this.dispatchOrderId = dispatchOrderId;
             this.reportedTime = reportedTime;
             this.createdBy = createdBy;

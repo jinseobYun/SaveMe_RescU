@@ -123,8 +123,6 @@ public class MedicalInformationService {
         }
         MedicalInformation medicalInformation = member.getMedicalInformation();
 
-
-
         List<DrugInfo> drugInfos = medicalInformation.getDrugInfos();
         List<MedCdi> medCdis = medicalInformation.getMedCdis();
         for (MedCdi medCdi : medCdis) {

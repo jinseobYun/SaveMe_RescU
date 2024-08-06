@@ -14,4 +14,6 @@ public interface WebMemberService {
    void changePassword(String memberId, WebPasswordChangeDto.Request dto);
 
    List<WebMemberDto.Response> getAllMembers();
+
+    public String getMembername();
 }
