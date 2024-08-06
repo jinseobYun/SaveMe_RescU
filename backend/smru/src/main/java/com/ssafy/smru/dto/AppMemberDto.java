@@ -3,7 +3,7 @@ package com.ssafy.smru.dto;
 import com.ssafy.smru.entity.AppMember;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class AppMemberDto {
     @Getter
@@ -14,14 +14,14 @@ public class AppMemberDto {
         private String memberId;
         private String password;
         private String memberName;
-        private Date birth;
+        private LocalDate birth;
         private boolean gender;
         private String phone;
         private boolean deleted;
         private MedicalInfoDto medicalInfoDto;
 
         @Builder
-        public Request(Long appMemberId, String memberId, String password, String memberName, Date birth, boolean gender, String phone, boolean deleted, MedicalInfoDto medicalInfoDto) {
+        public Request(Long appMemberId, String memberId, String password, String memberName, LocalDate birth, boolean gender, String phone, boolean deleted, MedicalInfoDto medicalInfoDto) {
             this.appMemberId = appMemberId;
             this.memberId = memberId;
             this.password = password;
@@ -58,6 +58,7 @@ public class AppMemberDto {
         private String memberId;
         private String memberName;
         private String phone;
+        private LocalDate birth;
 
         public static Response fromEntity(AppMember member) {
             return Response.builder()
@@ -65,6 +66,7 @@ public class AppMemberDto {
                     .memberId(member.getMemberId())
                     .memberName(member.getMemberName())
                     .phone(member.getPhone())
+                    .birth(member.getBirth())
                     .build();
         }
     }

@@ -51,6 +51,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<String> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
-        return new ResponseEntity<>("입력값을 확인하세요 " + ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("입력값을 확인하세요 " , HttpStatus.BAD_REQUEST);
     }
 }
