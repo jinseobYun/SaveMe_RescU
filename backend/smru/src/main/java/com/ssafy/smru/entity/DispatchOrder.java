@@ -26,7 +26,7 @@ public class DispatchOrder {
     private String jibunLocationInfo;
 
     @Column
-    private int emergencyType;
+    private String emergencyType;
 
     @Column
     private Timestamp reportedTime;
@@ -76,7 +76,7 @@ public class DispatchOrder {
     private WebMember webMember;
 
     @Builder
-    public DispatchOrder(Long dispatchOrderId, String firestation, String doroLocationInfo, String jibunLocationInfo, int emergencyType, Timestamp reportedTime, String reporterName, String reporterPhone, String reportDetails, String createdBy, String hospitalName, String memberName, String gender, String birth, String bloodType1, String bloodType2, String chronicDisease, String drugInfos, String otherInfo, WebMember webMember) {
+    public DispatchOrder(Long dispatchOrderId, String firestation, String doroLocationInfo, String jibunLocationInfo, String emergencyType, Timestamp reportedTime, String reporterName, String reporterPhone, String reportDetails, String createdBy, String hospitalName, String memberName, String gender, String birth, String bloodType1, String bloodType2, String chronicDisease, String drugInfos, String otherInfo, WebMember webMember) {
         this.dispatchOrderId = dispatchOrderId;
         this.firestation = firestation;
         this.doroLocationInfo = doroLocationInfo;
@@ -98,6 +98,7 @@ public class DispatchOrder {
         this.otherInfo = otherInfo;
         this.webMember = webMember;
     }
+
 
     // Setter 메서드 추가
     public void setHospitalName(String hospitalName) {
