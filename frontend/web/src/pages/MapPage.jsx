@@ -15,7 +15,11 @@ export default function Map() {
   );
 
   // 마커 선택 수정필요
-  const [showAllMarker, setShowAllMarker] = useState(false);
+  const [showAllMarkers, setShowAllMarkers] = useState(true);
+
+  const handleShowAllMarkers = () => {
+    setShowAllMarkers(!showAllMarkers);
+  };
 
   // 호출용 mock lat, lng
   const latlon = {
@@ -48,54 +52,27 @@ export default function Map() {
     };
   }, []);
 
-  // Mock
-  // const markerPositions = [
-  //   [latlng.lat, latlng.lng],
-  // ];
-  const markerPositions = items.map((item) => [item.latitude, item.longitude]);
-
-  // api 연결 이후
-
-  // Mock
-  const emergencyItems = [
-    {
-      name: "대전 응급 의료원",
-      address: "대전광역시 유성구 한밭대로",
-      details: "응급실 가용병상 : 3 | 중증질환 수용가능정보 1",
-      distance: 10,
-      time: 5,
-      phone: "054-123-1123",
-    },
-    {
-      name: "대전 응급 의료원",
-      address: "대전광역시 유성구 한밭대로",
-      details: "응급실 가용병상 : 3 | 중증질환 수용가능정보 1",
-      distance: 10,
-      time: 5,
-      phone: "054-123-1123",
-    },
-    {
-      name: "대전 응급 의료원",
-      address: "대전광역시 유성구 한밭대로",
-      details: "응급실 가용병상 : 3 | 중증질환 수용가능정보 1",
-      distance: 10,
-      time: 5,
-      phone: "054-123-1123",
-    },
-  ];
+  // 전체 마커 on/off용 마커지정
+  const markerPositions = showAllMarkers
+    ? items.map((item) => [item.latitude, item.longitude])
+    : selectedHospital
+    ? [[selectedHospital.latitude, selectedHospital.longitude]]
+    : [];
 
   return (
     <div className="map">
       <div className="map-left-side">
         <div className="controls">
-          <button>환지위치로 센터조정</button>
-          <button>전체마커표시</button>
+          <button className="mappage-btn" onClick={handleShowAllMarkers} >자세히보기</button>
         </div>
-        {/* <EmergencyList items={emergencyItems} /> */}
         <EmergencyList items={items} />
       </div>
       <div className="kakao-map-container">
-        <KakaoMap markerPositions={markerPositions} route={route} size={[70, 100]} />
+        <KakaoMap
+          markerPositions={markerPositions}
+          route={route}
+          size={[70, 100]}
+        />
       </div>
     </div>
   );
