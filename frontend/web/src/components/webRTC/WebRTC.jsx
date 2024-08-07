@@ -16,10 +16,10 @@ import MicNoneIcon from "@mui/icons-material/MicNone";
 import MicOffIcon from "@mui/icons-material/MicOff";
 import CallEndIcon from "@mui/icons-material/CallEnd";
 import Button from "../elements/Button";
-
 import "./WebRTC.css";
 
-let roomId = 1;
+let roomId;
+
 const WebRTC = () => {
   const [muted, setMuted] = useState(true);
   const [cameraOff, setCameraOff] = useState(true);
@@ -28,14 +28,11 @@ const WebRTC = () => {
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
 
-  // 테스트용
-  const localVideoRef2 = useRef(null);
-
   const handleMuteClick = () => {
     const enabled = !muted;
     myStream.getAudioTracks()[0].enabled = enabled;
     setMuted(enabled);
-    console.log("음소거!!")
+    console.log("음소거!!");
   };
 
   const handleCameraClick = () => {
@@ -48,7 +45,11 @@ const WebRTC = () => {
     initSocketConnection();
     getCameras().then(setCameras);
     initCall();
-    joinRoom(roomId, "userID");
+    // 방 생성
+    roomId = Math.floor(Math.random() * 100000); // 랜덤 방 번호 생성
+    roomId = 1; // 랜덤 방 번호 생성
+    joinRoom(roomId);
+    
     window.addEventListener("addStream", (event) => {
       remoteVideoRef.current.srcObject = event.detail.stream;
     });
@@ -61,9 +62,6 @@ const WebRTC = () => {
   const initCall = async () => {
     const stream = await getMedia();
     localVideoRef.current.srcObject = stream;
-
-    // 임시 테스트용
-    localVideoRef2.current.srcObject = stream;
     makeConnection();
   };
 
@@ -74,15 +72,9 @@ const WebRTC = () => {
 
   return (
     <VideoContainer>
-      {/* remoteVideo : 신고자 화면 (크게 출력 해야할 화면 ) */}
       <div className="remote-position">
-        {/* 테스트용 */}
-        <Video ref={localVideoRef2} muted autoPlay playsInline />
-
-        {/* 실제사용 */}
-        {/* <Video ref={remoteVideoRef} muted autoPlay playsInline /> */}
+        <Video ref={remoteVideoRef} autoPlay playsInline />
         <div className="local-position">
-          {/* LocalVideo : 신고접수대원 화면 (작게 출력 ) */}
           <LocalVideo ref={localVideoRef} muted autoPlay playsInline />
         </div>
       </div>
@@ -99,11 +91,11 @@ const WebRTC = () => {
             $radius="40px"
             $border="none"
           >
-            {cameraOff ? <VideocamIcon style={{ fontSize: '36px' }} /> : <VideocamOffIcon style={{ fontSize: '36px' }} />}
+            {cameraOff ? <VideocamIcon style={{ fontSize: "36px" }} /> : <VideocamOffIcon style={{ fontSize: "36px" }} />}
           </Button>
         </div>
         <div className="rtc-btn">
-          <Button 
+          <Button
             _onClick={onClickCallEnd}
             $bg={{
               default: "var(--button-red-color)",
@@ -113,7 +105,7 @@ const WebRTC = () => {
             $height="70px"
             $radius="40px"
           >
-            <CallEndIcon style={{ fontSize: '36px' }} />
+            <CallEndIcon style={{ fontSize: "36px" }} />
           </Button>
         </div>
         <div className="rtc-btn">
@@ -128,7 +120,7 @@ const WebRTC = () => {
             $radius="40px"
             $border="none"
           >
-            {muted ? <MicNoneIcon style={{ fontSize: '36px' }}/> : <MicOffIcon style={{ fontSize: '36px' }} />}
+            {muted ? <MicNoneIcon style={{ fontSize: "36px" }} /> : <MicOffIcon style={{ fontSize: "36px" }} />}
           </Button>
         </div>
       </div>
@@ -145,8 +137,6 @@ const Video = styled.video`
   width: 100%;
   height: 100%;
   background-color: white;
-   /* transform 좌우반전 적용 */
-  transform: scaleX(-1);
 `;
 
 const LocalVideo = styled.video`
