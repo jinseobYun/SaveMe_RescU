@@ -7,22 +7,32 @@ import useForm from "@/hooks/useForm";
 import { updateUserPwd } from "@/api/userApi";
 import useFormInputStore from "@/store/useFormInputStore";
 import { ChangePwValidation } from "@/util/validation";
+import { errorAlert } from "@/util/notificationAlert";
+
 const ChangePwPage = () => {
   const navigate = useNavigate();
-  const { clearInputs } = useFormInputStore();
+  const { clearInputs, inputs, updateInputs } = useFormInputStore();
   const { values, errors, isLoading, handleChange, handleSubmit } = useForm({
     initialValues: { newPassword: "", newPasswordConfirm: "" },
     onSubmit: (values) => {
-      //TODO - api test
+      // const data = {
+      //   phoneNumber: inputs.phoneNumber,
+      //   verifyCode: inputs.verifyCode,
+      //   newPassword: values.newPassword,
+      //   newPasswordConfirm: values.newPasswordConfirm,
+      //   memberId: inputs.memberId,
+      //   memberName: inputs.memberName,
+      //   verifyCode: inputs.verifyCode,
+      // };
       const data = {
-        phoneNumber,
-        verifyCode,
-        newPassword,
-        newPasswordConfirm,
-        memberId,
-        memberName,
+        ...inputs,
+        newPassword: values.newPassword,
+        newPasswordConfirm: values.newPasswordConfirm,
       };
+      console.log(data);
+      //FIXME - 서버 403 forbidden
       updateUserPwd(
+        "find",
         data,
         (response) => {
           if (response.status === 200) {
@@ -42,8 +52,6 @@ const ChangePwPage = () => {
   const [isTextOnce, setIsTextOnce] = useState(false);
   useEffect(() => {
     if (isTextOnce != (Object.keys(errors).length !== 0)) setIsTextOnce(true);
-    console.log(values);
-    console.log(errors);
   }, [errors]);
   return (
     <>

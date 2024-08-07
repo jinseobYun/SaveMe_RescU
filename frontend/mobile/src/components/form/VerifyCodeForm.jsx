@@ -42,31 +42,37 @@ const useSSNFields = (setIsVerify) => {
         nextSibling.focus();
       }
     }
+  };
+  useEffect(() => {
     const code = Object.values(ssnValues).join("");
-    console.log(ssnValues);
-    console.log(code);
 
     if (code.length === numOfFields) {
-      console.log("code");
       setIsVerify(true);
     } else setIsVerify(false);
-  };
+  }, [ssnValues]);
   const handleKeyDown = (e) => {
     const { name } = e.target;
     const fieldIndex = parseInt(name.split("-")[1], 10);
 
     if (e.key === "Backspace") {
       setValue((prevValues) => {
-        const newValues = { ...prevValues, [`n${fieldIndex}`]: "" };
+        const newValues = { ...prevValues };
 
-        if (fieldIndex > 1 && !prevValues[`n${fieldIndex - 1}`]) {
-          const previousSibling = document.querySelector(
-            `input[name=ssn-${fieldIndex - 1}]`
-          );
-          if (previousSibling !== null) {
-            previousSibling.focus();
+        if (newValues[`n${fieldIndex}`] === "") {
+          // 현재 필드가 이미 비어있을 때 이전 필드로 이동
+          if (fieldIndex > 1) {
+            const previousSibling = document.querySelector(
+              `input[name=ssn-${fieldIndex - 1}]`
+            );
+            if (previousSibling !== null) {
+              previousSibling.focus();
+            }
           }
+        } else {
+          // 현재 필드의 값을 지움
+          newValues[`n${fieldIndex}`] = "";
         }
+
         return newValues;
       });
     }
@@ -79,7 +85,7 @@ const useSSNFields = (setIsVerify) => {
 };
 
 const VerifyCodeForm = () => {
-  const { inputs, clearInputs } = useFormInputStore();
+  const { inputs, clearInputs, updateInputs } = useFormInputStore();
   const navigate = useNavigate();
   const location = useLocation();
   const { type } = location.state || {};
@@ -111,12 +117,12 @@ const VerifyCodeForm = () => {
 
   const onClickResend = () => {
     reqVerifyCode(
-      { phoneNumber: inputs.phoneNumber },
+      inputs.phoneNumber,
       (response) => {
         console.log(response);
         if (response.status === 200) {
-          //FIXME - 인증코드 저장 없애기
-          updateInputs({ temporyCode: response.data });
+          setRemainingTime(initialTime);
+          updateInputs({ verifyCode: response.data + "" });
         } else {
           console.log(response);
         }
@@ -125,12 +131,10 @@ const VerifyCodeForm = () => {
         console.log(error);
       }
     );
-    setRemainingTime(initialTime);
   };
 
-  const onClickBtn = () => {
-    // clearInputs();
-
+  const onClickBtn = (e) => {
+    e.preventDefault();
     const code = Object.values(ssnValues).join("");
     const data = {
       phoneNumber: inputs.phoneNumber,
@@ -138,17 +142,19 @@ const VerifyCodeForm = () => {
     };
     switch (type) {
       case "findid":
-        data.memberName = inputs.name;
+        data.memberName = inputs.memberName;
         break;
       case "findpassword":
-        data.memberId = inputs.id;
+        data.memberName = inputs.memberName;
+        data.memberId = inputs.memberId;
         break;
     }
-    //TODO - api 연결
+    console.log(data);
     checkVerifyCode(
+      type,
       data,
-      ({ data }) => {
-        if (data.status === "200") {
+      (response) => {
+        if (response.status === 200) {
           switch (type) {
             case "signup":
               navigate("/signup/logininfo");
@@ -157,7 +163,7 @@ const VerifyCodeForm = () => {
               clearInputs();
               Swal.fire({
                 title: "인증되었습니다. 회원님의 아이디는 ",
-                text: `${data.memberName}입니다`,
+                text: `${response.data}입니다`,
                 confirmButtonColor: "#FFCC70",
                 cancelButtonColor: "#FFFCE3",
                 confirmButtonText: "로그인하러 가기",

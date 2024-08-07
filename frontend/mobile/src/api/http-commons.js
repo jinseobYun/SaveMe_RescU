@@ -79,7 +79,7 @@ function loginAxios() {
               notificationAlert("error", "실패하셨습니다", () => {});
             }
             return new Promise(() => {});
-          //TODO - error 코드 별로 분기 만들기
+
           default:
             return Promise.reject(error);
         }

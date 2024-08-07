@@ -21,15 +21,24 @@ async function checkIdDuplication(id, success, fail) {
 }
 
 async function reqVerifyCode(phoneNumber, success, fail) {
-  await http.post(`/members/phone-verify-code-req`, { phoneNumber: phoneNumber }).then(success).catch(fail);
+  await http
+    .post(`/members/phone-verify-code-req`, { phoneNumber: phoneNumber })
+    .then(success)
+    .catch(fail);
 }
 
-async function checkVerifyCode(data, success, fail) {
-  await http.post(`/members/phone-verify-code-check`, data).then(success).catch(fail);
+async function checkVerifyCode(type, data, success, fail) {
+  let typeurl = "";
+  if (type === "findid") {
+    typeurl = "-id";
+  } else if (type === "findpassword") {
+    typeurl = "-pw";
+  }
+  await http
+    .post(`/members/phone-verify-code${typeurl}-check`, data)
+    .then(success)
+    .catch(fail);
 }
-//TODO - 아이디 찾기
-//TODO - 비밀번호 찾기
-//TODO - 비밀번호 변경
 
 async function updateUserPwd(type, data, success, fail) {
   switch (type) {

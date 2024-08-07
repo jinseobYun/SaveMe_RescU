@@ -27,7 +27,7 @@ const SignupUserInfoForm = () => {
         (response) => {
           console.log(response);
           if (response.status === 200) {
-            navigate("/verification", { type: "signup" });
+            navigate("/verification", { state: { type: "signup" } });
             //FIXME - 인증코드 저장 없애기
             updateInputs({ temporyCode: response.data });
           } else {
@@ -51,6 +51,7 @@ const SignupUserInfoForm = () => {
   };
   useEffect(() => {
     if (isTextOnce != (Object.keys(errors).length !== 0)) setIsTextOnce(true);
+    if (inputs.name) setIsTextOnce(true);
   }, [errors]);
   return (
     <>
