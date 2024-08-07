@@ -21,7 +21,6 @@ export const fetchRoute = createAsyncThunk(
       destinationY,
     });
     // 요소 클릭시 데이터
-    console.log(response)
     return response;
   }
 );
@@ -32,12 +31,18 @@ const emergencySlice = createSlice({
     items: [],
     status: "idle",
     error: null,
+    selectedHospital: null,
+    selectedInfo: null,
   },
   reducers: {
-    // 항목에서 선택된 병원 항목 저장 필요 
+    // 항목에서 선택된 병원 항목 저장 필요
+    // 경로 표시를 위한 선택병원의 정보 (destinationX,Y를 포함함.)
     selectHospital: (state, action) => {
       state.selectedHospital = action.payload;
     },
+    selectedInfo: (state, action) => {
+      state.selectedInfo = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -58,6 +63,8 @@ const emergencySlice = createSlice({
       .addCase(fetchRoute.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.route = action.payload;
+        state.selectedInfo = action.payload.routes[0];
+        console.log(state.selectedInfo)
       })
       .addCase(fetchRoute.rejected, (state, action) => {
         state.status = 'failed';
@@ -67,5 +74,5 @@ const emergencySlice = createSlice({
   },
 });
 
-export const { selectHospital } = emergencySlice.actions;
+export const { selectHospital, selectedInfo } = emergencySlice.actions;
 export default emergencySlice.reducer;

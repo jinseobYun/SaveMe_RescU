@@ -6,6 +6,12 @@ const KakaoMap = ({ markerPositions = [], route=null, size = [70, 100] }) => {
   const [markers, setMarkers] = useState([]);
   const container = useRef();
 
+  // 환자 위치임시설정
+  const latlon = {
+    lat: 37.50802,
+    lon: 127.062835,
+  };
+
   useEffect(() => {
     const script = document.createElement("script");
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=c2567af9a6459050759976f4ec47f1c2&autoload=false`;
@@ -13,7 +19,7 @@ const KakaoMap = ({ markerPositions = [], route=null, size = [70, 100] }) => {
 
     script.onload = () => {
       kakao.maps.load(() => {
-        const center = new kakao.maps.LatLng(37.50802, 127.062835);
+        const center = new kakao.maps.LatLng(latlon.lat, latlon.lon);
         const options = {
           center,
           level: 3,
@@ -44,6 +50,22 @@ const KakaoMap = ({ markerPositions = [], route=null, size = [70, 100] }) => {
   useEffect(() => {
     if (kakaoMap === null) return;
 
+
+    // 환자용마커 
+    const patientMarkerPosition = new kakao.maps.LatLng(latlon.lat, latlon.lon);
+    const patientMarkerImage = new kakao.maps.MarkerImage(
+      'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png  ', // 예시 마커 이미지
+      new kakao.maps.Size(44, 44),
+      { offset: new kakao.maps.Point(27, 69) }
+    );
+    const patientMarker = new kakao.maps.Marker({
+      map: kakaoMap,
+      position: patientMarkerPosition,
+      image: patientMarkerImage,
+    });
+
+
+
     const positions = markerPositions.map(
       (pos) => new kakao.maps.LatLng(...pos)
     );
@@ -60,6 +82,12 @@ const KakaoMap = ({ markerPositions = [], route=null, size = [70, 100] }) => {
         (bounds, latlng) => bounds.extend(latlng),
         new kakao.maps.LatLngBounds()
       );
+
+      // 선택시, 환자 위치와 선택위치를 기준으로 bound 설정
+      if (positions.length === 1) {
+        bounds.extend(patientMarkerPosition);
+      }
+
       kakaoMap.setBounds(bounds);
     }
   }, [kakaoMap, markerPositions]);

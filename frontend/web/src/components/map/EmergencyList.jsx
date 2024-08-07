@@ -8,7 +8,7 @@ const EmergencyList = ({ items }) => {
       <div className="list-title">응급실 리스트</div>
       <div className="list-items">
         {items.map((item, index) => (
-          <EmergencyListItem key={index} {...item} />
+          <EmergencyListItem key={index} {...item} index={index} />
         ))}
       </div>
     </div>
