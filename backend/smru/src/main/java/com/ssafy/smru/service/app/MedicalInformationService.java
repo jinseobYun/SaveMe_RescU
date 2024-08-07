@@ -119,7 +119,7 @@ public class MedicalInformationService {
 
         // 의료 정보 없는 경우 예외 처리
         if(member.getMedicalInformation() == null){
-            throw new ResourceNotFoundException("등록된 의료 정보가 없습니다.");
+            return null;
         }
         MedicalInformation medicalInformation = member.getMedicalInformation();
 

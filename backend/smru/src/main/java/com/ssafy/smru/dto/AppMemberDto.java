@@ -59,6 +59,7 @@ public class AppMemberDto {
         private String memberName;
         private String phone;
         private LocalDate birth;
+        private boolean gender;
 
         public static Response fromEntity(AppMember member) {
             return Response.builder()
@@ -66,8 +67,11 @@ public class AppMemberDto {
                     .memberId(member.getMemberId())
                     .memberName(member.getMemberName())
                     .phone(member.getPhone())
+                    .gender(member.isGender())
                     .birth(member.getBirth())
                     .build();
         }
     }
+
+
 }

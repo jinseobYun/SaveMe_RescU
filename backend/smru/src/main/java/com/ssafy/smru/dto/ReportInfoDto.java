@@ -78,7 +78,7 @@ public class ReportInfoDto {
 
 
         // 환자 medicalInfo
-        private MedicalInformationDto.ReportInfoResponse patientMedicalInformation;
+        private MedicalInformationDto.ReportInfoResponse taggingMedicalInformation;
 
         // 신고자 medicalInfo
         private MedicalInformationDto.ReportInfoResponse reporterMedicalInformation;
