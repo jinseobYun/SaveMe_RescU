@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -25,6 +25,7 @@ public class StunServer implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(StunServer.class);
     private DatagramSocket socket;
     private boolean running = true;
+    private final ObjectMapper objectMapper = new ObjectMapper(); // Jackson ObjectMapper
 
     @Override
     public void run() {
@@ -42,11 +43,14 @@ public class StunServer implements Runnable {
                     InetAddress clientAddress = packet.getAddress();
                     int clientPort = packet.getPort();
 
-                    // STUN 응답 생성
-                    String response = "STUN Response: " + clientAddress.getHostAddress() + ":" + clientPort;
-                    byte[] responseBuffer = response.getBytes();
+                    // STUN 응답 생성 (JSON 형식)
+                    Map<String, String> responseMap = new HashMap<>();
+                    responseMap.put("ip", clientAddress.getHostAddress());
+                    responseMap.put("port", String.valueOf(clientPort));
+                    String jsonResponse = objectMapper.writeValueAsString(responseMap); // JSON으로 변환
 
                     // 응답 전송
+                    byte[] responseBuffer = jsonResponse.getBytes();
                     DatagramPacket responsePacket = new DatagramPacket(responseBuffer, responseBuffer.length, clientAddress, clientPort);
                     socket.send(responsePacket);
                     logger.info("< IP 주소 : {} > < Port : {} >", clientAddress, clientPort);
