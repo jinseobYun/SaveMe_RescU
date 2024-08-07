@@ -11,38 +11,6 @@ import { postSecondInfoAsync } from "../../slices/reportSlice";
 // useLocation을 사용해 dispatchOrderId를 전달
 import { useLocation } from "react-router-dom";
 
-// mock
-const mockTagData = {
-  hospitals: ["가장 가까운 응급실 기본값 설정", "응급실 1", "응급실 2"],
-  patientName: "김싸피",
-  gender: "남",
-  birthDate: "2000.01.01",
-  bloodType: "A",
-  rhType: "Rh+",
-  diseases: ["당뇨", "천식"],
-  medications: ["아세트아미노펜 20mg", "약품2 40mg", "약품2 40mg"],
-  specialNotes: ["아세트아미노펜 20mg"],
-  reporterName: "신고자",
-  reporterPhone: "010-1234-5678",
-};
-// mock2
-const mockReporterData = {
-  patientName: "김신고자",
-  gender: "여",
-  birthDate: "1990.12.12",
-  bloodType: "AB",
-  rhType: "Rh-",
-  diseases: ["풍", "ADHD"],
-  medications: [
-    "신고자 의약품1 40mg",
-    "신고자 의약품2 11mg",
-    "신고자 의약품3 10mg",
-  ],
-  specialNotes: ["신고자는신고신고합니다"],
-  reporterName: "신고자",
-  reporterPhone: "010-9876-5432",
-};
-
 const SecondInfo = () => {
   // api 연결
   const dispatch = useDispatch();
@@ -67,16 +35,6 @@ const SecondInfo = () => {
   });
 
   const [hospitalOptions, setHospitalOptions] = useState([]);
-
-  // mock 용 데이터 저장 ★★★★★★★★★★★★★★★★★★★★★★★★
-  // useEffect(() => {
-  //   setHospitalOptions(mockTagData.hospitals);
-  //   setFormData((prevFormData) => ({
-  //     ...prevFormData,
-  //     hospital: mockTagData.hospitals[0],
-  //   }));
-  // }, []);
-  // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
   // api 호출 데이터 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
   useEffect(() => {

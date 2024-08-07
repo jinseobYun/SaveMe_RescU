@@ -3,8 +3,8 @@ import { getReport, postFirstInfo, postSecondInfo } from "../api/reportApi";
 
 export const getReportAsync = createAsyncThunk(
   "getReportAsync",
-  async (memberId) => {
-    return await getReport(memberId);
+  async ({ patientId, reporterId, latitude, longitude }) => {
+    return await getReport( patientId, reporterId, latitude, longitude );
   }
 );
 
@@ -23,26 +23,35 @@ export const postSecondInfoAsync = createAsyncThunk(
 );
 
 const initState = {
-  emergencyType: null,
   latitude: "",
   longitude: "",
   reportedTime: "",
-  hospitals: [],
   reporterName: "",
   reporterPhone: "",
-  reportDetail: "",
-  gwanhals: [],
-  jibunLocationInfo: "",
-  doroLocationInfo: "",
-  medicalInformation: {
-    memberName: "",
-    birth: "",
-    phone: "",
-    chronicDisease: [],
+  rescueTeams: [],
+  lotNumberAddress: "",
+  roadNameAddress: "",
+  patientMedicalInformation: {
+    medicalInformationId: null,
     bloodType1: "",
     bloodType2: "",
+    otherInfo: "",
     drugInfos: [],
-    otherInfo: ""
+    medCdis: [],
+    memberName: "",
+    phoneNumber: "",
+    birth: ""
+  },
+  reporterMedicalInformation: {
+    medicalInformationId: null,
+    bloodType1: "",
+    bloodType2: "",
+    otherInfo: "",
+    drugInfos: [],
+    medCdis: [],
+    memberName: "",
+    phoneNumber: "",
+    birth: ""
   }
 };
 
