@@ -14,8 +14,7 @@ public class SignalingController {
 //    Session control messages : 통신의 초기화, 종료, 그리고 에러 메시지
 //    Network configuration : 외부에서 바라보는 IP와 포트 정보
 //    Media capabilities : 상호 두 단말의 브라우저에서 사용 가능한 코덱, 해상도
-    //camKey : 각 요청하는 캠 key
-    // roomId : 룸 아이디
+
 
     //offer 메시지를 주고 받기 위한 websocket 핸들러
     @MessageMapping("/peer/offer/{camKey}/{roomId}")
