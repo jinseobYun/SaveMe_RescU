@@ -36,13 +36,8 @@ public class WebMemberServiceImpl implements WebMemberService {
 
     @Override
     public int register(WebMemberDto.Request dto) {
-        //--- 1. 회원가입 입력 유효성 검사
-        //validateMemberSignUpDto(dto);
-        //--- 2. id 생성 후 저장
         try {
             WebMember webMember = dto.toEntity();
-            System.out.println(webMember.getMemberId());
-            System.out.println(webMember.getWebMemberId());
             WebMemberRole role = webMemberRoleRepository.findById(1)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid role ID"));
             webMember.changeRole(role);
@@ -60,23 +55,23 @@ public class WebMemberServiceImpl implements WebMemberService {
     @Override
     @Transactional
     public TokenInfo login(WebMemberDto.LoginRequest dto) {
-        //--- 1. ID, 암호화된 PW를 기반으로 Authentication 객체 생성
-        // 이 때 authentication 은 인증 여부를 확인하는 authenticated 값이 false 로 설정되어있음.
+        // 1. 아이디 비번 입력값 유효성 검사
+        if(dto.getMemberId()==null||dto.getPassword()==null||dto.getPassword().trim().isEmpty()||
+        dto.getMemberId().trim().isEmpty()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"아이디 혹은 비번을 입력하지 않으셨습니다.");
+        }
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken("web:"+dto.getMemberId(), dto.getPassword());
-        System.out.println("이게 토큰이야" + token);
-        //--- 2. 실제 검증 과정 (사용자 비밀번호 확인)
-        // authenticate 함수가 실행되면, CustomUserDetailsService 에서 구현한 loadUserByUsername 함수가 자동으로 실행 됨.
+
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(token);
-        System.out.println(1);
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        System.out.println(2);
+
         WebMember webMember = webMemberRepository.findByMemberId(dto.getMemberId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "입력된 정보와 일치하는 사용자가 없습니다."));
-        System.out.println(3);
-        System.out.println(webMember);
-        //--- 3. 인증 정보를 기반으로 JWT 생성
+
         return webJwtProvider.generateToken(authentication, webMember.getWebMemberId(), webMember.getRole().getRoleId());
     }
+
 
     // 비밀번호 변경
     @Override
