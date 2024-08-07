@@ -35,7 +35,6 @@ public class AppMemberServiceImpl implements AppMemberService {
         //validateMemberSignUpDto(dto);
         //--- 2. id 생성 후 저장
 
-
         if(checkPhoneNumberDuplicate(dto.getPhone())){
             throw new ResourceConflictException("같은 휴대폰 번호로 가입한 회원이 존재합니다.");
         }

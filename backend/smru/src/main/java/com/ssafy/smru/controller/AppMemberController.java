@@ -10,6 +10,7 @@ import com.ssafy.smru.exception.ResourceNotFoundException;
 import com.ssafy.smru.exception.UnauthorizedException;
 import com.ssafy.smru.service.AppMemberService;
 import com.ssafy.smru.service.app.PhoneVerificationService;
+import com.ssafy.smru.util.RegularExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,9 @@ public class AppMemberController {
 
     private final PhoneVerificationService phoneVerificationService;
 
+    // 정규식 유틸 가져오기
+    private final RegularExpression regularExpression = new RegularExpression();
+
     // 로그인 요청
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AppMemberDto.Request dto) {
@@ -42,6 +46,11 @@ public class AppMemberController {
 
         if(dto.getPassword() == null || dto.getPassword().trim().equals("")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("아이디 또는 비밀번호를 입력하세요");
+        }
+
+        // 아이디 정규식 검사
+        if(!regularExpression.isId(dto.getMemberId())) {
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("올바르지 않은 형식의 데이터입니다.");
         }
 
         log.info("로그인 요청");
@@ -63,8 +72,25 @@ public class AppMemberController {
     }
 
     // 회원가입 요청
+    // 아이디, 휴대폰, 이름에 대한 정규식 검증
+    // 비밀번호, 비밀번호 확인 검사
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody AppMemberRegisterDto.Request dto) {
+
+        if(dto.getMemberId() == null || dto.getMemberId().trim().equals("")
+                || dto.getPassword() == null || dto.getPassword().trim().equals("")
+        || dto.getPhone() == null || dto.getPhone().trim().equals("")
+        || dto.getPasswordConfirm() == null || dto.getPasswordConfirm().trim().equals("")
+        || dto.getMemberName()==null || dto.getMemberName().trim().equals("")
+        || dto.getBirth()==null ) {
+            return ResponseEntity.badRequest().body("입력값을 확인하세요.");
+        }
+
+        if(!regularExpression.isId(dto.getMemberId()) || !regularExpression.isPhone(dto.getPhone())
+        || !regularExpression.isName(dto.getMemberName())) {
+            return ResponseEntity.badRequest().body("올바르지 않은 형식의 데이터입니다.");
+        }
+
         try {
             if (!dto.getPassword().equals(dto.getPasswordConfirm())) {
                 return new ResponseEntity<String>("비밀번호가 일치하지 않습니다.",HttpStatus.BAD_REQUEST);
@@ -98,6 +124,10 @@ public class AppMemberController {
         if (request.getPhoneNumber() == null || request.getPhoneNumber().trim().isEmpty()) {
             return ResponseEntity.badRequest().body("휴대폰 번호를 입력하세요");
         }
+        if (!regularExpression.isPhone(request.getPhoneNumber())) {
+            return ResponseEntity.badRequest().body("올바르지 않은 형식의 데이터입니다.");
+        }
+
 
 
         PhoneVerificationDto.Response response = phoneVerificationService.generateAndSaveVerificationCode(request);
