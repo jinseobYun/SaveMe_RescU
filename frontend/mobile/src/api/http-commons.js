@@ -1,5 +1,4 @@
 import axios from "axios";
-import useUserStore from "@/store/useUserStore";
 function Axios() {
   const instance = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -22,7 +21,7 @@ async function tokenRegeneration() {
 }
 
 function loginAxios() {
-  const accessToken = localStorage.getItem("accessToken");
+
   const refreshToken = localStorage.getItem("refreshToken");
 
   const instance = axios.create({
@@ -37,6 +36,7 @@ function loginAxios() {
 
   instance.interceptors.request.use(
     (config) => {
+      const accessToken = localStorage.getItem("accessToken");
       config.headers["Content-Type"] = "application/json";
       config.headers["Authorization"] = `Bearer ${accessToken}`;
 
@@ -77,9 +77,9 @@ function loginAxios() {
                 window.location.replace("/login");
               });
             } else {
-              notificationAlert("error", "실패하셨습니다", () => {});
+              notificationAlert("error", "실패하셨습니다", () => { });
             }
-            return new Promise(() => {});
+            return new Promise(() => { });
 
           default:
             return Promise.reject(error);

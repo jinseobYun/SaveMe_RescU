@@ -2,20 +2,27 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Swal from "sweetalert2";
 
 import { Header, TabBar } from "@components/common";
 import { Grid, Button, Text } from "@components/elements";
 import useUserStore from "@/store/useUserStore";
-import { getMedicalInfo } from "@api/medicalInfoApi";
+import { getMedicalInfo, deleteMedicalInfo } from "@api/medicalInfoApi";
 import { errorAlert } from "@/util/notificationAlert";
+import useFormInputStore from "@/store/useFormInputStore";
 
-//TODO - 의료정보 삭제
 const MedicalInfoPage = () => {
+  const { changeFormRegister, changeFormEdit } = useFormInputStore();
+
   const userMedicalInfo = useUserStore((state) => state.userMedicalInfo);
   const setUserMedicalInfo = useUserStore((state) => state.setUserMedicalInfo);
   const navigate = useNavigate();
   const btnStyles = {
-    _onClick: () => navigate("/medicalinfo/edit?form=basic"),
+    _onClick: () => {
+      changeFormRegister();
+      navigate("/medicalinfo/edit?form=basic");
+    },
     children: "등록하기 >",
     $radius: "8px",
     $bg: {
@@ -32,6 +39,40 @@ const MedicalInfoPage = () => {
     $padding: "14px 32px",
     $width: "",
     $height: "10vh",
+  };
+  const onClickDelteBtn = (e) => {
+    e.preventDefault();
+    Swal.fire({
+      title: "나의 의료 정보를 삭제하시겠습니까?",
+      text: "신고 시 나의 정보가 전송되지 않습니다.",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#FF4C4C",
+      confirmButtonText: "취소",
+      cancelButtonText: "삭제하기",
+    }).then((result) => {
+      if (result.isDismissed) {
+        //FIXME - 403 forbidden
+        deleteMedicalInfo(
+          (response) => {
+            console.log(response);
+            if (response.status === 200) {
+              Swal.fire({
+                title: "삭제되었습니다",
+                confirmButtonText: "Okay",
+                confirmButtonColor: "#FFCC70",
+              });
+            } else {
+              console.log(response);
+            }
+          },
+          (error) => {
+            console.log(error);
+            errorAlert(error.response.data);
+          }
+        );
+      }
+    });
   };
   useEffect(() => {
     getMedicalInfo(
@@ -59,7 +100,6 @@ const MedicalInfoPage = () => {
         errorAlert(error.response.data);
       }
     );
-    console.log(userMedicalInfo.bloodType1);
   }, []);
 
   const infoItemRef = useRef(null);
@@ -85,16 +125,24 @@ const MedicalInfoPage = () => {
         {/* //TODO - 의료 정보 있으면 있는 상태 보여주기 */}
         {userMedicalInfo ? (
           <>
+            <StyledBtn
+              onClick={() => {
+                changeFormEdit();
+
+                navigate("/medicalinfo/edit?form=basic");
+              }}
+            >
+              <EditIcon />
+              수정
+            </StyledBtn>
+            <StyledBtn onClick={onClickDelteBtn}>
+              <DeleteIcon />
+              삭제
+            </StyledBtn>
             <InfoContainer>
               <Section>
                 <SectionHeader>
                   <SectionTitle>기본 정보</SectionTitle>
-                  <EditButton
-                    onClick={() => navigate("/medicalinfo/edit?form=basic")}
-                  >
-                    <EditIcon />
-                    수정
-                  </EditButton>
                 </SectionHeader>
                 <InfoList>
                   <InfoItem>
@@ -218,6 +266,8 @@ const Content = styled.div`
   align-items: center;
   overflow: auto;
   height: 83vh;
+  align-items: flex-end;
+  margin: auto;
 `;
 
 const InfoContainer = styled.div`
@@ -248,7 +298,7 @@ const SectionTitle = styled.h2`
   margin: 0;
 `;
 
-const EditButton = styled.button`
+const StyledBtn = styled.button`
   font-size: 14px;
   color: var(--dark-blue-color);
   background: none;
