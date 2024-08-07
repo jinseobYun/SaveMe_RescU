@@ -20,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -35,7 +37,7 @@ public class AppMemberServiceImpl implements AppMemberService {
         //validateMemberSignUpDto(dto);
         //--- 2. id 생성 후 저장
 
-        if(checkPhoneNumberDuplicate(dto.getPhone())){
+        if(checkPhoneNumberDuplicate(dto.getPhoneNumber())){
             throw new ResourceConflictException("같은 휴대폰 번호로 가입한 회원이 존재합니다.");
         }
 
@@ -80,7 +82,7 @@ public class AppMemberServiceImpl implements AppMemberService {
     // 회원가입 인증시 휴대폰번호로
     @Override
     public AppMemberDto.Response getMemberByPhoneNumber(String phoneNumber) {
-        AppMember appMember = appMemberRepository.findByPhone(phoneNumber)
+        AppMember appMember = appMemberRepository.findByPhoneNumber(phoneNumber)
                 .orElseThrow(() -> new ResourceNotFoundException(""));
         return AppMemberDto.Response.fromEntity(appMember);
     }
@@ -89,14 +91,14 @@ public class AppMemberServiceImpl implements AppMemberService {
     // 아이디 찾기시 입력값으로 member조회
     @Override
     public AppMemberDto.Response getMemberByPhoneNumberAndMemberName(String phoneNumber,String memberName) {
-        AppMember appMember = appMemberRepository.findByPhoneAndMemberName(phoneNumber,memberName)
+        AppMember appMember = appMemberRepository.findByPhoneNumberAndMemberName(phoneNumber,memberName)
                 .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
         return AppMemberDto.Response.fromEntity(appMember);
     }
 
     @Override
     public AppMemberDto.Response getMemberByPhoneNumberAndMemberIdAndMemberName(String phoneNumber, String memberId, String memberName) {
-        AppMember appMember = appMemberRepository.findByPhoneAndMemberIdAndMemberName(phoneNumber,memberId,memberName)
+        AppMember appMember = appMemberRepository.findByPhoneNumberAndMemberIdAndMemberName(phoneNumber,memberId,memberName)
                 .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
         return AppMemberDto.Response.fromEntity(appMember);
     }
@@ -104,9 +106,11 @@ public class AppMemberServiceImpl implements AppMemberService {
 
     @Override
     public AppMemberDto.Response getMemberByMemberId(String memberId) {
-        AppMember appMember = appMemberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new ResourceNotFoundException("해당 ID로 등록된 사용자가 없습니다."));
-        return AppMemberDto.Response.fromEntity(appMember);
+        Optional<AppMember> appMember = appMemberRepository.findByMemberId(memberId);
+        if (appMember.isPresent()) {
+            return AppMemberDto.Response.fromEntity(appMember.get());
+        }
+        return null;
     }
 
 
@@ -129,7 +133,7 @@ public class AppMemberServiceImpl implements AppMemberService {
 
     @Override
     public boolean checkPhoneNumberDuplicate(String phone) {
-        return appMemberRepository.findByPhone(phone).isPresent();
+        return appMemberRepository.findByPhoneNumber(phone).isPresent();
     }
 
 

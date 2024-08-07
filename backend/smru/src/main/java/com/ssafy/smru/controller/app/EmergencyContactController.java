@@ -22,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmergencyContactController {
 
+
     private final EmergencyContactService emergencyContactService;
 
     private RegularExpression regularExpression = new RegularExpression();
@@ -100,11 +101,11 @@ public class EmergencyContactController {
 
     @DeleteMapping
     public ResponseEntity<?> deleteEmergencyContact(@RequestParam Long emergencyContactId) {
-
+        if(emergencyContactId  == null) {
+            return new ResponseEntity<>("잘못된 요청입니다.",HttpStatus.BAD_REQUEST);
+        }
         try {
-            if(emergencyContactId  == null) {
-                return new ResponseEntity<>("잘못된 요청입니다.",HttpStatus.BAD_REQUEST);
-            }
+
             String memberId = getAuthenticatedUserId();
             emergencyContactService.deleteEmergencyContact(emergencyContactId, memberId);
             return new ResponseEntity<>("비상연락망을 정상적으로 삭제했습니다.",HttpStatus.OK);
