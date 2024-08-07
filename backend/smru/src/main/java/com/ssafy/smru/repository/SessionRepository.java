@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-// 기능 : 웹소켓에 필요한 세션 정보를 저장, 관리 (싱글톤)
+// 기능 : 웹소켓 세션 정보를 저장하고 관리합니다. 방 별로 클라이언트 세션을 관리하고, 각 세션이 어느 방에 속해 있는지를 추적
 @Slf4j
 @Component
 @NoArgsConstructor
