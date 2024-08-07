@@ -45,6 +45,8 @@ dependencies {
 	implementation 'org.springframework:spring-context-support'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml' // xml 파싱
+	testImplementation 'org.springframework:spring-messaging'
+	testImplementation 'org.mockito:mockito-core'
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 
