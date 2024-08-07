@@ -36,7 +36,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         config.enableSimpleBroker("/topic"); // broker url 설정 해당 경로로 전송된 메시지 수신 가능
         config.setApplicationDestinationPrefixes("/app"); // 클라이언트가 서버로 메시지를 전송할 때 사용할 URL의 접두사를 /app
     }
-    @Bean
+    @Bean(name = "customSignalHandler")
     public WebSocketHandler signalHandler() {
         return new SignalHandler();
     }
