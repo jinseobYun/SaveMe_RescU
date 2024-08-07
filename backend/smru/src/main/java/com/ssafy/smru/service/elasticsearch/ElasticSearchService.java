@@ -6,6 +6,7 @@ import com.ssafy.smru.entity.app.MedicineEs;
 import com.ssafy.smru.repository.app.MedicineRepository;
 import com.ssafy.smru.repository.elasticsearch.ElasticSearchRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
@@ -37,20 +38,15 @@ public class ElasticSearchService {
 
         return NativeQuery.builder()
                 .withQuery(q -> q.bool(boolQuery))
+                .withPageable(Pageable.ofSize(10))
                 .build();
     }
 
     public List<MedicineEs> searchByMedicineName(String medicineName) {
-
         SearchHits<MedicineEs> searchHits = elasticsearchOperations.search(createNativeQuery(medicineName), MedicineEs.class);
         List<MedicineEs> contentList = searchHits.getSearchHits().stream()
                 .map(SearchHit::getContent)
                 .collect(Collectors.toList());
-        for (MedicineEs medicineEs : contentList) {
-            System.out.println(medicineEs.getMedicineId());
-            System.out.println(medicineEs.getMedicineName());
-        }
-
         return contentList;
     }
 

@@ -22,8 +22,15 @@ public class ElasticSearchController {
 
     @GetMapping
     public ResponseEntity<?> searchByMedicineName(@RequestParam String medicineName) {
+        if (medicineName == null || medicineName.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
+        }
         try {
+
             List<MedicineEs> medicineList = elasticSearchService.searchByMedicineName(medicineName);
+            if (medicineList == null || medicineList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(medicineName + "와(과) 일치하는 검색결과가 없습니다.");
+            }
             return new ResponseEntity<>(medicineList,HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
