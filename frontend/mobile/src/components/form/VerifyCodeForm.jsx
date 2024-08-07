@@ -123,6 +123,8 @@ const VerifyCodeForm = () => {
         if (response.status === 200) {
           setRemainingTime(initialTime);
           updateInputs({ verifyCode: response.data + "" });
+          //FIXME - 인증코드 저장 없애기
+          updateInputs({ temporyCode: response.data });
         } else {
           console.log(response);
         }
@@ -138,7 +140,9 @@ const VerifyCodeForm = () => {
     const code = Object.values(ssnValues).join("");
     const data = {
       phoneNumber: inputs.phoneNumber,
-      verifyCode: code,
+      //FIXME - 인증코드 임시 저장 없애기
+      // verifyCode: code,
+      verifyCode: String(inputs.temporyCode),
     };
     switch (type) {
       case "findid":
