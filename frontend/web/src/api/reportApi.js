@@ -1,13 +1,12 @@
 import axios from "axios";
-import { API_SERVER_HOST } from "../config/apiConfig";
 import { API_SERVER_DOMAIN } from "../config/apiConfig";
 
-const host = `${API_SERVER_HOST}/report`;
-const serverHost = `${API_SERVER_DOMAIN}/report`;
+const serverHost = `${API_SERVER_DOMAIN}`;
 
-export const getReport = async (memberId) => {
+export const getReport = async (patientId, reporterId, latitude, longitude) => {
   try {
-    const res = await axios.get(`${host}/${memberId}`, {
+    const res = await axios.get(`${serverHost}/report-info`, {
+      params: { patientId, reporterId, latitude, longitude },
       headers: {
         Authorization: `Bearer ${localStorage.getItem("JWT-AccessToken")}`,
       },
@@ -21,7 +20,7 @@ export const getReport = async (memberId) => {
 
 export const postFirstInfo = async (firstInfo) => {
   try {
-    const res = await axios.post(`${host}/1st-info`, firstInfo, {
+    const res = await axios.post(`${serverHost}/1st-info`, firstInfo, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("JWT-AccessToken")}`,
       },
