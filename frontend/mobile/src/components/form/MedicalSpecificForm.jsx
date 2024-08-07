@@ -24,7 +24,9 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
     deleteDrugInput,
   } = useFormInputStore();
   const { setUserMedicalInfo } = useUserStore();
-  const { searchResults, setSearchResults } = useSearchStore();
+  const searchResults = useSearchStore((state) => state.searchResults);
+  const setSearchResults = useSearchStore((state) => state.setSearchResults);
+
   const navigate = useNavigate();
 
   const onClickNextBtn = (e) => {
@@ -39,7 +41,10 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
         medCdis,
         drugInfos,
       };
+      console.log(data);
       //TODO - 의료정보 저장 api
+      //FIXME - 403 forbidden
+
       if (isFormEdit) {
         updateMedicalInfo(
           data,
@@ -79,22 +84,20 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
     }
   };
 
-  const handleSaveInput = (value) => {
+  const handleAddInput = (value) => {
     const data = {
-      id: value.id,
-      name: value.name,
+      id: value.medicineId,
+      name: value.medicineName,
     };
-
-    if (form === "disease") {
-      addMedCdisInputs(data);
-    } else {
-      addDrugInputs(data);
-    }
+    addDrugInputs(data);
   };
+  //TODO - 지병은 자동검색 기능 없음
   const onClickAddBtn = (name) => {
+    let formType = "의약품";
+    if (form === "disease") formType = "지병";
     if (name == "[object Object]") name = "";
     Swal.fire({
-      // title: `<h5>의약품 명을 적어주세요</h5>`,
+      title: `${formType} 명을 입력해주세요`,
       html: '<div id="swal-react-container"></div>',
       didOpen: () => {
         const container = document.getElementById("swal-react-container");
@@ -110,15 +113,16 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
         const inputValue = document.querySelector(
           "#swal-react-container input"
         ).value;
+        const searchResults = useSearchStore.getState().searchResults;
         const existsInArray = searchResults.some(
+          (item) => item.medicineName === inputValue
+        );
+        const existsInInputs = drugInputs.some(
           (item) => item.name === inputValue
         );
-        const existsInInputs = (
-          form === "disease" ? medCdisInputs : drugInputs
-        ).some((item) => item.name === inputValue);
 
         if (!existsInArray) {
-          Swal.showValidationMessage("해당하는 단어가 DB에 없습니다.");
+          Swal.showValidationMessage("해당하는 단어가 약품정보에 없습니다.");
           return false;
         }
 
@@ -127,20 +131,18 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
           return false;
         } else {
           if (name && inputValue !== name) {
-            const prevIndex = (
-              form === "disease" ? medCdisInputs : drugInputs
-            ).findIndex((item) => item.name === name);
+            const prevIndex = drugInputs.findIndex(
+              (item) => item.name === name
+            );
             if (prevIndex !== -1) {
-              if (form === "disease") {
-                deleteMedCdisInput(prevIndex);
-              } else {
-                deleteDrugInput(prevIndex);
-              }
+              deleteDrugInput(prevIndex);
             }
           }
         }
         // 추가 처리 로직
-        const newItem = searchResults.find((item) => item.name === inputValue);
+        const newItem = searchResults.find(
+          (item) => item.medicineName === inputValue
+        );
 
         return inputValue
           ? Promise.resolve(newItem)
@@ -151,7 +153,9 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
       confirmButtonColor: "var(--main-orange-color)",
     }).then((result) => {
       if (result.isConfirmed) {
-        handleSaveInput(result.value);
+        console.log(result.value);
+        //FIXME - id 안넘어옴
+        handleAddInput(result.value);
       }
     });
   };
@@ -170,46 +174,10 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
     $size: "2rem",
     $bold: true,
     // $boxShadow: "0px 4px 0px 0px var(--main-orange-color);",
-    $padding: "1rem",
     $width: "",
     $height: "auto",
   };
-  useEffect(() => {
-    //STUB - 테스트 후 지우기
-    const data = medCdisInputs;
-    const stringifiedData = JSON.stringify(data);
-    const parsedData = JSON.parse(stringifiedData); // 정상 작동
-    if (form === "disease") {
-      setSearchResults([
-        {
-          id: 1,
-          name: "고혈압",
-        },
-        {
-          id: 2,
-          name: "당뇨병",
-        },
-        {
-          id: 3,
-          name: "천식",
-        },
-      ]);
-    } else
-      setSearchResults([
-        {
-          id: 24,
-          name: "러츠날캡슐(탐스로신염산염)",
-        },
-        {
-          id: 25,
-          name: "세린드연고",
-        },
-        {
-          id: 74,
-          name: "하트만용액",
-        },
-      ]);
-  }, []);
+
   return (
     <Container>
       <Grid

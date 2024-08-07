@@ -78,6 +78,7 @@ const Input = ({
             onBlur={_onBlur}
             onChange={onChangeInput}
             maxLength={$maxLen}
+            // autoComplete="off"
           />
           {$type === "password" && (
             <div className="input_icon" onClick={handleTogglePassword}>

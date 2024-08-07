@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { persist, devtools } from "zustand/middleware";
-import { Axios } from '@api/http-commons';
+import { loginAxios } from '@api/http-commons';
 
-const axios = Axios();
+const axios = loginAxios();
 const useSearchStore = create((set) => ({
   searchResults: [],
   setSearchResults: (results) =>
@@ -12,17 +12,15 @@ const useSearchStore = create((set) => ({
   isLoading: false,
   error: null,
 
-  fetchSearchResults: async (query) => {
+  fetchSearchResults: async (keyword) => {
     set({ isLoading: true, error: null });
-    //TODO - 검색 api url 확인
     try {
-      const response = await axios.get(`/api/search`, {
-        params: { query }
-      });
+      const response = await axios.get(`/search?medicineName=${keyword}`);
 
       set({ searchResults: response.data, isLoading: false });
     } catch (error) {
       set({ error: error.message, isLoading: false });
+      return Promise.reject(error);
     }
   },
 

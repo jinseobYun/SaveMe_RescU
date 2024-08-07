@@ -1,15 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
 import { TabBar } from "@components/common";
 import { Button, Grid, Text, Toggle } from "@components/elements";
+import useFormInputStore from "@/store/useFormInputStore";
+
 const Home = () => {
   const navigate = useNavigate();
 
   const onClickReportBtn = () => {
     navigate("/report");
   };
+  const { clearAllInputs } = useFormInputStore();
+  useEffect(() => {
+    clearAllInputs();
+  }, []);
   return (
     <>
       {/* 헤더 */}

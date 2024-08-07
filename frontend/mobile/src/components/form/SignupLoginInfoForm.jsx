@@ -7,7 +7,6 @@ import useForm from "@/hooks/useForm";
 import { SignUpValidationLoginInfo } from "@/util/validation";
 import useFormInputStore from "@/store/useFormInputStore";
 import { Header } from "@/components/common";
-
 const SignupLoginInfoForm = () => {
   const { updateInputs, inputs } = useFormInputStore();
   const navigate = useNavigate();
@@ -15,7 +14,7 @@ const SignupLoginInfoForm = () => {
     initialValues: {
       id: inputs.id || "",
       password: inputs.password || "",
-      confirmPassword: inputs.confirmPassword || "",
+      passwordConfirm: inputs.passwordConfirm || "",
     },
     onSubmit: (values) => {
       console.log(values);
@@ -26,12 +25,10 @@ const SignupLoginInfoForm = () => {
   });
 
   const [isTextOnce, setIsTextOnce] = useState(false);
-  useEffect(() => {}, []);
   useEffect(() => {
     console.log(errors, values);
     if (isTextOnce != (Object.keys(errors).length !== 0)) setIsTextOnce(true);
-
-    // Object.keys(errors).length > 0 && setIsTextOnce(true);
+    if (inputs.id) setIsTextOnce(true);
   }, [errors]);
   return (
     <>
@@ -68,14 +65,14 @@ const SignupLoginInfoForm = () => {
               $isValid={errors.password && false}
             />
             <Input
-              $name="confirmPassword"
+              $name="passwordConfirm"
               $placeholder="비밀번호를 다시 입력해주세요"
-              $value={values.confirmPassword}
+              $value={values.passwordConfirm}
               _onChange={handleChange}
               $label="비밀번호*"
               $haveToCheckValid={true}
-              $errorMessage={errors.confirmPassword}
-              $isValid={errors.confirmPassword && false}
+              $errorMessage={errors.passwordConfirm}
+              $isValid={errors.passwordConfirm && false}
               $type="password"
             />
           </StyledForm>

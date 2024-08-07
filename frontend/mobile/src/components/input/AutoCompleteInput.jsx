@@ -3,46 +3,24 @@ import styled from "styled-components";
 import debounce from "lodash.debounce";
 
 import useSearchStore from "@/store/useSearchStore";
-
-const wholeTextArray = [
-  {
-    id: 1,
-    name: "고혈압",
-  },
-  {
-    id: 2,
-    name: "당뇨병",
-  },
-  {
-    id: 3,
-    name: "천식",
-  },
-];
+import { searchMedicine } from "@/api/medicalInfoApi";
+import { Text } from "@components/elements";
 
 const AutoCompleteInput = ({ $prev, $onChange }) => {
-  const { searchResults, fetchSearchResults, isLoading, error } =
-    useSearchStore();
-
+  const searchResults = useSearchStore((state) => state.searchResults);
+  const setSearchResults = useSearchStore((state) => state.setSearchResults);
+  const fetchSearchResults = useSearchStore(
+    (state) => state.fetchSearchResults
+  );
+  const clearSearchResults = useSearchStore(
+    (state) => state.clearSearchResults
+  );
   const [inputValue, setInputValue] = useState($prev || "");
   const [isHaveInputValue, setIsHaveInputValue] = useState(false);
-  const [dropDownList, setDropDownList] = useState(wholeTextArray);
   const [dropDownItemIndex, setDropDownItemIndex] = useState(-1);
-  const [prevFirstChar, setPrevFirstChar] = useState("");
 
-  const showDropDownList = () => {
-    if (inputValue === "") {
-      setIsHaveInputValue(false);
-      setDropDownList([]);
-    } else {
-      const choosenTextList = searchResults.filter((textItem) =>
-        // textItem.name.includes(inputValue)
-        textItem.name.startsWith(inputValue)
-      );
-      setDropDownList(choosenTextList);
-    }
-  };
-  const debouncedSearch = debounce(() => {
-    showDropDownList();
+  const debouncedSearch = debounce((input) => {
+    fetchSearchResults(input);
   }, 300); // 300ms 디바운싱
 
   const changeInputValue = (event) => {
@@ -50,12 +28,8 @@ const AutoCompleteInput = ({ $prev, $onChange }) => {
 
     setInputValue(newValue);
     setIsHaveInputValue(true);
+    debouncedSearch(newValue);
     $onChange && $onChange();
-
-    //NOTE - 첫 글자가 변경된 경우에만 API 호출
-    if (newValue[0] !== prevFirstChar) {
-      setPrevFirstChar(newValue[0]);
-    }
   };
 
   const clickDropDownItem = (clickedItem) => {
@@ -63,14 +37,12 @@ const AutoCompleteInput = ({ $prev, $onChange }) => {
     setIsHaveInputValue(false);
   };
 
-  useEffect(debouncedSearch, [inputValue]);
-
   useEffect(() => {
-    if (prevFirstChar) {
-      //TODO - api 연결
-      // fetchSearchResults(inputValue);
+    if (inputValue === "") {
+      clearSearchResults();
+      setIsHaveInputValue(false);
     }
-  }, [prevFirstChar]);
+  }, [inputValue]);
 
   return (
     <WholeBox>
@@ -78,24 +50,29 @@ const AutoCompleteInput = ({ $prev, $onChange }) => {
         <Input type="text" value={inputValue} onChange={changeInputValue} />
         {/* <DeleteButton onClick={() => setInputValue("")}>&times;</DeleteButton> */}
       </InputBox>
+      {/* {error && <p>Error: {error}</p>} */}
+
       {isHaveInputValue && (
         <DropDownBox>
-          {isLoading && <p>Loading...</p>}
-          {error && <p>Error: {error}</p>}
-          {dropDownList.length === 0 && (
+          {/* {searchResults.length === 0 && (
             <DropDownItem>해당하는 단어가 없습니다</DropDownItem>
-          )}
-          {dropDownList.map(({ id, name }, dropDownIndex) => {
+          )} */}
+          {searchResults.map(({ medicineId, medicineName }, dropDownIndex) => {
             return (
               <DropDownItem
                 key={dropDownIndex}
-                onClick={() => clickDropDownItem(name)}
+                onClick={() => clickDropDownItem(medicineName)}
                 onMouseOver={() => setDropDownItemIndex(dropDownIndex)}
                 className={
                   dropDownItemIndex === dropDownIndex ? "selected" : ""
                 }
               >
-                {name}
+                <Text
+                  $size="1.5rem"
+                  children={medicineName}
+                  $padding="2rem"
+                  $lineHeight=""
+                />
               </DropDownItem>
             );
           })}
@@ -144,7 +121,7 @@ const DeleteButton = styled.div`
 `;
 
 const DropDownBox = styled.ul`
-  display: block;
+  display: flex;
   margin: 0 auto;
   padding: 8px 0;
   background-color: white;
@@ -153,11 +130,14 @@ const DropDownBox = styled.ul`
   border-radius: 0 0 10px 10px;
   list-style-type: none;
   z-index: 3;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
 const DropDownItem = styled.li`
-  padding: 0 15px;
-  margin: 0.5rem;
+  padding: 0 20px;
+  margin: 1rem;
   &.selected {
     background-color: lightgray;
   }
