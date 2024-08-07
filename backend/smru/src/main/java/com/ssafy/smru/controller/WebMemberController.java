@@ -2,6 +2,7 @@ package com.ssafy.smru.controller;
 
 import com.ssafy.smru.dto.WebMemberDto;
 import com.ssafy.smru.dto.WebPasswordChangeDto;
+import com.ssafy.smru.repository.WebMemberRepository;
 import com.ssafy.smru.service.WebMemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -59,6 +60,7 @@ public class WebMemberController {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String memberId = authentication.getName();
+            System.out.println(memberId);
 
             webMemberService.changePassword(memberId, dto);
             return new ResponseEntity<>("Password changed successfully", HttpStatus.OK);
@@ -68,17 +70,11 @@ public class WebMemberController {
             return new ResponseEntity<>("An unexpected error occurred.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    // 현재 토큰에서 memberId 추출
+    // 로그인된 유저 이름 반환
     @GetMapping("/extract-memberId")
-    public ResponseEntity<?> extractUsername(HttpServletRequest request) {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
-            request.getAuthType();
-            return new ResponseEntity<>(memberId, HttpStatus.OK);
-        }catch(Exception e){
-            return new ResponseEntity<>("로그인 해주세요.",HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> extractUsername() {
+            return new ResponseEntity<>(webMemberService.getMembername(),HttpStatus.OK);
+
     }
 
     // 전체 Member 조회

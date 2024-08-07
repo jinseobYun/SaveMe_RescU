@@ -36,17 +36,17 @@ public class AppMemberServiceImpl implements AppMemberService {
         //--- 2. id 생성 후 저장
 
 
-            if(checkPhoneNumberDuplicate(dto.getPhone())){
-                throw new ResourceConflictException("같은 휴대폰 번호로 가입한 회원이 존재합니다.");
-            }
+        if(checkPhoneNumberDuplicate(dto.getPhone())){
+            throw new ResourceConflictException("같은 휴대폰 번호로 가입한 회원이 존재합니다.");
+        }
 
-            if(!checkMemberIdDuplicate(dto.getMemberId())){
+        if(!checkMemberIdDuplicate(dto.getMemberId())){
             throw new ResourceConflictException("같은 아이디로 가입한 회원이 존재합니다.");
-            }
+        }
 
-            AppMember appMember = dto.toEntity();
-            appMember.changePassword(passwordEncoder.encode(appMember.getPassword()));
-            appMemberRepository.save(appMember);
+        AppMember appMember = dto.toEntity();
+        appMember.changePassword(passwordEncoder.encode(appMember.getPassword()));
+        appMemberRepository.save(appMember);
 
 
     }

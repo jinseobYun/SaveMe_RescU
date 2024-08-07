@@ -43,7 +43,9 @@ public class AppMemberController {
         if(dto.getPassword() == null || dto.getPassword().trim().equals("")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("아이디 또는 비밀번호를 입력하세요");
         }
+
         log.info("로그인 요청");
+
         try {
             return ResponseEntity.ok(appMemberService.login(dto));
         } catch (BadCredentialsException e) {
@@ -92,17 +94,26 @@ public class AppMemberController {
     // 휴대폰 인증번호 생성 요청
     @PostMapping("/phone-verify-code-req")
     public ResponseEntity<?> registerPhoneVerificationCode(@RequestBody PhoneVerificationDto.Request request) {
+
         if (request.getPhoneNumber() == null || request.getPhoneNumber().trim().isEmpty()) {
             return ResponseEntity.badRequest().body("휴대폰 번호를 입력하세요");
         }
 
+
         PhoneVerificationDto.Response response = phoneVerificationService.generateAndSaveVerificationCode(request);
+// -------------------------------실제 휴대폰 문자 보내는 매서드 -----------------------------------
+//            // 휴대폰 번호로 문자 보내는 메서드 작성
+//        try {
+//            SingleMessageSentResponse result = phoneVerificationService.sendVerificationCode(response.getPhoneNumber(),response.getVerifyCode());
+//
+//        }catch (Exception e){
+//            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("인증번호 발송 오류");
+//        }
+// -----------------------------------------------------------------------------------------------
 
-        // 휴대폰 번호로 문자 보내는 메서드 작성
 
-
-
-        return ResponseEntity.ok().body("OK");
+        // 테스트를 위해 프론트로 리스폰스 넘기기
+        return ResponseEntity.ok().body(response.getVerifyCode());
     }
 
 
