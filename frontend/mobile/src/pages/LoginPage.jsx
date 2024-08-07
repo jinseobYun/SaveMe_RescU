@@ -26,13 +26,15 @@ const Login = () => {
             setReFreshToken(response.data.refreshToken);
             setUserId(values.id);
             login();
+            localStorage.setItem("accessToken", response.data.accessToken);
+            localStorage.setItem("refreshToken", response.data.refreshToken);
             clearInputs();
             navigate("/");
           }
         },
         (error) => {
           console.log(error);
-          // errorAlert(error.response.status);
+          errorAlert(error.response.status);
         }
       );
     },

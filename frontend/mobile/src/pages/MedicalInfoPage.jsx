@@ -7,6 +7,7 @@ import { Header, TabBar } from "@components/common";
 import { Grid, Button, Text } from "@components/elements";
 import useUserStore from "@/store/useUserStore";
 import { getMedicalInfo } from "@api/medicalInfoApi";
+import { errorAlert } from "@/util/notificationAlert";
 
 //TODO - 의료정보 삭제
 const MedicalInfoPage = () => {
@@ -33,35 +34,34 @@ const MedicalInfoPage = () => {
     $height: "10vh",
   };
   useEffect(() => {
-    //TODO - 의료 정보 조회하기
-    // getMedicalInfo(
-    //   (response) => {
-    //     if (response.status === 200) {
-    //       const data = {
-    //         medicalInformationId: response.data.medicalInformationId,
-    //         bloodType1: response.data.bloodType1,
-    //         bloodType2: response.data.bloodType2,
-    //         otherInfo: response.data.otherInfo,
-    //         drugInfos: response.data.drugInfos.map((item) => ({
-    //           id: item.medicineId,
-    //           name: item.medicineName,
-    //         })),
-    //         medCdis: response.data.medCdis.map((item) => ({
-    //           id: item.cdInfoId,
-    //           name: item.cdName,
-    //         })),
-    //       };
-    //       // setUserMedicalInfo(response.data);
-    //     }
-    //   },
-    //   (error) => {
-    //     console.log(error);
-    //   }
-    // );
-    // console.log(userMedicalInfo.bloodType1);
+    getMedicalInfo(
+      (response) => {
+        if (response.status === 200) {
+          const data = {
+            medicalInformationId: response.data.medicalInformationId,
+            bloodType1: response.data.bloodType1,
+            bloodType2: response.data.bloodType2,
+            otherInfo: response.data.otherInfo,
+            drugInfos: response.data.drugInfos.map((item) => ({
+              id: item.medicineId,
+              name: item.medicineName,
+            })),
+            medCdis: response.data.medCdis.map((item) => ({
+              id: item.cdInfoId,
+              name: item.cdName,
+            })),
+          };
+          setUserMedicalInfo(data);
+        }
+      },
+      (error) => {
+        //TODO - 등록된 정보가 없을때
+        errorAlert(error.response.data);
+      }
+    );
+    console.log(userMedicalInfo.bloodType1);
   }, []);
 
-  //NOTE - 기타 특이사항이 길어질 때 style 처리
   const infoItemRef = useRef(null);
   const [isColumn, setIsColumn] = useState(false);
 

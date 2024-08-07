@@ -149,7 +149,6 @@ const VerifyCodeForm = () => {
         data.memberId = inputs.memberId;
         break;
     }
-    console.log(data);
     checkVerifyCode(
       type,
       data,

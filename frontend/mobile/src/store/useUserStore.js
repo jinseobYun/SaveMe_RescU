@@ -11,42 +11,42 @@ const store = (set) => ({
   setUserName: (userData) => set({ userName: userData.userName }),
   clearUserName: () => set({ userName: null }),
 
-  //TODO - 더미 데이터 지우기
-  // userMedicalInfo: null,
-  userMedicalInfo: {
-    // "medicalInformationId": 20,
-    // "bloodType1": "O",
-    // "bloodType2": "RH+",
-    // "otherInfo": "기타 특이사항 내용",
-    // "drugInfos": [
-    //   {
-    //     id: 24,
-    //     name: "러츠날캡슐(탐스로신염산염)",
-    //   },
-    //   {
-    //     id: 25,
-    //     name: "세린드연고",
-    //   },
-    //   {
-    //     id: 74,
-    //     name: "하트만용액",
-    //   },
-    // ],
-    // "medCdis": [
-    //   {
-    //     id: 1,
-    //     name: "고혈압",
-    //   },
-    //   {
-    //     id: 2,
-    //     name: "당뇨병",
-    //   },
-    //   {
-    //     id: 3,
-    //     name: "천식",
-    //   },
-    // ]
-  },
+  userMedicalInfo: null,
+  //FIXME - 더미 데이터 주석 지우기
+  // userMedicalInfo: {
+  // "medicalInformationId": 20,
+  // "bloodType1": "O",
+  // "bloodType2": "RH+",
+  // "otherInfo": "기타 특이사항 내용",
+  // "drugInfos": [
+  //   {
+  //     id: 24,
+  //     name: "러츠날캡슐(탐스로신염산염)",
+  //   },
+  //   {
+  //     id: 25,
+  //     name: "세린드연고",
+  //   },
+  //   {
+  //     id: 74,
+  //     name: "하트만용액",
+  //   },
+  // ],
+  // "medCdis": [
+  //   {
+  //     id: 1,
+  //     name: "고혈압",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "당뇨병",
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "천식",
+  //   },
+  // ]
+  // },
   setUserMedicalInfo: (userData) => {
     set({ userMedicalInfo: userData });
 

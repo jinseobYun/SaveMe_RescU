@@ -8,6 +8,7 @@ import { updateUserPwd } from "@/api/userApi";
 import useFormInputStore from "@/store/useFormInputStore";
 import { ChangePwValidation } from "@/util/validation";
 import { errorAlert } from "@/util/notificationAlert";
+import axios from "axios";
 
 const ChangePwPage = () => {
   const navigate = useNavigate();
@@ -31,20 +32,43 @@ const ChangePwPage = () => {
       };
       console.log(data);
       //FIXME - 서버 403 forbidden
-      updateUserPwd(
-        "find",
-        data,
-        (response) => {
-          if (response.status === 200) {
-            clearInputs();
-            navigate("/", { replace: true });
-          }
-        },
-        (error) => {
-          console.log(error);
-          errorAlert(error.response.status);
-        }
-      );
+      // updateUserPwd(
+      //   "find",
+      //   {
+      //     phoneNumber: "01012345623",
+      //     verifyCode: inputs.verifyCode + "",
+      //     memberName: "남도일",
+      //     memberId: "wlstjq",
+      //     newPassword: "test1234",
+      //     newPasswordConfirm: "test1234",
+      //   },
+      //   (response) => {
+      //     if (response.status === 200) {
+      //       clearInputs();
+      //       navigate("/", { replace: true });
+      //     }
+      //   },
+      //   (error) => {
+      //     console.log(error);
+      //     errorAlert(error.response.data);
+      //   }
+      // );
+      // axios
+      //   .put(
+      //     "https://i11b305.p.ssafy.io/api/v1/app/members/password-not-login",
+      //     {
+      //       phoneNumber: "01012345623",
+      //       verifyCode: "565825",
+      //       memberName: "남도일",
+      //       memberId: "wlstjq",
+      //       newPassword: "test1234",
+      //       newPasswordConfirm: "test1234",
+      //     }
+      //   )
+      //   .then((respnse) => {
+      //     console.log(respnse);
+      //   })
+      //   .catch((err) => console.log(err));
     },
     validate: ChangePwValidation,
   });
