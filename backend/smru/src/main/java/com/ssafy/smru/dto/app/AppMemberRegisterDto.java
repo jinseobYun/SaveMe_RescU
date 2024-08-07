@@ -23,12 +23,12 @@ public class AppMemberRegisterDto {
         private String memberName;
         private LocalDate birth;
         private boolean gender;
-        private String phone;
+        private String phoneNumber;
         private boolean deleted;
         private MedicalInfoDto medicalInfoDto;
 
         @Builder
-        public Request(Long appMemberId, String memberId, String password, String memberName, LocalDate birth, boolean gender, String phone, boolean deleted, MedicalInfoDto medicalInfoDto) {
+        public Request(Long appMemberId, String memberId, String password, String memberName, LocalDate birth, boolean gender, String phoneNumber, boolean deleted, MedicalInfoDto medicalInfoDto) {
             this.appMemberId = appMemberId;
             this.memberId = memberId;
             this.password = password;
@@ -36,7 +36,7 @@ public class AppMemberRegisterDto {
             this.memberName = memberName;
             this.birth = birth;
             this.gender = gender;
-            this.phone = phone;
+            this.phoneNumber = phoneNumber;
             this.deleted = deleted;
             this.medicalInfoDto = medicalInfoDto;
         }
@@ -49,7 +49,7 @@ public class AppMemberRegisterDto {
                     .memberName(memberName)
                     .birth(birth)
                     .gender(gender)
-                    .phone(phone)
+                    .phoneNumber(phoneNumber)
                     .deleted(deleted)
                     .medicalInformation(null)
                     .build();
@@ -72,7 +72,7 @@ public class AppMemberRegisterDto {
                     .appMemberId(member.getAppMemberId())
                     .memberId(member.getMemberId())
                     .memberName(member.getMemberName())
-                    .phone(member.getPhone())
+                    .phoneNumber(member.getPhoneNumber())
                     .build();
         }
     }

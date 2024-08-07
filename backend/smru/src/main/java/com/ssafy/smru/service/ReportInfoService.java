@@ -106,7 +106,7 @@ public class ReportInfoService {
             }
         
             reportInfoDto.setReporterName(reporter.getMemberName());
-            reportInfoDto.setReporterPhone(reporter.getPhone());
+            reportInfoDto.setReporterPhone(reporter.getPhoneNumber());
 
             reportInfoDto.setReporterMedicalInformation(reporterTotalInfo);
 

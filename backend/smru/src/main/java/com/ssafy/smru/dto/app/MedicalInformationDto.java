@@ -89,7 +89,7 @@ public class MedicalInformationDto {
                     .medCdis(response.getMedCdis() != null ? response.getMedCdis() : new ArrayList<>())
                     .memberName(member.getMemberName())
                     .birth(member.getBirth())
-                    .phoneNumber(member.getPhone())
+                    .phoneNumber(member.getPhoneNumber())
                     .gender(member.isGender() ? 1 : 0)
                     .build();
         }
@@ -97,7 +97,7 @@ public class MedicalInformationDto {
         // 회원 정보 수정
         public void updateMember(AppMemberDto.Response member) {
             this.memberName = member.getMemberName();
-            this.phoneNumber = member.getPhone();
+            this.phoneNumber = member.getPhoneNumber();
             this.birth = member.getBirth();
             this.gender = member.isGender() ? 1 : 0;
 

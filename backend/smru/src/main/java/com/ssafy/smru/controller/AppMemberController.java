@@ -79,14 +79,14 @@ public class AppMemberController {
 
         if(dto.getMemberId() == null || dto.getMemberId().trim().equals("")
                 || dto.getPassword() == null || dto.getPassword().trim().equals("")
-        || dto.getPhone() == null || dto.getPhone().trim().equals("")
+        || dto.getPhoneNumber() == null || dto.getPhoneNumber().trim().equals("")
         || dto.getPasswordConfirm() == null || dto.getPasswordConfirm().trim().equals("")
         || dto.getMemberName()==null || dto.getMemberName().trim().equals("")
         || dto.getBirth()==null ) {
             return ResponseEntity.badRequest().body("입력값을 확인하세요.");
         }
 
-        if(!regularExpression.isId(dto.getMemberId()) || !regularExpression.isPhone(dto.getPhone())
+        if(!regularExpression.isId(dto.getMemberId()) || !regularExpression.isPhone(dto.getPhoneNumber())
         || !regularExpression.isName(dto.getMemberName())) {
             return ResponseEntity.badRequest().body("올바르지 않은 형식의 데이터입니다.");
         }
@@ -154,6 +154,9 @@ public class AppMemberController {
                 request.getVerifyCode() == null || request.getVerifyCode().trim().isEmpty()) {
             return ResponseEntity.badRequest().body("입력값을 확인하세요.");
         }
+        if (!regularExpression.isNumber(request.getVerifyCode()) || !regularExpression.isPhone(request.getPhoneNumber())) {
+            return new ResponseEntity<>("올바르지 않은 형식의 데이터입니다.", HttpStatus.BAD_REQUEST);
+        }
         try {
             boolean isValid = phoneVerificationService.commonVerifyPhoneNumber(request.getPhoneNumber(), request.getVerifyCode());
             if (isValid) {
@@ -176,6 +179,9 @@ public class AppMemberController {
         if (request.getPhoneNumber() == null || request.getPhoneNumber().trim().isEmpty() ||
                 request.getVerifyCode() == null || request.getVerifyCode().trim().isEmpty()) {
             return ResponseEntity.badRequest().body("입력값을 확인하세요.");
+        }
+        if (!regularExpression.isNumber(request.getVerifyCode()) || !regularExpression.isPhone(request.getPhoneNumber())) {
+            return new ResponseEntity<>("올바르지 않은 형식의 데이터입니다.", HttpStatus.BAD_REQUEST);
         }
 
         try {
@@ -207,7 +213,10 @@ public class AppMemberController {
                 request.getMemberName() == null || request.getMemberName().trim().isEmpty()) {
             return ResponseEntity.badRequest().body("입력값을 확인하세요.");
         }
-
+        if (!regularExpression.isNumber(request.getVerifyCode()) || !regularExpression.isPhone(request.getPhoneNumber())
+                || !regularExpression.isId(request.getMemberId())) {
+            return new ResponseEntity<>("올바르지 않은 형식의 데이터입니다.", HttpStatus.BAD_REQUEST);
+        }
         try {
             boolean isValid = phoneVerificationService.commonVerifyPhoneNumber(request.getPhoneNumber(), request.getVerifyCode());
             if (isValid) {
@@ -294,9 +303,12 @@ public class AppMemberController {
     public ResponseEntity<?> updatePhoneNumber(@RequestBody Map<String,String> req) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserName = authentication.getName();
-        String phone = req.get("phone");
+        String phone = req.get("phoneNumber");
         if (phone == null || phone.trim().isEmpty()) {
             return new ResponseEntity<>("변경할 휴대폰 번호를 입력하세요.", HttpStatus.BAD_REQUEST);
+        }
+        if (!regularExpression.isPhone(phone)){
+            return new ResponseEntity<>("올바르지 않은 형식의 데이터입니다.",HttpStatus.BAD_REQUEST);
         }
         System.out.println(phone);
 

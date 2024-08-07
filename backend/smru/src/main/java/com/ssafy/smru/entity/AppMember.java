@@ -38,8 +38,8 @@ public class AppMember implements UserDetails {
     @Column
     private boolean gender;
 
-    @Column(unique = true)
-    private String phone;
+    @Column(name="phone",unique = true)
+    private String phoneNumber;
 
     @Column
     @ColumnDefault("false")
@@ -67,14 +67,14 @@ public class AppMember implements UserDetails {
 
 
     @Builder
-    public AppMember(Long appMemberId, String memberId, String password, String memberName, LocalDate birth, boolean gender, String phone, boolean deleted, MedicalInformation medicalInformation) {
+    public AppMember(Long appMemberId, String memberId, String password, String memberName, LocalDate birth, boolean gender, String phoneNumber, boolean deleted, MedicalInformation medicalInformation) {
         this.appMemberId = appMemberId;
         this.memberId = memberId;
         this.password = password;
         this.memberName = memberName;
         this.birth = birth;
         this.gender = gender;
-        this.phone = phone;
+        this.phoneNumber = phoneNumber;
         this.deleted = deleted;
         this.medicalInformation = medicalInformation;
     }
@@ -86,7 +86,7 @@ public class AppMember implements UserDetails {
     public void changeMedicalInformation(MedicalInformation medicalInformation) {
         this.medicalInformation = medicalInformation;
     }
-    public void changePhone(String phone) {
-        this.phone = phone;
+    public void changePhone(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }
