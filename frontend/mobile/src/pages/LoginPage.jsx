@@ -8,6 +8,8 @@ import useForm from "@/hooks/useForm";
 import { loginApi } from "@/api/userApi";
 import useUserStore from "@/store/useUserStore";
 import useFormInputStore from "@/store/useFormInputStore";
+import { errorAlert } from "@/util/notificationAlert";
+
 const Login = () => {
   const navigate = useNavigate();
   const { setAccessToken, setReFreshToken, login, setUserId } = useUserStore();
@@ -20,23 +22,25 @@ const Login = () => {
         values.id,
         values.password,
         (response) => {
-          //TODO - 토큰 저장하기
           if (response.status === 200) {
             setAccessToken(response.data.accessToken);
             setReFreshToken(response.data.refreshToken);
             setUserId(values.id);
             login();
+            localStorage.setItem("accessToken", response.data.accessToken);
+            localStorage.setItem("refreshToken", response.data.refreshToken);
             clearInputs();
             navigate("/");
           }
         },
         (error) => {
           console.log(error);
+          //FIXME - api 에러 코드 완성되면 주석 풀기
           // errorAlert(error.response.status);
         }
       );
     },
-    validate: () => {},
+    validate: null,
   });
   return (
     <Container>

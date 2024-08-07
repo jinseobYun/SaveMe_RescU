@@ -21,7 +21,7 @@ async function tokenRegeneration() {
 }
 
 function loginAxios() {
-  const accessToken = localStorage.getItem("accessToken");
+
   const refreshToken = localStorage.getItem("refreshToken");
 
   const instance = axios.create({
@@ -36,6 +36,7 @@ function loginAxios() {
 
   instance.interceptors.request.use(
     (config) => {
+      const accessToken = localStorage.getItem("accessToken");
       config.headers["Content-Type"] = "application/json";
       config.headers["Authorization"] = `Bearer ${accessToken}`;
 
@@ -76,10 +77,10 @@ function loginAxios() {
                 window.location.replace("/login");
               });
             } else {
-              notificationAlert("error", "실패하셨습니다", () => {});
+              notificationAlert("error", "실패하셨습니다", () => { });
             }
-            return new Promise(() => {});
-          //TODO - error 코드 별로 분기 만들기
+            return new Promise(() => { });
+
           default:
             return Promise.reject(error);
         }

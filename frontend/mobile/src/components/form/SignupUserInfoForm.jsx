@@ -16,22 +16,29 @@ const SignupUserInfoForm = () => {
       name: inputs.name || "",
       birth: inputs.birth || "",
       phoneNumber: inputs.phoneNumber || "",
-      gender: inputs.gender || "남성",
+      gender: inputs.gender || "",
     },
     onSubmit: (values) => {
       console.log(values);
-      navigate("/verification", { state: { type: "signup" } });
       updateInputs(values);
 
-      //TODO - api 연결
-      // updateInputs(values);
-      // reqVerifyCode(
-      //   values.phoneNumber,
-      //   ({ data }) => {
-      //     navigate("/verification", { type: "signup" });
-      //   },
-      //   (error) => {}
-      // );
+      reqVerifyCode(
+        values.phoneNumber,
+        (response) => {
+          console.log(response);
+          if (response.status === 200) {
+            navigate("/verification", { state: { type: "signup" } });
+            //FIXME - 인증코드 저장 없애기
+            updateInputs({ temporyCode: response.data.toString() });
+          } else {
+            console.log(response);
+          }
+          4867;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
     },
     validate: SignUpValidationUserInfo,
   });
@@ -44,8 +51,7 @@ const SignupUserInfoForm = () => {
   };
   useEffect(() => {
     if (isTextOnce != (Object.keys(errors).length !== 0)) setIsTextOnce(true);
-    console.log(values);
-    console.log(errors);
+    if (inputs.name) setIsTextOnce(true);
   }, [errors]);
   return (
     <>
@@ -115,12 +121,13 @@ const SignupUserInfoForm = () => {
                   $size="12px"
                   $lineHeight="16px"
                 />
+                <label></label>
                 <StyledRadio
-                  value="남성"
+                  value="0"
                   type="radio"
                   name="gender"
                   onChange={onChangeGender}
-                  defaultChecked
+                  defaultChecked={inputs.gender === "0"}
                 />
                 <Text
                   children="여성"
@@ -129,10 +136,11 @@ const SignupUserInfoForm = () => {
                   $lineHeight="16px"
                 />
                 <StyledRadio
-                  value="여성"
+                  value="1"
                   type="radio"
                   name="gender"
                   onChange={onChangeGender}
+                  defaultChecked={inputs.gender === "1"}
                 />
               </Grid>
             </Grid>

@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 
 import useUserStore from "@/store/useUserStore";
 const TabBar = () => {
-  //TODO -  유저 연결
   const isLogined = useUserStore((state) => state.isLogined);
 
   return (
@@ -16,12 +15,11 @@ const TabBar = () => {
         <Link to="/">홈</Link>
       </TabItem>
       <TabItem>
-        {/* {isLogined ? (
-          <Link to="/login">로그인</Link>
+        {isLogined ? (
+          <Link to="/menu">내정보</Link>
         ) : (
-          <Link to="/mySetting">내정보</Link>
-        )} */}
-        <Link to="/login">로그인</Link>
+          <Link to="/login">로그인</Link>
+        )}
       </TabItem>
 
       {/* <BottomNav>

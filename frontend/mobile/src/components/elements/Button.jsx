@@ -36,6 +36,7 @@ const Button = ({
     $boxShadow,
     $transition,
     $zIndex,
+    $disabled,
   };
   return (
     <BasicButton {...styles} onClick={_onClick} disabled={$disabled}>
@@ -62,7 +63,7 @@ const BasicButton = styled.button`
           margin: ${props.$margin};
         `
       : ""}
-    ${(props) => (props.$bold ? "font-weight: 600;" : "")}
+  ${(props) => (props.$bold ? "font-weight: 600;" : "")}
     outline: none;
   &:focus {
     outline: none;
@@ -71,18 +72,26 @@ const BasicButton = styled.button`
     background-color: ${(props) => props.$bg.disabled || props.$bg.default};
     border: 1px solid #ddd;
     color: ${(props) => props.$color.disabled || props.$color.default};
-
   }
   &:hover {
     background-color: ${(props) => props.$bg.hover || props.$bg.default};
     color: ${(props) => props.$color.hover || props.$color.default};
     cursor: pointer;
   }
-
-  &.active {
-    background-color: ${(props) => props.$bg.active || props.$bg.default};
-    color: ${(props) => props.$color.active || props.$color.default};
-  }
+  &:active {
+    ${(props) =>
+      props.$disabled
+        ? css`
+            background-color: ${(props) =>
+              props.$bg.disabled || props.$bg.default};
+            border: 1px solid #ddd;
+            color: ${(props) => props.$color.disabled || props.$color.default};
+          `
+        : css`
+            background-color: ${props.$bg.active || props.$bg.default};
+            color: ${props.$color.active || props.$color.default};
+          `}
+}
     ${(props) =>
       props.$boxShadow &&
       css`

@@ -15,9 +15,14 @@ import SendIcon from "@mui/icons-material/Send";
 
 import { Button, Text, Grid } from "@components/elements";
 const socket = io(import.meta.env.VITE_SOCKET_SERVER_URL, {
-  transports: ["websocket"],
+  // transports: ["websocket"],
   autoConnect: false,
   pingTimeout: 300000,
+  withCredentials: true,
+  extraHeaders: {
+    "Content-Type": "application/json",
+  },
+  cors: { origin: import.meta.env.VITE_SOCKET_SERVER_URL },
 });
 
 const configuration = {

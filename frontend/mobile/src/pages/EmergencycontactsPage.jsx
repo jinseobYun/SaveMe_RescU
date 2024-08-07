@@ -157,7 +157,7 @@ const EmergencycontactsPage = () => {
     $padding: "1rem 2rem",
     $size: "24px",
     $bold: true,
-    $padding: "14px 32px",
+    // $padding: "14px 32px",
     $width: "",
     $height: "10vh",
   };
