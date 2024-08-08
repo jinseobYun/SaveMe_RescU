@@ -28,6 +28,7 @@ import {
   ChangePwPage,
   EmptyPage,
   NfcInfoPage,
+  ReportOpenViduPage,
 } from "@/pages";
 import GlobalStyle from "@/globalStyles.js";
 function App() {
@@ -40,6 +41,7 @@ function App() {
           {/* <Route path="/" element={<Navigate to="/home" />} /> */}
           {/* <Route path="/home" element={<HomePage />} /> */}
           <Route path="/" element={<HomePage />} />
+          <Route path="/gps" element={<ReportOpenViduPage />} />
 
           <Route path="/verification" element={<VerifyCodeForm />} />
           <Route path="/report" element={<ReportCallPage />} />

@@ -12,7 +12,9 @@ import FindIdPwPage from "./FindIdPwPage";
 import ChangePwPage from "./ChangePwPage";
 import EmptyPage from "./EmptyPage";
 import NfcInfoPage from "./NfcInfoPage";
+import ReportOpenViduPage from "./ReportOpenViduPage";
 export {
+  ReportOpenViduPage,
   NfcInfoPage,
   EmptyPage,
   HomePage,
