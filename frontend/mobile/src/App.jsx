@@ -22,6 +22,7 @@ import {
   FindIdPwPage,
   ChangePwPage,
   EmptyPage,
+  NfcInfoPage,
 } from "@/pages";
 import GlobalStyle from "@/globalStyles.js";
 function App() {
@@ -51,7 +52,8 @@ function App() {
               path="/medicalinfo/edit/*"
               element={<EditMedicalInfoPage />}
             />
-            {/*  <Route path="/nfc-info" element={<NfcInfoPage />} />
+            <Route path="/nfcinfo" element={<NfcInfoPage />} />
+            {/* 
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/privacy-agreement" element={<PrivacyAgreementPage />} />
           <Route

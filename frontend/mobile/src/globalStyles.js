@@ -78,7 +78,12 @@ const GlobalStyles = createGlobalStyle`
 		width: 100%;
   	height: 100%;
 		overflow: hidden;
+		
 	}
+// 		body.swal2-shown > [aria-hidden='true'] {
+//   transition: 0.1s filter;
+//   filter: blur(3px);
+// }
 	ol, ul {
 		list-style: none;
 	}

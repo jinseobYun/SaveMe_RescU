@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { TabBar } from "@components/common";
 import { Button, Grid, Text, Toggle } from "@components/elements";
@@ -8,13 +8,16 @@ import useFormInputStore from "@/store/useFormInputStore";
 
 const Home = () => {
   const navigate = useNavigate();
-
+  const [searchParams] = useSearchParams();
+  const tagId = searchParams.get("tagId");
   const onClickReportBtn = () => {
     navigate("/report");
   };
   const { clearAllInputs } = useFormInputStore();
   useEffect(() => {
     clearAllInputs();
+    if (tagId) {
+    }
   }, []);
   return (
     <>

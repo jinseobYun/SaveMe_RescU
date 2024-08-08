@@ -56,7 +56,7 @@ const MenuPage = () => {
   }, []);
   return (
     <Container>
-      <Header navText={"내 정보"} />
+      <Header navText={"내 정보"} goTo="/" />
 
       <MenuList>
         {items.map((item, index) => (
