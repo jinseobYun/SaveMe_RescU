@@ -22,7 +22,8 @@ export const yesorNoAlert = (
   title,
   confirmButtonText,
   cancelButtonText,
-  confirmFuc
+  confirmFuc,
+
 ) => {
   Swal.fire({
     title: title,

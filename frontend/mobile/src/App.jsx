@@ -37,8 +37,10 @@ function App() {
       <Router basename="/app/">
         <Routes>
           {/* 인증이 필요없는 */}
-          <Route path="/" element={<Navigate to="/home" />} />
-          <Route path="/home" element={<HomePage />} />
+          {/* <Route path="/" element={<Navigate to="/home" />} /> */}
+          {/* <Route path="/home" element={<HomePage />} /> */}
+          <Route path="/" element={<HomePage />} />
+
           <Route path="/verification" element={<VerifyCodeForm />} />
           <Route path="/report" element={<ReportCallPage />} />
 
