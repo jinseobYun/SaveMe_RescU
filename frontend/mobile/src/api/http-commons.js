@@ -58,7 +58,7 @@ function loginAxios() {
         if (response.status === 200) {
           const newAccessToken = response.data.accessToken;
           localStorage.setItem("accessToken", response.data.accessToken);
-          // localStorage.setItem("refreshToken", response.data.refreshToken);
+          localStorage.setItem("refreshToken", response.data.refreshToken);
           axios.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
           //진행중이던 요청 이어서하기
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;

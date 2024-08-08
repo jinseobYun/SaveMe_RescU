@@ -8,19 +8,22 @@ const TabBar = () => {
 
   return (
     <Wrapper>
-      <TabItem>
-        <Link to="/firstaid">긴급 대처 요령</Link>
-      </TabItem>
-      <TabItem>
-        <Link to="/">홈</Link>
-      </TabItem>
-      <TabItem>
-        {isLogined ? (
-          <Link to="/menu">내정보</Link>
-        ) : (
-          <Link to="/login">로그인</Link>
-        )}
-      </TabItem>
+      <Link to="/firstaid">
+        <TabItem>긴급 대처 요령</TabItem>
+      </Link>
+      <Link to="/">
+        <TabItem>홈</TabItem>
+      </Link>
+
+      {isLogined ? (
+        <Link to="/menu">
+          <TabItem>내정보</TabItem>
+        </Link>
+      ) : (
+        <Link to="/login">
+          <TabItem>로그인</TabItem>
+        </Link>
+      )}
 
       {/* <BottomNav>
         <NavItem>긴급 대처 요청</NavItem>
@@ -50,6 +53,7 @@ const TabItem = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  font-size: 2rem;
   gap: 8px;
   flex-shrink: 0;
   &:hover {
