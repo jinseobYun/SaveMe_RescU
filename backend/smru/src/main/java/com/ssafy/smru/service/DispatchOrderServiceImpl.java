@@ -92,7 +92,7 @@ public class DispatchOrderServiceImpl implements DispatchOrderService{
 
         dispatchOrder.setHospitalName(request.getHospitalName());
         dispatchOrder.setMemberName(request.getMemberName());
-        dispatchOrder.setGender(request.getGender());
+        dispatchOrder.setGender(request.getGender().equals("0")?"남":"여");
         dispatchOrder.setBirth(request.getBirth());
         dispatchOrder.setBloodType1(request.getBloodType1());
         dispatchOrder.setBloodType2(request.getBloodType2());
