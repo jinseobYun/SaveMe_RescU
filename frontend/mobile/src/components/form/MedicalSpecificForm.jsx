@@ -10,6 +10,7 @@ import useUserStore from "@/store/useUserStore";
 import useFormInputStore from "@/store/useFormInputStore";
 import useSearchStore from "@/store/useSearchStore";
 import { registerMedicalInfo, updateMedicalInfo } from "@api/medicalInfoApi";
+import { successAlert, errorAlert } from "@/util/notificationAlert";
 
 const MedicalSpecificForm = ({ form, btnSetting }) => {
   const {
@@ -48,13 +49,8 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
             if (response.status === 200) {
               clearAllInputs();
               setUserMedicalInfo(data);
-              Swal.fire({
-                title: "저장되었습니다",
-                confirmButtonText: "확인",
-                confirmButtonColor: "#FFCC70",
-                didClose: () => {
-                  navigate("/medicalinfo", { replace: true });
-                },
+              successAlert("저장되었습니다", () => {
+                navigate("/medicalinfo", { replace: true });
               });
             }
           },
@@ -66,22 +62,17 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
         registerMedicalInfo(
           data,
           (response) => {
-            console.log(response);
             if (response.status === 201) {
               clearAllInputs();
               setUserMedicalInfo(data);
-              Swal.fire({
-                title: "등록되었습니다",
-                confirmButtonText: "확인",
-                confirmButtonColor: "#FFCC70",
-                didClose: () => {
-                  navigate("/medicalinfo", { replace: true });
-                },
+              successAlert("등록되었습니다", () => {
+                navigate("/medicalinfo", { replace: true });
               });
             }
           },
           (error) => {
             console.log(error.toJSON());
+            errorAlert(error.response.data);
           }
         );
       }

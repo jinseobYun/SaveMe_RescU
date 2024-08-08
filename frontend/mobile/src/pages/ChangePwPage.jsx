@@ -16,59 +16,35 @@ const ChangePwPage = () => {
   const { values, errors, isLoading, handleChange, handleSubmit } = useForm({
     initialValues: { newPassword: "", newPasswordConfirm: "" },
     onSubmit: (values) => {
-      // const data = {
-      //   phoneNumber: inputs.phoneNumber,
-      //   verifyCode: inputs.verifyCode,
-      //   newPassword: values.newPassword,
-      //   newPasswordConfirm: values.newPasswordConfirm,
-      //   memberId: inputs.memberId,
-      //   memberName: inputs.memberName,
-      //   verifyCode: inputs.verifyCode,
-      // };
+      //FIXME - 인증번호 저장 삭제 후 밑의 data로 변경
       const data = {
-        ...inputs,
+        phoneNumber: inputs.phoneNumber,
         newPassword: values.newPassword,
         newPasswordConfirm: values.newPasswordConfirm,
+        memberId: inputs.memberId,
+        memberName: inputs.memberName,
+        verifyCode: inputs.temporyCode,
       };
+      // const data = {
+      //   ...inputs,
+      //   newPassword: values.newPassword,
+      //   newPasswordConfirm: values.newPasswordConfirm,
+      // };
       console.log(data);
-      //FIXME - 서버 403 forbidden
-      // updateUserPwd(
-      //   "find",
-      //   {
-      //     phoneNumber: "01012345623",
-      //     verifyCode: inputs.verifyCode + "",
-      //     memberName: "남도일",
-      //     memberId: "wlstjq",
-      //     newPassword: "test1234",
-      //     newPasswordConfirm: "test1234",
-      //   },
-      //   (response) => {
-      //     if (response.status === 200) {
-      //       clearInputs();
-      //       navigate("/", { replace: true });
-      //     }
-      //   },
-      //   (error) => {
-      //         console.log(error.toJSON());
-      //     errorAlert(error.response.data);
-      //   }
-      // );
-      // axios
-      //   .put(
-      //     "https://i11b305.p.ssafy.io/api/v1/app/members/password-not-login",
-      //     {
-      //       phoneNumber: "01012345623",
-      //       verifyCode: "565825",
-      //       memberName: "남도일",
-      //       memberId: "wlstjq",
-      //       newPassword: "test1234",
-      //       newPasswordConfirm: "test1234",
-      //     }
-      //   )
-      //   .then((respnse) => {
-      //     console.log(respnse);
-      //   })
-      //   .catch((err) => console.log(err));
+      updateUserPwd(
+        "find",
+        data,
+        (response) => {
+          if (response.status === 200) {
+            clearInputs();
+            navigate("/", { replace: true });
+          }
+        },
+        (error) => {
+          console.log(error);
+          errorAlert(error.response.data);
+        }
+      );
     },
     validate: ChangePwValidation,
   });

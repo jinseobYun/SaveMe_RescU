@@ -15,13 +15,17 @@ const EmergencyContactInput = ({ $onChange, $prev }) => {
     },
     validate: EmergencyContactValidation,
   });
+  const onChangeInput = (e) => {
+    $onChange && $onChange();
+    handleChange(e);
+  };
   return (
     <>
       <Input
         $name="relation"
         $placeholder="영문, 한글 20자 이하로 작성해주세요"
         $value={values.relation}
-        _onChange={handleChange}
+        _onChange={onChangeInput}
         $label="관계*"
         $errorMessage={errors.relation}
         $haveToCheckValid={true}
@@ -33,7 +37,7 @@ const EmergencyContactInput = ({ $onChange, $prev }) => {
         $label="전화번호*"
         $type="tel"
         $value={values.phoneNumber}
-        _onChange={handleChange}
+        _onChange={onChangeInput}
         $errorMessage={errors.phoneNumber}
         $haveToCheckValid={true}
         $isValid={errors.phoneNumber && false}
