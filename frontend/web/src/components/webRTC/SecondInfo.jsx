@@ -4,56 +4,87 @@ import Input from "../elements/Input";
 import Button from "../elements/Button";
 import Radio from "../elements/Radio";
 import Select from "../elements/Select";
+import Textarea from "../elements/Textarea";
 
 import { useDispatch, useSelector } from "react-redux";
-import { postSecondInfoAsync } from "../../slices/reportSlice";
+import { putSecondInfoAsync } from "../../slices/reportSlice";
+// 응급실 정보는 다시 호출
+import { fetchEmergencyList } from "../../slices/emergencySlice";
 
-// useLocation을 사용해 dispatchOrderId를 전달
-import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const SecondInfo = () => {
   // api 연결
   const dispatch = useDispatch();
-  const location = useLocation();
+  const navigate = useNavigate();
   // 없는경우 {}
-  const { dispatchOrderId } = location.state || {};
-  const reportData = useSelector((state) => state.reportSlice);
+  const reportData = useSelector((state) => state.reportSlice.reportData);
+  const dispatchOrderId = useSelector(
+    (state) => state.reportSlice.dispatchOrderId
+  );
+  const emergencyData = useSelector((state) => state.emergencySlice) || {
+    items: [],
+  };
 
+  // form 변수명 수정
   const [formData, setFormData] = useState({
-    hospital: "",
-    hpid: "",
-    patientName: "",
+    hospitalName: "",
+    memberName: "",
     gender: "",
-    birthDate: "",
-    bloodType: "",
-    rhType: "",
-    diseases: [""],
-    medications: [""],
-    specialNotes: [""],
-    reporterName: "",
-    reporterPhone: "",
+    birth: "",
+    bloodType1: "",
+    bloodType2: "",
+    otherInfo: "",
+    chronicDisease: [""],
+    drugInfos: [""],
   });
 
   const [hospitalOptions, setHospitalOptions] = useState([]);
 
   // api 호출 데이터 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+  // reportData의 latitude와 longitude로 응급실 정보를 호출
   useEffect(() => {
-    if (reportData && reportData.hospital) {
-      setHospitalOptions(
-        reportData.hospitals.map((hospital) => hospital.hospitalName)
+    if (reportData.latitude && reportData.longitude) {
+      dispatch(
+        fetchEmergencyList({
+          lat: reportData.latitude,
+          lon: reportData.longitude,
+        })
       );
-      setFormData({
-        hospital: reportData.hospitals[0].hospitalName,
-        hpid: reportData.hospitals[0].hpid,
-        patientName: reportData.medicalInformation.memberName,
-        gender: reportData.medicalInformation.gender,
-        birthDate: reportData.medicalInformation.birth,
-        bloodType: reportData.medicalInformation.bloodType1,
-        rhType: reportData.medicalInformation.bloodType2,
-        diseases: reportData.medicalInformation.chronicDisease,
-        medications: reportData.medicalInformation.drugInfos,
-        specialNotes: reportData.medicalInformation.otherInfo.split(", "), // assuming otherInfo is a comma-separated string
-      });
+    }
+  }, [reportData.latitude, reportData.longitude, dispatch]);
+
+  // 응급실 정보가 변경될 때 폼의 기본 값을 설정
+  useEffect(() => {
+    if (emergencyData.items.length > 0) {
+      setHospitalOptions(
+        emergencyData.items.map((hospital) => hospital.dutyName)
+      );
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        hospitalName: emergencyData.items[0].dutyName,
+        // hpid: emergencyData.items[0].hpid,
+      }));
+    }
+  }, [emergencyData.items]);
+
+  useEffect(() => {
+    if (reportData && reportData.hospitals && reportData.hospitals.length > 0) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        memberName: reportData.taggingMedicalInformation.memberName,
+        gender: reportData.taggingMedicalInformation.gender,
+        birth: reportData.taggingMedicalInformation.birth,
+        bloodType: reportData.taggingMedicalInformation.bloodType1,
+        bloodType2: reportData.taggingMedicalInformation.bloodType2,
+        chronicDisease: reportData.taggingMedicalInformation.medCdis.map(
+          (disease) => disease.cdName
+        ),
+        drugInfos: reportData.taggingMedicalInformation.drugInfos.map(
+          (med) => med.medicineName
+        ),
+        otherInfo: reportData.taggingMedicalInformation.otherInfo,
+      }));
     }
   }, [reportData]);
 
@@ -64,7 +95,6 @@ const SecondInfo = () => {
     }));
   };
 
-  // 추가: 배열로 들어온 값에 대해 수정하는 경우.
   const handleArrayInputChange = (name, index, value) => {
     setFormData((prevState) => {
       const updatedArray = [...prevState[name]];
@@ -78,63 +108,88 @@ const SecondInfo = () => {
 
   const handleClearAll = () => {
     setFormData({
-      hospital: "",
+      hospitalName: "",
       hpid: "",
-      patientName: "",
+      memberName: "",
       gender: "",
-      birthDate: "",
-      bloodType: "",
-      rhType: "",
-      diseases: [""],
-      medications: [""],
-      specialNotes: [""],
-      reporterName: "",
-      reporterPhone: "",
+      birth: "",
+      bloodType1: "",
+      bloodType2: "",
+      chronicDisease: [""],
+      drugInfos: [""],
+      otherInfo: "",
     });
   };
 
   const handleLoadTagData = () => {
+    console.log("태그된 환자 정보 : ", reportData.taggingMedicalInformation);
     setFormData({
       ...formData,
-      ...mockTagData,
+      drugInfos: reportData.taggingMedicalInformation.memberName,
+      gender: reportData.taggingMedicalInformation.gender,
+      birth: reportData.taggingMedicalInformation.birth,
+      bloodType1: reportData.taggingMedicalInformation.bloodType1,
+      bloodType2: reportData.taggingMedicalInformation.bloodType2,
+      chronicDisease: reportData.taggingMedicalInformation.medCdis.map(
+        (disease) => disease.cdName
+      ),
+      drugInfos: reportData.taggingMedicalInformation.drugInfos.map(
+        (med) => med.medicineName
+      ),
+      otherInfo: reportData.taggingMedicalInformation.otherInfo,
     });
   };
 
   const handleLoadReporterData = () => {
+    console.log(
+      "신고자의 저장 된 정보 : ",
+      reportData.reporterMedicalInformation
+    );
     setFormData({
       ...formData,
-      ...mockReporterData,
+      memberName: reportData.reporterMedicalInformation.memberName,
+      gender: "",
+      birth: reportData.reporterMedicalInformation.birth,
+      bloodType1: reportData.reporterMedicalInformation.bloodType1,
+      bloodType2: reportData.reporterMedicalInformation.bloodType2,
+      chronicDisease: reportData.reporterMedicalInformation.medCdis.map(
+        (disease) => disease.cdName
+      ),
+      drugInfos: reportData.reporterMedicalInformation.drugInfos.map(
+        (med) => med.medicineName
+      ),
+      otherInfo: reportData.reporterMedicalInformation.otherInfo,
     });
   };
 
-  // const handleSubmit = () => {
-  //   console.log(formData);
-  // };
+  const handleHospitalChange = (value, index) => {
+    if (emergencyData.items && emergencyData.items.length > 0) {
+      console.log(emergencyData);
+      setFormData((prevState) => ({
+        ...prevState,
+        hospitalName: value,
+        hpid: emergencyData.items[index].hpid,
+      }));
+    } else {
+      console.log("응급실 정보 누락");
+    }
+  };
 
   // 데이터 전송
   const handleSubmit = () => {
-
     if (!dispatchOrderId) {
       alert("dispatchOrderId가 없습니다. 1차 정보를 먼저 입력해주세요.");
       return;
     }
 
     const payload = {
-      dispatchOrderId: dispatchOrderId,
-      hpid: formData.hpid,
-      hospitalName: formData.hospital,
-      medicalInformation: {
-        medicalInfoId: reportData.medicalInformation.medicalInfoId,
-        bloodType1: formData.bloodType,
-        bloodType2: formData.rhType,
-        otherInfo: formData.specialNotes.join(", "),
-        chronicDisease: formData.diseases,
-        drugInfos: formData.medications,
-      },
+      dispatchOrderId,
+      ...formData,
     };
 
-    dispatch(postSecondInfoAsync(payload));
-    console.log(payload);
+    console.log("이거봐바바바바", payload);
+
+    dispatch(putSecondInfoAsync(payload));
   };
 
   return (
@@ -144,13 +199,10 @@ const SecondInfo = () => {
           label="응급실"
           name="hospitals"
           options={hospitalOptions}
-          selectedValue={formData.hospital}
-          setSelectedValue={(value, index) => {
-            handleInputChange({ target: { name: "hospital", value } });
-            handleInputChange({
-              target: { name: "hpid", value: reportData.hospitals[index].hpid },
-            });
-          }}
+          selectedValue={formData.hospitalName}
+          setSelectedValue={(value, index) =>
+            handleHospitalChange(value, index)
+          }
         />
         <div>
           <Button _onClick={handleClearAll}>환자정보 일괄삭제</Button>
@@ -164,10 +216,9 @@ const SecondInfo = () => {
         <InputRow>
           <Input
             label="환자명"
-            name="patientName"
-            value={formData.patientName}
+            name="memberName"
+            value={formData.memberName}
             onChange={handleInputChange}
-            // setValue={(value) => handleInputChange("patientName", value)}
             placeholder="이름"
           />
           <Input
@@ -175,50 +226,46 @@ const SecondInfo = () => {
             name="gender"
             value={formData.gender}
             onChange={handleInputChange}
-            // setValue={(value) => handleInputChange("gender", value)}
             placeholder="남/여"
           />
           <Input
             label="생년월일"
-            name="birthDate"
-            value={formData.birthDate}
+            name="birth"
+            value={formData.birth}
             onChange={handleInputChange}
-            // setValue={(value) => handleInputChange("birthDate", value)}
             placeholder="yyyy.mm.dd"
           />
         </InputRow>
         <InputRow>
           <Radio
-            name="bloodType"
+            name="bloodType1"
             label="혈액형"
             options={["A", "B", "AB", "O"]}
-            selectedValue={formData.bloodType}
+            selectedValue={formData.bloodType1}
             setSelectedValue={(value) =>
-              handleInputChange({ target: { name: "bloodType", value } })
+              handleInputChange({ target: { name: "bloodType1", value } })
             }
-            // setSelectedValue={(value) => handleInputChange("bloodType", value)}
           />
           <Radio
-            name="rhType"
+            name="bloodType2"
             label="Rh"
-            options={["Rh+", "Rh-"]}
-            selectedValue={formData.rhType}
+            options={["RH+", "RH-"]}
+            selectedValue={formData.bloodType2}
             setSelectedValue={(value) =>
-              handleInputChange({ target: { name: "rhType", value } })
+              handleInputChange({ target: { name: "bloodType2", value } })
             }
-            // setSelectedValue={(value) => handleInputChange("rhType", value)}
           />
         </InputRow>
       </Section>
       <Section>
         <Label>지병정보</Label>
-        {formData.diseases.map((disease, index) => (
+        {formData.chronicDisease.map((disease, index) => (
           <Input
             key={index}
             name={`disease_${index}`}
             value={disease}
             onChange={(e) =>
-              handleArrayInputChange("diseases", index, e.target.value)
+              handleArrayInputChange("chronicDisease", index, e.target.value)
             }
             placeholder={`지병을 입력하세요`}
             // showClearButton={true}
@@ -227,13 +274,13 @@ const SecondInfo = () => {
       </Section>
       <Section>
         <Label>투약정보</Label>
-        {formData.medications.map((medication, index) => (
+        {formData.drugInfos.map((medication, index) => (
           <Input
             key={index}
             name={`medication_${index}`}
             value={medication}
             onChange={(e) =>
-              handleArrayInputChange("medications", index, e.target.value)
+              handleArrayInputChange("drugInfos", index, e.target.value)
             }
             placeholder={`투약정보를 입력하세요`}
             // showClearButton={true}
@@ -241,22 +288,15 @@ const SecondInfo = () => {
         ))}
       </Section>
       <Section>
-        <Label>기타 특이 사항</Label>
-        {formData.specialNotes.map((note, index) => (
-          <Input
-            key={index}
-            name={`specialNote_${index}`}
-            value={note}
-            onChange={(e) =>
-              handleArrayInputChange("specialNotes", index, e.target.value)
-            }
-            placeholder={`기타 특이사항`}
-            // showClearButton={true}
-          />
-        ))}
+        <Textarea
+          label="기타 특이사항"
+          name="otherInfo"
+          value={formData.otherInfo}
+          onChange={handleInputChange}
+        />
       </Section>
       <ButtonRow>
-        <Button _onClick={handleSubmit}>뒤로가기</Button>
+        <Button _onClick={() => navigate(-1)}>뒤로가기</Button>
         <Button _onClick={handleSubmit}>보내기</Button>
       </ButtonRow>
     </FormContainer>
