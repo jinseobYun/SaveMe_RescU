@@ -13,9 +13,9 @@ function Axios() {
   return instance;
 }
 async function tokenRegeneration() {
-  const accessToken = localStorage.getItem("accessToken");
+  const refreshToken = localStorage.getItem("refreshToken");
   const response = await Axios().post("/members/refresh", {
-    accessToken: accessToken,
+    refreshToken: refreshToken,
   });
   console.log(response);
   return response;
@@ -54,12 +54,11 @@ function loginAxios() {
       const originalRequest = error.config;
       if (error.response.status === 401 || error.response.status === 403) {
         const response = await tokenRegeneration();
-        //리프레시 토큰 요청이 성공할 때
         //FIXME - 서버 500뜸
         if (response.status === 200) {
           const newAccessToken = response.data.accessToken;
           localStorage.setItem("accessToken", response.data.accessToken);
-          localStorage.setItem("refreshToken", response.data.refreshToken);
+          // localStorage.setItem("refreshToken", response.data.refreshToken);
           axios.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
           //진행중이던 요청 이어서하기
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
@@ -70,9 +69,9 @@ function loginAxios() {
             window.location.replace("/login");
           });
         } else {
-          notificationAlert("error", "실패하셨습니다", () => {});
+          notificationAlert("error", "실패하셨습니다", () => { });
         }
-        return new Promise(() => {});
+        return new Promise(() => { });
       }
       return Promise.reject(error);
     }

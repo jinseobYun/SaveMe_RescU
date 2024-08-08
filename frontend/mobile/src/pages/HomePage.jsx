@@ -1,13 +1,16 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 
 import { TabBar } from "@components/common";
 import { Button, Grid, Text, Toggle } from "@components/elements";
 import useFormInputStore from "@/store/useFormInputStore";
-
+import { yesorNoAlert, errorAlert } from "@/util/notificationAlert";
+import { tagReport } from "@/api/reportApi";
 const Home = () => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
   const [searchParams] = useSearchParams();
   const tagId = searchParams.get("tagId");
   const onClickReportBtn = () => {
@@ -17,6 +20,24 @@ const Home = () => {
   useEffect(() => {
     clearAllInputs();
     if (tagId) {
+      yesorNoAlert("태깅이 감지되었습니다.", "취소", "신고하기", (result) => {
+        if (result.isDismissed) {
+          //TODO - 태깅 신고 로직
+          tagReport(
+            tagId,
+            (response) => {
+              if (response.status === 200) {
+                navigate("/report");
+              }
+            },
+            (error) => {
+              console.log(error);
+              errorAlert(error.response.data);
+              navigate("/home ");
+            }
+          );
+        } else navigate("/home ");
+      });
     }
   }, []);
   return (
