@@ -248,13 +248,12 @@ public class AppMemberController {
         }
 
         if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {
-            return ResponseEntity.unprocessableEntity().body("새 비밀번호가 일치하지 않습니다.");
+            return ResponseEntity.badRequest().body("새 비밀번호가 일치하지 않습니다.");
         }
 
         try {
             boolean isValid = phoneVerificationService.commonVerifyPhoneNumber(request.getPhoneNumber(), request.getVerifyCode());
             if (isValid) {
-
                 AppMemberDto.Response member = appMemberService.getMemberByPhoneNumberAndMemberIdAndMemberName(request.getPhoneNumber(),request.getMemberId(),request.getMemberName());
                 appMemberService.updatePassword(member.getMemberId(), request.getNewPassword());
                 // 인증 성공 후 비밀번호 변경이 끝났으므로
@@ -322,8 +321,4 @@ public class AppMemberController {
         }
 
     }
-
-
-
-
 }
