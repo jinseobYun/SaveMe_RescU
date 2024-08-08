@@ -92,6 +92,7 @@ public class DispatchOrderDto {
         private String reporterPhone;
         private String reportDetails;
         private String hospitalName;
+        private String memberName;
         private String gender;
         private String birth;
         private String chronicDisease;
@@ -100,6 +101,7 @@ public class DispatchOrderDto {
         private String drugInfos;
         private String otherInfo;
         private String createdBy;
+
 
         public Response(DispatchOrder dispatchOrder) {
             this.dispatchOrderId = dispatchOrder.getDispatchOrderId();
@@ -112,8 +114,10 @@ public class DispatchOrderDto {
             this.reporterPhone = dispatchOrder.getReporterPhone();
             this.reportDetails = dispatchOrder.getReportDetails();
             this.hospitalName = dispatchOrder.getHospitalName();
+            this.memberName=dispatchOrder.getMemberName();
             this.gender = dispatchOrder.getGender();
             this.birth = dispatchOrder.getBirth();
+            this.memberName = dispatchOrder.getMemberName();
             this.chronicDisease = dispatchOrder.getChronicDisease();
             this.bloodType1 = dispatchOrder.getBloodType1();
             this.bloodType2 = dispatchOrder.getBloodType2();
