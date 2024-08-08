@@ -8,6 +8,7 @@ import com.ssafy.smru.entity.AppMember;
 import com.ssafy.smru.entity.app.*;
 import com.ssafy.smru.exception.EntityExistsException;
 import com.ssafy.smru.exception.ResourceNotFoundException;
+import com.ssafy.smru.exception.UnauthorizedException;
 import com.ssafy.smru.repository.AppMemberRepository;
 import com.ssafy.smru.repository.app.*;
 import com.ssafy.smru.service.elasticsearch.ElasticSearchService;
@@ -35,7 +36,7 @@ public class MedicalInformationService {
     @Transactional
     public void createMedicalInformation(MedicalInformationDto.Request request) {
         AppMember appMember = appMemberRepository.findByMemberId(request.getMemberId())
-                .orElseThrow(() -> new ResourceNotFoundException(request.getMemberId() + "는 등록되지 않은 사용자입니다."));
+                .orElseThrow(() -> new UnauthorizedException("등록된 사용자가 아닙니다."));
         // 이미 존재하는 경우 삭제
         if (appMember.getMedicalInformation() != null && appMember.getMedicalInformation().getMedicalInformationId() != null) {
                 throw new EntityExistsException("이미 등록된 의료정보가 있습니다.");
@@ -115,7 +116,7 @@ public class MedicalInformationService {
     // 아이디로 의료 정보 불러오기
     public  MedicalInformationDto.Response getMedicalInformationByMemberId(String memberId) {
         AppMember member = appMemberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new ResourceNotFoundException("등록된 사용자가 아닙니다"));
+                .orElseThrow(() -> new UnauthorizedException("등록된 사용자가 아닙니다"));
 
         // 의료 정보 없는 경우 예외 처리
         if(member.getMedicalInformation() == null){
@@ -140,7 +141,7 @@ public class MedicalInformationService {
     @Transactional
     public void modifyMedicalInformation(String memberId, MedicalInformationDto.Request request) {
         AppMember member = appMemberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new ResourceNotFoundException("등록된 사용자가 없습니다."));
+                .orElseThrow(() -> new UnauthorizedException("등록된 사용자가 아닙니다"));
         if (member.getMedicalInformation() == null) {
             throw new ResourceNotFoundException("등록된 의료 정보가 없습니다.");
         }
@@ -159,7 +160,7 @@ public class MedicalInformationService {
     public void removeMedicalInformation(Long medicalInformationId) {
 
         MedicalInformation medicalInformation = medicalInformationRepository.findById(medicalInformationId)
-                .orElseThrow(() -> new ResourceNotFoundException("등록된 의료 정보가 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 의료정보 입니다."));
         drugInfoRepository.deleteAll(medicalInformation.getDrugInfos());
         medCdiRepository.deleteAll(medicalInformation.getMedCdis());
         medicalInformationRepository.delete(medicalInformation);
@@ -168,7 +169,7 @@ public class MedicalInformationService {
     @Transactional
     public void deleteRequestProcess(String memberId) {
         AppMember member = appMemberRepository.findByMemberId(memberId)
-                .orElseThrow(()-> new ResourceNotFoundException("등록된 사용자가 없습니다."));
+                .orElseThrow(()-> new UnauthorizedException("등록된 사용자가 아닙니다"));
         if (member.getMedicalInformation() == null) {
             throw new ResourceNotFoundException("등록된 의료 정보가 없습니다.");
         }
