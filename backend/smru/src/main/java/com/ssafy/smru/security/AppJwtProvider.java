@@ -43,7 +43,6 @@ public class AppJwtProvider {
         Date accessTokenExpiresIn = new Date((new Date()).getTime() + 1000L * 60 * 60 * 3);
 
         // 엑세스 토큰 생성
-
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("appMemberId", appMemberId)
@@ -53,8 +52,9 @@ public class AppJwtProvider {
                 .compact();
 
         // 리프레시 토큰 생성
+        Date refreshTokenExpiresIn = new Date((new Date()).getTime() + 1000L * 60 * 60 * 14);
         String refreshToken = Jwts.builder()
-                .setExpiration(accessTokenExpiresIn)
+                .setExpiration(refreshTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 

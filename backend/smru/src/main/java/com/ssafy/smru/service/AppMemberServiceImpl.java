@@ -5,12 +5,14 @@ import com.ssafy.smru.dto.app.AppMemberRegisterDto;
 import com.ssafy.smru.entity.AppMember;
 import com.ssafy.smru.exception.ResourceConflictException;
 import com.ssafy.smru.exception.ResourceNotFoundException;
+import com.ssafy.smru.exception.UnauthorizedException;
 import com.ssafy.smru.repository.AppMemberRepository;
 import com.ssafy.smru.security.AppJwtProvider;
 import com.ssafy.smru.security.TokenInfo;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -20,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -147,4 +150,19 @@ public class AppMemberServiceImpl implements AppMemberService {
         member.changePhone(newPhoneNumber);
         appMemberRepository.save(member);
     }
+
+    @Override
+    public TokenInfo regenerateToken(Map<String, String> req) throws BadRequestException, UnauthorizedException {
+        String accessToken = req.get("accessToken");
+        String refreshToken = req.get("refreshToken");
+        // 요청에 토큰이 없는 경우
+        if (refreshToken == null) throw new BadRequestException("요청정보에 토큰이 없습니다.");
+        // 토큰이 있다면 토큰이 유효한지 확인
+        if (!appJwtProvider.validateToken(refreshToken) /* TODO: 여기에 DB와 해당 사용자의 refreshToken인지 검증 */) throw new UnauthorizedException("유효하지 않는 토큰입니다.");
+        // 유효한 토큰이라면 액세스, 리프레시 토큰 재발급
+        TokenInfo tokenInfo = appJwtProvider.generateToken(appJwtProvider.getAuthentication(accessToken), appJwtProvider.getAppMemberIdFromToken(accessToken));
+        // TODO: DB의 사용자 refreshToken을 교체
+        return tokenInfo;
+    }
+
 }

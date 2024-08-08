@@ -13,6 +13,7 @@ import com.ssafy.smru.service.app.PhoneVerificationService;
 import com.ssafy.smru.util.RegularExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -320,5 +321,18 @@ public class AppMemberController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
 
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> regenerateToken(@RequestBody Map<String, String> req) {
+        try {
+            return ResponseEntity.ok(appMemberService.regenerateToken(req));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (UnauthorizedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("서버에서 예상치 못한 오류가 발생했습니다.");
+        }
     }
 }
