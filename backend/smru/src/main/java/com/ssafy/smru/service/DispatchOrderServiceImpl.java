@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
@@ -29,10 +30,13 @@ public class DispatchOrderServiceImpl implements DispatchOrderService{
     private final WebMemberRepository webMemberRepository;
 
     // 출동 지령 리스트 페이징 메서드
-    public Page<DispatchOrderListDto.Response> getFilteredDispatchOrders(String createdBy, Timestamp startDate, Timestamp endDate, Pageable pageable){
-        Page<DispatchOrder> page = dispatchOrderRepository.findByCreatedByAndReportedTimeBetween(createdBy, startDate, endDate, pageable);
+    public Page<DispatchOrderListDto.Response> getFilteredDispatchOrders(String createdBy, Date startDate, Date endDate, Pageable pageable) {
+        Timestamp startTimestamp = startDate != null ? new Timestamp(startDate.getTime()) : null;
+        Timestamp endTimestamp = endDate != null ? new Timestamp(endDate.getTime()) : null;
 
-        // 엔티티 dto로변환
+        Page<DispatchOrder> page = dispatchOrderRepository.findByCreatedByAndReportedTimeBetween(createdBy, startTimestamp, endTimestamp, pageable);
+
+        // 엔티티 dto로 변환
         return page.map(dispatchOrder -> new DispatchOrderListDto.Response(
                 dispatchOrder.getDispatchOrderId(),
                 dispatchOrder.getReportedTime(),
@@ -40,6 +44,8 @@ public class DispatchOrderServiceImpl implements DispatchOrderService{
         ));
     }
 
+
+    // 상세 조회
     public DispatchOrderDto.Response getDispatchOrderById(Long dispatchOrderId){
         DispatchOrder dispatchOrder = dispatchOrderRepository.findById(dispatchOrderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"출동지령을 찾을 수 없습니다?"));
@@ -75,7 +81,7 @@ public class DispatchOrderServiceImpl implements DispatchOrderService{
                 .webMember(webMember)
                 .createdBy(currentUser.getName())
                 .build();
-
+        System.out.println(dispatchOrder.toString());
         return dispatchOrderRepository.save(dispatchOrder);
 
     }
