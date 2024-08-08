@@ -11,7 +11,7 @@ import useUserStore from "@/store/useUserStore";
 import { getMedicalInfo, deleteMedicalInfo } from "@api/medicalInfoApi";
 import { errorAlert } from "@/util/notificationAlert";
 import useFormInputStore from "@/store/useFormInputStore";
-
+import { successAlert, yesorNoAlert } from "@/util/notificationAlert";
 const MedicalInfoPage = () => {
   const { changeFormRegister, changeFormEdit, clearAllInputs } =
     useFormInputStore();
@@ -42,41 +42,28 @@ const MedicalInfoPage = () => {
     $width: "",
     $height: "10vh",
   };
-  const onClickDelteBtn = (e) => {
-    e.preventDefault();
-    Swal.fire({
-      title: "나의 의료 정보를 삭제하시겠습니까?",
-      text: "신고 시 나의 정보가 전송되지 않습니다.",
-      showCancelButton: true,
-      confirmButtonColor: "#96C9F4#",
-      cancelButtonColor: "#FF4C4C",
-      confirmButtonText: "취소",
-      cancelButtonText: "삭제하기",
-    }).then((result) => {
-      if (result.isDismissed) {
-        //FIXME - 403 forbidden
-        deleteMedicalInfo(
-          (response) => {
-            console.log(response);
-            if (response.status === 200) {
-              Swal.fire({
-                title: "삭제되었습니다",
-                didClose: () => {
-                  clearAllInputs();
-                  clearUserMedicalInfo();
-                },
-              });
-            } else {
-              console.log(response);
+  const onClickDelteBtn = (contact) => {
+    yesorNoAlert(
+      `${contact.relation} 연락처를 삭제하시겠습니까?`,
+      "삭제하기",
+      "취소",
+      (result) => {
+        if (result.isDismissed) {
+          deleteEmergencycontact(
+            contact.emergency_contact_id,
+            (response) => {
+              if (response.status === 200) {
+                successAlert("삭제되었습니다");
+                deleteEmergencyContact(contact.emergency_contact_id);
+              }
+            },
+            (error) => {
+              console.log(error);
             }
-          },
-          (error) => {
-            console.log(error.toJSON());
-            errorAlert(error.response.data);
-          }
-        );
+          );
+        }
       }
-    });
+    );
   };
   useEffect(() => {
     getMedicalInfo(

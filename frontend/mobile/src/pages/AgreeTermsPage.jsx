@@ -13,7 +13,7 @@ import {
   NextPageButton,
 } from "@components/elements";
 import useForm from "@/hooks/useForm";
-import { errorAlert } from "@/util/notificationAlert";
+import { errorAlert, successAlert } from "@/util/notificationAlert";
 
 import { registerUser } from "@/api/userApi";
 const AgreeTermsPage = () => {
@@ -36,10 +36,7 @@ const AgreeTermsPage = () => {
       data,
       (response) => {
         if (response.status === 200) {
-          Swal.fire({
-            text: "가입이 완료되었습니다!",
-            confirmButtonColor: "#FFCC70",
-          }).then((result) => {
+          successAlert("가입이 완료되었습니다!", (result) => {
             clearInputs();
             if (result.isConfirmed) {
               navigate("/", { replace: true });

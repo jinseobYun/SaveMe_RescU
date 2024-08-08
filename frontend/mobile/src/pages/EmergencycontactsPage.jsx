@@ -19,7 +19,11 @@ import {
 import useUserStore from "@/store/useUserStore";
 import useFormInputStore from "@/store/useFormInputStore";
 import EmergencyContactInput from "@components/input/EmergencyContactInput";
-import { errorAlert } from "@/util/notificationAlert";
+import {
+  successAlert,
+  yesorNoAlert,
+  errorAlert,
+} from "@/util/notificationAlert";
 
 const EmergencycontactsPage = () => {
   const emergencyContactList = useUserStore(
@@ -97,42 +101,35 @@ const EmergencycontactsPage = () => {
               result.value,
               (response) => {
                 if (response.status === 200) {
-                  Swal.fire({
-                    text: "수정되었습니다!",
-                    confirmButtonColor: "#FFCC70",
-                  });
+                  successAlert("수정되었습니다!");
+
                   deleteEmergencyContact(result.value.emergencyContactId);
                   addEmergencyContact(result.value);
                   clearAllInputs();
                 }
               },
               (error) => {
-                console.log(error.toJSON());
+                console.log(error);
               }
             )
           : registerEmergencycontact(
               result.value,
               (response) => {
                 if (response.status === 201) {
-                  Swal.fire({
-                    text: "등록되었습니다!",
-                    confirmButtonColor: "#FFCC70",
-                  });
-                  console.log(result.value);
-                  addEmergencyContact({
-                    relation: result.value,
-                    emergencyContactId: response.data.emergencyContactId,
-                  });
-                  console.log({
-                    relation: result.value,
-                    emergencyContactId: response.data.emergencyContactId,
-                  });
+                  successAlert("등록되었습니다!");
+
+                  console.log(response.data);
+                  let newContact = result.value;
+                  newContact.emergencyContactId =
+                    response.data.emergencyContactId;
+                  addEmergencyContact(newContact);
+                  console.log(newContact);
                   clearAllInputs();
                 }
               },
               (error) => {
-                console.log(error.toJSON());
-                errorAlert(error.response.data);
+                console.log(error);
+                // errorAlert(error.response.data);
               }
             );
         setShowButton(false);
@@ -141,34 +138,29 @@ const EmergencycontactsPage = () => {
   };
 
   const onClickDeleteBtn = (contact) => {
-    Swal.fire({
-      title: `${contact.relation} 연락처를 삭제하시겠습니까?`,
-      showCancelButton: true,
-      confirmButtonColor: "#96C9F4",
-      cancelButtonColor: "#FF4C4C",
-      confirmButtonText: "취소",
-      cancelButtonText: "삭제하기",
-    }).then((result) => {
-      if (result.isDismissed) {
-        deleteEmergencycontact(
-          contact.emergencyContactId,
-          (response) => {
-            if (response.status === 200) {
-              Swal.fire({
-                text: "삭제되었습니다!",
-                confirmButtonColor: "#FFCC70",
-              });
-              deleteEmergencyContact(contact.emergencyContactId);
-              if (emergencyContactList.length === 0) setShowButton(true);
+    yesorNoAlert(
+      `${contact.relation} 연락처를 삭제하시겠습니까?`,
+      "취소",
+      "삭제하기",
+      (result) => {
+        if (result.isDismissed) {
+          deleteEmergencycontact(
+            contact.emergencyContactId,
+            (response) => {
+              if (response.status === 200) {
+                successAlert("삭제되었습니다!");
+                deleteEmergencyContact(contact.emergencyContactId);
+                if (emergencyContactList.length === 0) setShowButton(true);
+              }
+            },
+            (error) => {
+              // console.log(error.toJSON());
+              // errorAlert(error.response.data);
             }
-          },
-          (error) => {
-            console.log(error.toJSON());
-            errorAlert(error.response.data);
-          }
-        );
+          );
+        }
       }
-    });
+    );
   };
   const btnStyles = {
     _onClick: onClickShowModal,

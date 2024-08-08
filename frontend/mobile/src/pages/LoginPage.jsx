@@ -17,7 +17,6 @@ const Login = () => {
   const { values, errors, isLoading, handleChange, handleSubmit } = useForm({
     initialValues: { id: "", password: "" },
     onSubmit: (values) => {
-      //TODO - api test
       loginApi(
         values.id,
         values.password,
@@ -35,8 +34,8 @@ const Login = () => {
         },
         (error) => {
           console.log(error.toJSON());
-          //FIXME - api 에러 코드 완성되면 주석 풀기
-          // errorAlert(error.response.status);
+          //FIXME - 백에게 에러 메세지 요청하기
+          errorAlert(error.response.data);
         }
       );
     },
