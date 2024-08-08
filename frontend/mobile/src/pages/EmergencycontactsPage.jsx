@@ -19,17 +19,25 @@ import {
 import useUserStore from "@/store/useUserStore";
 import useFormInputStore from "@/store/useFormInputStore";
 import EmergencyContactInput from "@components/input/EmergencyContactInput";
+import { errorAlert } from "@/util/notificationAlert";
+
 const EmergencycontactsPage = () => {
-  const {
-    emergencyContactList,
-    setEmergencyContactList,
-    addEmergencyContact,
-    deleteEmergencyContact,
-  } = useUserStore();
+  const emergencyContactList = useUserStore(
+    (state) => state.emergencyContactList
+  );
+  const setEmergencyContactList = useUserStore(
+    (state) => state.setEmergencyContactList
+  );
+  const addEmergencyContact = useUserStore(
+    (state) => state.addEmergencyContact
+  );
+  const deleteEmergencyContact = useUserStore(
+    (state) => state.deleteEmergencyContact
+  );
   const { clearAllInputs } = useFormInputStore();
   const navigate = useNavigate();
 
-  const [showButton, setShowButton] = useState(true);
+  const [showButton, setShowButton] = useState(false);
 
   const onClickShowModal = (contactItem) => {
     Swal.fire({
@@ -46,19 +54,20 @@ const EmergencycontactsPage = () => {
         );
       },
       preConfirm: () => {
-        const relationnputValue = document.querySelector(
+        const relationInputValue = document.querySelector(
           "#swal-react-container input[name='relation']"
         ).value;
         const phoneNumberInputValue = document.querySelector(
           "#swal-react-container input[name='phoneNumber']"
         ).value;
-        if (emergencyContactList) {
-          const existsInInputs = emergencyContactList.some(
-            (item) =>
-              (item.emergency_contact_id !== contactItem.emergency_contact_id &&
-                item.relation === relationnputValue) ||
-              item.phoneNumber === phoneNumberInputValue
-          );
+        if (emergencyContactList && contactItem) {
+          const existsInInputs = emergencyContactList.some((item) => {
+            return (
+              item.emergencyContactId !== contactItem.emergencyContactId &&
+              (item.relation === relationInputValue ||
+                item.phoneNumber === phoneNumberInputValue)
+            );
+          });
           if (existsInInputs) {
             Swal.showValidationMessage("중복된 연락처가 있습니다.");
             return false;
@@ -67,13 +76,13 @@ const EmergencycontactsPage = () => {
 
         // 추가 처리 로직
         const newItem = {
-          relation: relationnputValue,
+          relation: relationInputValue,
           phoneNumber: phoneNumberInputValue,
         };
-        newItem.emergency_contact_id =
-          contactItem && contactItem.emergency_contact_id;
+        newItem.emergencyContactId =
+          contactItem && contactItem.emergencyContactId;
 
-        return relationnputValue && phoneNumberInputValue
+        return relationInputValue && phoneNumberInputValue
           ? Promise.resolve(newItem)
           : Promise.reject("입력해 주세요.");
       },
@@ -82,16 +91,17 @@ const EmergencycontactsPage = () => {
       confirmButtonColor: "#FFCC70",
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log(result.value);
-        result.value.emergency_contact_id
+        result.value.emergencyContactId
           ? updateEmergencycontact(
-              result.value.emergency_contact_id,
+              result.value.emergencyContactId,
               result.value,
               (response) => {
                 if (response.status === 200) {
-                  Swal.fire("수정되었습니다");
-
-                  deleteEmergencyContact(result.value.emergency_contact_id);
+                  Swal.fire({
+                    text: "수정되었습니다!",
+                    confirmButtonColor: "#FFCC70",
+                  });
+                  deleteEmergencyContact(result.value.emergencyContactId);
                   addEmergencyContact(result.value);
                   clearAllInputs();
                 }
@@ -103,14 +113,26 @@ const EmergencycontactsPage = () => {
           : registerEmergencycontact(
               result.value,
               (response) => {
-                if (response.status === 200) {
-                  Swal.fire("등록되었습니다");
-                  addEmergencyContact(result.value);
+                if (response.status === 201) {
+                  Swal.fire({
+                    text: "등록되었습니다!",
+                    confirmButtonColor: "#FFCC70",
+                  });
+                  console.log(result.value);
+                  addEmergencyContact({
+                    relation: result.value,
+                    emergencyContactId: response.data.emergencyContactId,
+                  });
+                  console.log({
+                    relation: result.value,
+                    emergencyContactId: response.data.emergencyContactId,
+                  });
                   clearAllInputs();
                 }
               },
               (error) => {
                 console.log(error.toJSON());
+                errorAlert(error.response.data);
               }
             );
         setShowButton(false);
@@ -129,15 +151,20 @@ const EmergencycontactsPage = () => {
     }).then((result) => {
       if (result.isDismissed) {
         deleteEmergencycontact(
-          contact.emergency_contact_id,
+          contact.emergencyContactId,
           (response) => {
             if (response.status === 200) {
-              Swal.fire("삭제되었습니다");
-              deleteEmergencyContact(contact.emergency_contact_id);
+              Swal.fire({
+                text: "삭제되었습니다!",
+                confirmButtonColor: "#FFCC70",
+              });
+              deleteEmergencyContact(contact.emergencyContactId);
+              if (emergencyContactList.length === 0) setShowButton(true);
             }
           },
           (error) => {
             console.log(error.toJSON());
+            errorAlert(error.response.data);
           }
         );
       }
@@ -162,37 +189,27 @@ const EmergencycontactsPage = () => {
     $height: "10vh",
   };
   useEffect(() => {
-    //TODO - api 연결
-    // getEmergencycontacts(
-    //   (response) => {
-    //     if (response.status === 200) {
-    //       setEmergencyContactList(response.data.contactList);
-    //       response.data.contactList &&
-    //         response.data.contactList.length > 0 &&
-    //         setShowButton(false);
-    //     }
-    //   },
-    //   (error) => {
-    //         console.log(error.toJSON());
-    //   }
-    // );
-    setShowButton(false);
-    setEmergencyContactList([
-      {
-        emergency_contact_id: 1,
-        phoneNumber: "010-1010-1010",
-        relation: "MOM",
+    getEmergencycontacts(
+      (response) => {
+        if (response.status === 200) {
+          if (typeof response.data != "string") {
+            setEmergencyContactList(response.data);
+            setShowButton(false);
+          } else {
+            setEmergencyContactList([]);
+            setShowButton(true);
+          }
+        }
       },
-      {
-        emergency_contact_id: 5,
-        phoneNumber: "010-1010-1010",
-        relation: "MOM",
-      },
-    ]);
+      (error) => {
+        console.log(error.toJSON());
+        errorAlert(error.response.data);
+      }
+    );
   }, []);
   return (
     <Container>
-      <Header navText="비상 연락망" />
+      <Header navText="비상 연락망" goTo="/menu" />
 
       <Content>
         {!showButton ? (
@@ -254,7 +271,7 @@ const Content = styled.div`
 `;
 
 const AddButton = styled.button`
-  background-color: var(--orange-color-200);
+  background-color: var(--orange-color-100);
   color: white;
   border: none;
   padding: 5px 10px;

@@ -36,7 +36,7 @@ const store = (set) => ({
   deleteEmergencyContact: (id) => {
     set((state) => ({
       emergencyContactList: state.emergencyContactList.filter(
-        (contact) => contact.emergency_contact_id !== id
+        (contact) => contact.emergencyContactId !== id
       ),
     }));
   },

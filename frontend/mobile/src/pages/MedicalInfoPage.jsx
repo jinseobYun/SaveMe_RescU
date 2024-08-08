@@ -133,7 +133,7 @@ const MedicalInfoPage = () => {
   }, [userMedicalInfo]);
   return (
     <Container>
-      <Header navText="내 의료 정보" />
+      <Header navText="내 의료 정보" goTo="/menu" />
       <Content>
         {/* //TODO - 의료 정보 있으면 있는 상태 보여주기 */}
         {userMedicalInfo ? (

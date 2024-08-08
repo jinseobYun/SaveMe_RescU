@@ -29,9 +29,9 @@ const AgreeTermsPage = () => {
       memberName: inputs.name,
       gender: inputs.gender - 0,
       birth: inputs.birth,
-      phone: inputs.phoneNumber,
+      phoneNumber: inputs.phoneNumber,
     };
-    //FIXME - data를 inputs로
+    //FIXME - 인증번호 빼면 data를 inputs로
     registerUser(
       data,
       (response) => {
