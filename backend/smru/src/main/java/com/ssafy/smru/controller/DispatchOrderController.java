@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 @RestController
@@ -29,8 +30,8 @@ public class DispatchOrderController {
     @GetMapping
     public ResponseEntity<Page<DispatchOrderListDto.Response>> getDispatchOrders(
             @RequestParam(required = false) String createdBy,
-            @RequestParam(required = false) Timestamp startDate,
-            @RequestParam(required = false) Timestamp endDate,
+            @RequestParam(required = false) Date startDate,
+            @RequestParam(required = false) Date endDate,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
@@ -66,4 +67,5 @@ public class DispatchOrderController {
         DispatchOrder dispatchOrder = dispatchOrderService.updateSecondOrder(request);
         return ResponseEntity.ok().body("2차 출동지령정보가 성공적으로 업데이트되었습니다.");
     }
+
 }

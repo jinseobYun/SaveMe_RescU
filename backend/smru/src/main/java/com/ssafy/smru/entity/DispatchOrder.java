@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 
@@ -97,6 +98,32 @@ public class DispatchOrder {
         this.drugInfos = drugInfos;
         this.otherInfo = otherInfo;
         this.webMember = webMember;
+    }
+
+    @Override
+    public String toString() {
+        return "DispatchOrder{" +
+                "dispatchOrderId=" + dispatchOrderId +
+                ", firestation='" + firestation + '\'' +
+                ", doroLocationInfo='" + doroLocationInfo + '\'' +
+                ", jibunLocationInfo='" + jibunLocationInfo + '\'' +
+                ", emergencyType=" + emergencyType +
+                ", reportedTime=" + reportedTime +
+                ", reporterName='" + reporterName + '\'' +
+                ", reporterPhone='" + reporterPhone + '\'' +
+                ", reportDetails='" + reportDetails + '\'' +
+                ", createdBy='" + createdBy + '\'' +
+                ", hospitalName='" + hospitalName + '\'' +
+                ", memberName='" + memberName + '\'' +
+                ", gender='" + gender + '\'' +
+                ", birth='" + birth + '\'' +
+                ", bloodType1='" + bloodType1 + '\'' +
+                ", bloodType2='" + bloodType2 + '\'' +
+                ", chronicDisease='" + chronicDisease + '\'' +
+                ", drugInfos='" + drugInfos + '\'' +
+                ", otherInfo='" + otherInfo + '\'' +
+                ", webMember=" + (webMember.toString()) +
+                '}';
     }
 
     // Setter 메서드 추가
