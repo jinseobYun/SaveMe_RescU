@@ -26,16 +26,16 @@ public class MedicalInformationController {
         String memberId = authentication.getName();
 
         try {
-            MedicalInformationDto.Response  response = medicalInformationService.getMedicalInformationByMemberId(memberId);
+            MedicalInformationDto.Response response = medicalInformationService.getMedicalInformationByMemberId(memberId);
 
-            if(response == null) {
-                return new ResponseEntity<>("등록된 의료정보가 없습니다.",HttpStatus.NOT_FOUND);
+            if (response == null) {
+                return new ResponseEntity<>("등록된 의료정보가 없습니다.", HttpStatus.NOT_FOUND);
             }
             return ResponseEntity.ok(response);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (UnauthorizedException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버에서 오류가 발생했습니다.");
         }
@@ -62,13 +62,13 @@ public class MedicalInformationController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
         try {
-            medicalInformationService.modifyMedicalInformation(memberId,request);
+            medicalInformationService.modifyMedicalInformation(memberId, request);
 
             return ResponseEntity.ok("의료 정보가 성공적으로 수정되었습니다.");
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (UnauthorizedException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버에서 오류가 발생했습니다.");
         }
@@ -86,7 +86,7 @@ public class MedicalInformationController {
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (UnauthorizedException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버에서 오류가 발생했습니다.");
         }
