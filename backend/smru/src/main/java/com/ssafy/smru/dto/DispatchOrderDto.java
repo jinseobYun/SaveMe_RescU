@@ -17,7 +17,7 @@ public class DispatchOrderDto {
         private String firestation;
         private String doroLocationInfo;
         private String jibunLocationInfo;
-        private int emergencyType;
+        private String emergencyType;
         private Timestamp reportedTime;
         private String reporterName;
         private String reporterPhone;
@@ -33,7 +33,7 @@ public class DispatchOrderDto {
 
         @Builder
         public Request(Long dispatchOrderId, String firestation, String doroLocationInfo,
-                       String jibunLocationInfo, int emergencyType, Timestamp reportedTime,
+                       String jibunLocationInfo, String emergencyType, Timestamp reportedTime,
                        String reporterName, String reporterPhone, String reportDetails,
                        String hospitalName, String chronicDisease, String bloodType1, String bloodType2,
                        String drugInfos, String otherInfo, Long webMemberId, String createdBy) {
@@ -86,7 +86,7 @@ public class DispatchOrderDto {
         private String firestation;
         private String doroLocationInfo;
         private String jibunLocationInfo;
-        private int emergencyType;
+        private String emergencyType;
         private Timestamp reportedTime;
         private String reporterName;
         private String reporterPhone;

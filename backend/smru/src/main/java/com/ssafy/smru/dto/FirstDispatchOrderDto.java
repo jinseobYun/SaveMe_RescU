@@ -16,14 +16,14 @@ public class FirstDispatchOrderDto {
         private String firestation;
         private String jibunLocationInfo;
         private String doroLocationInfo;
-        private Integer emergencyType;
+        private String emergencyType;
         private String reporterName;
         private String reporterPhone;
         private String reportDetail;
 
         @Builder
         public FirstInfoRequest(Long rescueTeamId,String firestation, String jibunLocationInfo, String doroLocationInfo,
-                                Integer emergencyType, String reporterName, String reporterPhone,
+                                String emergencyType, String reporterName, String reporterPhone,
                                 String reportDetail) {
             this.rescueTeamId = rescueTeamId;
             this.firestation=firestation;
