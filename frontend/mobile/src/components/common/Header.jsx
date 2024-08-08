@@ -15,7 +15,7 @@ const Header = ({ navText, backAlert }) => {
           title: "변경사항이 저장되지 않습니다",
           text: "뒤로 가시겠습니까?",
           showCancelButton: true,
-          confirmButtonColor: "#3085d6",
+          confirmButtonColor: "#96C9F4",
           cancelButtonColor: "#FF4C4C",
           confirmButtonText: "취소",
           cancelButtonText: "뒤로가기",

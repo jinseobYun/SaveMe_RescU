@@ -6,14 +6,16 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Swal from "sweetalert2";
 
 import { Header, TabBar } from "@components/common";
-import { Grid, Button, Text } from "@components/elements";
+import { Button, Text } from "@components/elements";
 import useUserStore from "@/store/useUserStore";
 import { getMedicalInfo, deleteMedicalInfo } from "@api/medicalInfoApi";
 import { errorAlert } from "@/util/notificationAlert";
 import useFormInputStore from "@/store/useFormInputStore";
 
 const MedicalInfoPage = () => {
-  const { changeFormRegister, changeFormEdit } = useFormInputStore();
+  const { changeFormRegister, changeFormEdit, clearAllInputs } =
+    useFormInputStore();
+  const { clearUserMedicalInfo } = useUserStore();
 
   const userMedicalInfo = useUserStore((state) => state.userMedicalInfo);
   const setUserMedicalInfo = useUserStore((state) => state.setUserMedicalInfo);
@@ -36,7 +38,7 @@ const MedicalInfoPage = () => {
     $size: "24px",
     $bold: true,
     // $boxShadow: "0px 4px 0px 0px var(--main-orange-color);",
-    $padding: "14px 32px",
+    // $padding: "14px 32px",
     $width: "",
     $height: "10vh",
   };
@@ -46,7 +48,7 @@ const MedicalInfoPage = () => {
       title: "나의 의료 정보를 삭제하시겠습니까?",
       text: "신고 시 나의 정보가 전송되지 않습니다.",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
+      confirmButtonColor: "#96C9F4#",
       cancelButtonColor: "#FF4C4C",
       confirmButtonText: "취소",
       cancelButtonText: "삭제하기",
@@ -59,15 +61,17 @@ const MedicalInfoPage = () => {
             if (response.status === 200) {
               Swal.fire({
                 title: "삭제되었습니다",
-                confirmButtonText: "Okay",
-                confirmButtonColor: "#FFCC70",
+                didClose: () => {
+                  clearAllInputs();
+                  clearUserMedicalInfo();
+                },
               });
             } else {
               console.log(response);
             }
           },
           (error) => {
-            console.log(error);
+            console.log(error.toJSON());
             errorAlert(error.response.data);
           }
         );
@@ -96,8 +100,14 @@ const MedicalInfoPage = () => {
         }
       },
       (error) => {
+        console.log(error.toJSON());
+
         //TODO - 등록된 정보가 없을때
-        errorAlert(error.response.data);
+        if (error.response.status === 404) {
+          setUserMedicalInfo(null);
+        } else {
+          errorAlert(error.response.data);
+        }
       }
     );
   }, []);
@@ -106,18 +116,21 @@ const MedicalInfoPage = () => {
   const [isColumn, setIsColumn] = useState(false);
 
   useEffect(() => {
-    const labelElement = infoItemRef.current.querySelector("span:first-child");
-    const valueElement = infoItemRef.current.querySelector("span:last-child");
+    if (userMedicalInfo) {
+      const labelElement =
+        infoItemRef.current.querySelector("span:first-child");
+      const valueElement = infoItemRef.current.querySelector("span:last-child");
 
-    const labelRect = labelElement.getBoundingClientRect();
-    const valueRect = valueElement.getBoundingClientRect();
+      const labelRect = labelElement.getBoundingClientRect();
+      const valueRect = valueElement.getBoundingClientRect();
 
-    const horizontalDistance = valueRect.left - labelRect.right;
+      const horizontalDistance = valueRect.left - labelRect.right;
 
-    if (horizontalDistance < 10) {
-      setIsColumn(true);
+      if (horizontalDistance < 10) {
+        setIsColumn(true);
+      }
     }
-  }, []);
+  }, [userMedicalInfo]);
   return (
     <Container>
       <Header navText="내 의료 정보" />

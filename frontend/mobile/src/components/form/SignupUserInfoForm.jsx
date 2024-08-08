@@ -36,7 +36,7 @@ const SignupUserInfoForm = () => {
           4867;
         },
         (error) => {
-          console.log(error);
+          console.log(error.toJSON());
         }
       );
     },

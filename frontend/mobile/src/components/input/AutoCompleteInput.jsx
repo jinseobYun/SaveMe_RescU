@@ -21,7 +21,7 @@ const AutoCompleteInput = ({ $prev, $onChange }) => {
 
   const debouncedSearch = debounce((input) => {
     fetchSearchResults(input);
-  }, 300); // 300ms 디바운싱
+  }, 600);
 
   const changeInputValue = (event) => {
     const newValue = event.target.value;

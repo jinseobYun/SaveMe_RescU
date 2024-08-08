@@ -18,7 +18,6 @@ const MedicalInfoForm = () => {
       otherInfo: inputs.otherInfo || "",
     },
     onSubmit: (values) => {
-      console.log(values);
       updateInputs(values);
       navigate("/medicalinfo/edit?form=drug");
     },
@@ -32,12 +31,7 @@ const MedicalInfoForm = () => {
     e.preventDefault();
     handleChange(e);
   };
-  useEffect(() => {
-    const stringifiedData = JSON.stringify(inputs);
-    const parsedData = JSON.parse(stringifiedData);
-    console.log(JSON.stringify(inputs));
-    console.log(values);
-  }, []);
+
   return (
     <Container>
       <Grid

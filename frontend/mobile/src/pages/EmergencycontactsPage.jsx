@@ -79,7 +79,7 @@ const EmergencycontactsPage = () => {
       },
       width: "30em",
       confirmButtonText: "저장하기",
-      confirmButtonColor: "var(--main-orange-color)",
+      confirmButtonColor: "#FFCC70",
     }).then((result) => {
       if (result.isConfirmed) {
         console.log(result.value);
@@ -97,7 +97,7 @@ const EmergencycontactsPage = () => {
                 }
               },
               (error) => {
-                console.log(error);
+                console.log(error.toJSON());
               }
             )
           : registerEmergencycontact(
@@ -110,7 +110,7 @@ const EmergencycontactsPage = () => {
                 }
               },
               (error) => {
-                console.log(error);
+                console.log(error.toJSON());
               }
             );
         setShowButton(false);
@@ -122,7 +122,7 @@ const EmergencycontactsPage = () => {
     Swal.fire({
       title: `${contact.relation} 연락처를 삭제하시겠습니까?`,
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
+      confirmButtonColor: "#96C9F4",
       cancelButtonColor: "#FF4C4C",
       confirmButtonText: "취소",
       cancelButtonText: "삭제하기",
@@ -137,7 +137,7 @@ const EmergencycontactsPage = () => {
             }
           },
           (error) => {
-            console.log(error);
+            console.log(error.toJSON());
           }
         );
       }
@@ -173,7 +173,7 @@ const EmergencycontactsPage = () => {
     //     }
     //   },
     //   (error) => {
-    //     console.log(error);
+    //         console.log(error.toJSON());
     //   }
     // );
     setShowButton(false);

@@ -18,9 +18,9 @@ const store = (set) => ({
 
     const { updateInputs, setMedCdisInput, setDrugInputs } =
       useFormInputStore.getState();
-    updateInputs(userData);
-    setMedCdisInput(userData.medCdis);
-    setDrugInputs(userData.drugInfos);
+    userData && updateInputs(userData);
+    userData && setMedCdisInput(userData.medCdis);
+    userData && setDrugInputs(userData.drugInfos);
   },
   clearUserMedicalInfo: () => set({ userMedicalInfo: null }),
 
@@ -58,13 +58,13 @@ const store = (set) => ({
 const useUserStore = create(
   import.meta.env.NODE_ENV === "production"
     ? persist(store, {
-      name: "userStore",
-    })
-    : devtools(
-      persist(store, {
         name: "userStore",
       })
-    )
+    : devtools(
+        persist(store, {
+          name: "userStore",
+        })
+      )
 );
 
 export default useUserStore;

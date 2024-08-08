@@ -21,7 +21,6 @@ async function tokenRegeneration() {
 }
 
 function loginAxios() {
-
   const refreshToken = localStorage.getItem("refreshToken");
 
   const instance = axios.create({
@@ -41,11 +40,12 @@ function loginAxios() {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
 
       return config;
-    },
-    (error) => {
-      console.log(error);
-      return Promise.reject(error);
     }
+    //,
+    // (error) => {
+    //   console.log(error.toJSON());
+    //   return Promise.reject(error);
+    // }
   );
 
   instance.interceptors.response.use(
@@ -77,9 +77,9 @@ function loginAxios() {
                 window.location.replace("/login");
               });
             } else {
-              notificationAlert("error", "실패하셨습니다", () => { });
+              notificationAlert("error", "실패하셨습니다", () => {});
             }
-            return new Promise(() => { });
+            return new Promise(() => {});
 
           default:
             return Promise.reject(error);

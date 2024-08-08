@@ -5,7 +5,7 @@ export const errorAlert = (errorMsg) => {
   Swal.fire({
     title: "Error!",
     text: message[0],
-    confirmButtonText: "Okay",
+    confirmButtonText: "확인",
     confirmButtonColor: "#FFCC70",
   });
 };

@@ -48,7 +48,7 @@ const AgreeTermsPage = () => {
         }
       },
       (error) => {
-        console.log(error);
+        console.log(error.toJSON());
         errorAlert(error.response.data);
       }
     );

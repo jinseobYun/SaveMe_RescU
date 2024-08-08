@@ -40,7 +40,7 @@ function SignUpValidationLoginInfo({ id, password, passwordConfirm }) {
         }
       },
       (error) => {
-        console.log(error);
+        console.log(error.toJSON());
       }
     );
   }
