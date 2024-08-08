@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
-
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcCallIcon from "@mui/icons-material/AddIcCall";
 import Swal from "sweetalert2";
 
 import { Header, TabBar } from "@components/common";

@@ -11,7 +11,9 @@ import FirstAidPage from "./FirstAidPage";
 import FindIdPwPage from "./FindIdPwPage";
 import ChangePwPage from "./ChangePwPage";
 import EmptyPage from "./EmptyPage";
+import NfcInfoPage from "./NfcInfoPage";
 export {
+  NfcInfoPage,
   EmptyPage,
   HomePage,
   LoginPage,

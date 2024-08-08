@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import styled from "styled-components";
 
 import {
@@ -22,6 +27,7 @@ import {
   FindIdPwPage,
   ChangePwPage,
   EmptyPage,
+  NfcInfoPage,
 } from "@/pages";
 import GlobalStyle from "@/globalStyles.js";
 function App() {
@@ -31,12 +37,14 @@ function App() {
       <Router basename="/app/">
         <Routes>
           {/* 인증이 필요없는 */}
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<Navigate to="/home" />} />
+          <Route path="/home" element={<HomePage />} />
           <Route path="/verification" element={<VerifyCodeForm />} />
           <Route path="/report" element={<ReportCallPage />} />
 
           <Route path="/changepassword" element={<ChangePwPage />} />
           <Route path="/firstaid" element={<FirstAidPage />} />
+          <Route path="/findpassword" element={<FindIdPwPage />} />
 
           {/* 인증을 해야만 */}
           <Route element={<PrivateRoute authentication={true} />}>
@@ -46,12 +54,14 @@ function App() {
             />
 
             <Route path="/menu" element={<MenuPage />} />
+            <Route path="/menu/changeInfo" element={<MenuPage />} />
             <Route path="/medicalinfo" element={<MedicalInfoPage />} />
             <Route
               path="/medicalinfo/edit/*"
               element={<EditMedicalInfoPage />}
             />
-            {/*  <Route path="/nfc-info" element={<NfcInfoPage />} />
+            <Route path="/nfcinfo" element={<NfcInfoPage />} />
+            {/* 
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/privacy-agreement" element={<PrivacyAgreementPage />} />
           <Route
@@ -70,8 +80,6 @@ function App() {
             <Route path="/agreeterms" element={<AgreeTermsPage />} />
 
             <Route path="/findid" element={<FindIdPwPage />} />
-            <Route path="/findid/result" element={<HomePage />} />
-            <Route path="/findpassword" element={<FindIdPwPage />} />
           </Route>
           <Route path="*" element={<EmptyPage />} />
         </Routes>
