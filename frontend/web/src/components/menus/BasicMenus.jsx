@@ -14,7 +14,9 @@ export default function BasicMenus() {
         </div>
       </div>
       <div className="logo-box">
-        <div className="logo"></div>
+        <Link to={"/main"}>
+          <div className="logo"></div>
+        </Link>
       </div>
       <div className="menu-right">
         <div className="open-edit-password">
