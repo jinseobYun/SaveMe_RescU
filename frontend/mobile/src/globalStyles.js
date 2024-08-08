@@ -38,14 +38,16 @@ const GlobalStyles = createGlobalStyle`
         --font-size-medium: 2.2rem;
         --font-size-small: 2rem;
         --font-size-primary: 1.6rem;
+				
     }
 
-	// @font-face {
-	// 	font-family: 'NotoSans';
-	// 	src: local('NotoSans'), local('NotoSans');
-	// 	font-style: normal;
-	// }
-
+@font-face {
+    font-family: 'PTBandocheB';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408@1.0/PTBandocheB.woff2') format('woff2');
+		// src:url("./assets/fonts/평택반도체.ttf) format('woff2")
+    font-weight: 700;
+    font-style: normal;
+}
     html, body, div, span, applet, object, iframe,
 	h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 	a, abbr, acronym, address, big, cite, code,
@@ -66,6 +68,7 @@ const GlobalStyles = createGlobalStyle`
 		font-size: 100%;
 		font: inherit;
 		vertical-align: baseline;
+		font-family: 'PTBandocheB';
 	}
 	/* HTML5 display-role reset for older browsers */
 	article, aside, details, figcaption, figure, 

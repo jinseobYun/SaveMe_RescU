@@ -29,25 +29,27 @@ const NfcInfoPage = () => {
   };
   return (
     <Container>
-      <Header navText="NFC " goTo="/menu" />
+      <Header navText="NFC 정보 등록" goTo="/menu" />
 
       <Content>
-        <div>NFC 스티커와 연동된 SaveMe 앱 사용 안내</div>
         <IconWrapper>
           <Icon src={nfcimg} alt="NFC Icon" />
         </IconWrapper>
+        <Title>NFC 스티커와 SaveMe 앱 연동 안내</Title>
         <Description>
           NFC 스티커에 SaveMe 앱을 연동해두면, 위급 상황에서 다른 사람이
-          사용자의 NFC 스티커에 태깅할 경우 자동으로 SaveMe 앱이 실행됩니다.
-          이때 사용자가 설정한 의료 정보가 즉시 119 구급대원에게 전달되며,
-          사용자가 미리 등록해 둔 비상 연락망의 사람들에게도 앱 푸시 알람이
-          전송됩니다. 이 기능을 통해 사용자의 건강 상태와 중요 정보를 빠르게
-          공유하여, 응급 상황에서 더욱 신속하고 적절한 도움을 받을 수 있습니다.
-          아래 'NFC 툴즈 사용법'을 참고하여 NFC 스티커에 앱을 연동해주세요!
+          사용자의 NFC 스티커에 태깅할 경우 사용자가 설정한 의료 정보가 즉시 119
+          구급대원에게 전달되며, 사용자가 미리 등록해 둔 비상 연락망의
+          사람들에게도 앱 푸시 알람이 전송됩니다.
+        </Description>
+        <Description>
+          SAVE ME를 통해 사용자의 건강 상태와 중요 정보를 빠르게 공유하여, 응급
+          상황에서 더욱 신속하고 적절한 신고를 할 수 있습니다. 아래 'NFC 툴즈
+          사용법'을 참고하여 NFC 스티커에 앱을 연동해주세요!
         </Description>
         <StyledButton>NFC 사용법</StyledButton>
-        <Link to="https://pioapp.tistory.com/51" />
       </Content>
+      <Link to="https://pioapp.tistory.com/51" />
       <TabBar />
     </Container>
   );
@@ -65,6 +67,14 @@ const Content = styled.div`
   align-items: center;
   overflow: auto;
   height: 83vh;
+  padding: 0 2rem;
+`;
+const Title = styled.div`
+  width: 100%;
+  padding: 16px 0;
+  text-align: left;
+  font-size: 18px;
+  font-weight: bold;
 `;
 const IconWrapper = styled.div`
   display: flex;
@@ -74,13 +84,13 @@ const IconWrapper = styled.div`
 `;
 
 const Icon = styled.img`
-  width: 60px;
-  height: 60px;
+  width: 30vw;
+  height: 30vw;
 `;
 
 const Description = styled.p`
-  color: #666;
-  font-size: 14px;
+  color: var(--black-color-100);
+  font-size: 13px;
   line-height: 1.5;
   text-align: center;
   margin-bottom: 20px;
@@ -89,7 +99,7 @@ const Description = styled.p`
 const StyledButton = styled.button`
   width: 100%;
   padding: 16px;
-  background-color: #007aff;
+  background-color: var(--main-orange-color);
   color: white;
   font-size: 16px;
   border: none;
@@ -98,7 +108,7 @@ const StyledButton = styled.button`
   text-align: center;
 
   &:hover {
-    background-color: #005bb5;
+    background-color: var(--orange-color-200);
   }
 `;
 export default NfcInfoPage;
