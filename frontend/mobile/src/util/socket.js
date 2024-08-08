@@ -202,7 +202,7 @@
 //     const cameras = devices.filter((device) => device.kind === "videoinput");
 //     return cameras;
 //   } catch (error) {
-//     console.log(error);
+//         console.log(error.toJSON());
 //   }
 // };
 
@@ -222,7 +222,7 @@
 
 //     return localStream;
 //   } catch (error) {
-//     console.log(error);
+//         console.log(error.toJSON());
 //   }
 // };
 

@@ -15,7 +15,7 @@ function SignUpValidationUserInfo({ name, birth, gender, phoneNumber }) {
   }
   if (!phoneNumber) {
     errors.phoneNumber = "전화번호를 입력해주세요.";
-  } else if (!/^01(0|1|[6-9])[0-9]{3,4}[0-9]{4}$/.test(phoneNumber)) {
+  } else if (!/^01(0|1|[6-9])[0-9]{4}[0-9]{4}$/.test(phoneNumber)) {
     errors.phoneNumber = "유효한 전화 번호를 입력해주세요.";
   }
 
@@ -29,7 +29,6 @@ function SignUpValidationLoginInfo({ id, password, passwordConfirm }) {
   } else if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,20}$/.test(id)) {
     errors.id = "아이디는5~20 자 이내 영문과 숫자 조합이어야합니다";
   } else if (previd !== id) {
-    //TODO - 아이디 중복체크 api 연결
     checkIdDuplication(
       id,
       ({ data }) => {
@@ -40,7 +39,7 @@ function SignUpValidationLoginInfo({ id, password, passwordConfirm }) {
         }
       },
       (error) => {
-        console.log(error);
+        console.log(error.toJSON());
       }
     );
   }
@@ -69,7 +68,7 @@ function EmergencyContactValidation({ relation, phoneNumber }) {
   }
   if (!phoneNumber) {
     errors.phoneNumber = "전화번호를 입력해주세요.";
-  } else if (!/^01(0|1|[6-9])[0-9]{3,4}[0-9]{4}$/.test(phoneNumber)) {
+  } else if (!/^01(0|1|[6-9])[0-9]{4}[0-9]{4}$/.test(phoneNumber)) {
     errors.phoneNumber = "유효한 전화 번호를 입력해주세요.";
   }
   return errors;

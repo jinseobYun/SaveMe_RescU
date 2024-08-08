@@ -122,15 +122,14 @@ const VerifyCodeForm = () => {
         console.log(response);
         if (response.status === 200) {
           setRemainingTime(initialTime);
-          updateInputs({ verifyCode: response.data + "" });
           //FIXME - 인증코드 저장 없애기
-          updateInputs({ temporyCode: response.data });
+          updateInputs({ temporyCode: response.data.toString() });
         } else {
           console.log(response);
         }
       },
       (error) => {
-        console.log(error);
+        console.log(error.toJSON());
       }
     );
   };
@@ -142,7 +141,7 @@ const VerifyCodeForm = () => {
       phoneNumber: inputs.phoneNumber,
       //FIXME - 인증코드 임시 저장 없애기
       // verifyCode: code,
-      verifyCode: String(inputs.temporyCode),
+      verifyCode: inputs.temporyCode + "",
     };
     switch (type) {
       case "findid":

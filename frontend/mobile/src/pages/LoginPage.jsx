@@ -34,7 +34,7 @@ const Login = () => {
           }
         },
         (error) => {
-          console.log(error);
+          console.log(error.toJSON());
           //FIXME - api 에러 코드 완성되면 주석 풀기
           // errorAlert(error.response.status);
         }
