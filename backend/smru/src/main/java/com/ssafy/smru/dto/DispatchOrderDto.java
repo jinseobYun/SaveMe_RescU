@@ -92,6 +92,7 @@ public class DispatchOrderDto {
         private String reporterPhone;
         private String reportDetails;
         private String hospitalName;
+        private String memberName;
         private String gender;
         private String birth;
         private String chronicDisease;
@@ -112,6 +113,7 @@ public class DispatchOrderDto {
             this.reporterPhone = dispatchOrder.getReporterPhone();
             this.reportDetails = dispatchOrder.getReportDetails();
             this.hospitalName = dispatchOrder.getHospitalName();
+            this.memberName = dispatchOrder.getMemberName();
             this.gender = dispatchOrder.getGender();
             this.birth = dispatchOrder.getBirth();
             this.chronicDisease = dispatchOrder.getChronicDisease();
