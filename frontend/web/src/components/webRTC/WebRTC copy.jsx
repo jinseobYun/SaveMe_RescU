@@ -1,6 +1,14 @@
-import React, { useRef, useEffect, useState, useCallback } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { initOpenVidu, leaveSession, mainStreamManager, subscribers, toggleAudio, toggleVideo } from "../../util/openvidu";
+import {
+  initSocketConnection,
+  joinRoom,
+  getCameras,
+  getMedia,
+  makeConnection,
+  myStream,
+  leaveCall,
+} from "@/util/socket";
 import styled from "styled-components";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import VideocamIcon from "@mui/icons-material/Videocam";
@@ -9,83 +17,56 @@ import MicOffIcon from "@mui/icons-material/MicOff";
 import CallEndIcon from "@mui/icons-material/CallEnd";
 import Button from "../elements/Button";
 import "./WebRTC.css";
-import UserVideoComponent from "./UserVideoComponent";
+
+let roomId;
 
 const WebRTC = () => {
   const [muted, setMuted] = useState(true);
   const [cameraOff, setCameraOff] = useState(true);
-  const [currentVideoDevice, setCurrentVideoDevice] = useState(null);
+  const [cameras, setCameras] = useState([]);
   const navigate = useNavigate();
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
 
-
-  const session = useRef(null);
-  const OV = useRef(null);
-
   const handleMuteClick = () => {
-    const enabled = toggleAudio();
-    setMuted(!enabled);
+    const enabled = !muted;
+    myStream.getAudioTracks()[0].enabled = enabled;
+    setMuted(enabled);
+    console.log("음소거!!");
   };
 
   const handleCameraClick = () => {
-    const enabled = toggleVideo();
-    setCameraOff(!enabled);
+    const enabled = !cameraOff;
+    myStream.getVideoTracks()[0].enabled = enabled;
+    setCameraOff(enabled);
   };
 
-  const switchCamera = useCallback(async () => {
-    try {
-      const devices = await OV.current.getDevices();
-      const videoDevices = devices.filter(device => device.kind === 'videoinput');
-
-      if (videoDevices && videoDevices.length > 1) {
-        const newVideoDevice = videoDevices.filter(device => device.deviceId !== currentVideoDevice.deviceId);
-
-        if (newVideoDevice.length > 0) {
-          const newPublisher = OV.current.initPublisher(undefined, {
-            videoSource: newVideoDevice[0].deviceId,
-            publishAudio: true,
-            publishVideo: true,
-            mirror: true,
-          });
-
-          if (session) {
-            await session.unpublish(mainStreamManager);
-            await session.publish(newPublisher);
-            setCurrentVideoDevice(newVideoDevice[0]);
-            setMainStreamManager(newPublisher);
-            setPublisher(newPublisher);
-          }
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }, [currentVideoDevice, session, mainStreamManager]);
-
   useEffect(() => {
-    const user = { username: "myname", userno: 1 }; // 실제 사용자 정보로 대체
-    const sessionId = "ses_WEyWspxXTD"; // 실제 세션 ID로 대체
-
-    initOpenVidu(sessionId, user.username).then(() => {
-      console.log("OpenVidu Init 시작!!!!!!!!!!!!!")
-      localVideoRef.current.srcObject = mainStreamManager.stream.getMediaStream();
-      console.log("OpenVidu Init 성공!!!!!!!!!!!!!")
-    });
-
-    window.addEventListener("streamCreated", (event) => {
-      console.log("상대방접속 시작!!!!!!!!!!!!!")
-      remoteVideoRef.current.srcObject = event.detail.subscriber.stream.getMediaStream();
-      console.log("상대방 컴퓨터 연결 완료!!!!!!!!!!!!!")
+    initSocketConnection();
+    getCameras().then(setCameras);
+    initCall();
+    // 방 생성
+    roomId = Math.floor(Math.random() * 100000); // 랜덤 방 번호 생성
+    roomId = 1; // 랜덤 방 번호 생성
+    joinRoom(roomId);
+    
+    window.addEventListener("addStream", (event) => {
+      remoteVideoRef.current.srcObject = event.detail.stream;
     });
 
     return () => {
-      leaveSession();
+      leaveCall();
     };
   }, []);
 
+  const initCall = async () => {
+    const stream = await getMedia();
+    localVideoRef.current.srcObject = stream;
+    makeConnection();
+  };
+
   const onClickCallEnd = () => {
-    leaveSession();
+    leaveCall();
     navigate("/");
   };
 
@@ -162,6 +143,12 @@ const LocalVideo = styled.video`
   width: 350px;
   height: 300px;
   z-index: 4;
+`;
+
+const ControlPanel = styled.div`
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
 `;
 
 export default WebRTC;

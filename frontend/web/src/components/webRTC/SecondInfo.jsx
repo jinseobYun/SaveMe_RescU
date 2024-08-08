@@ -293,6 +293,7 @@ const SecondInfo = () => {
           name="otherInfo"
           value={formData.otherInfo}
           onChange={handleInputChange}
+          overflow="hidden"
         />
       </Section>
       <ButtonRow>

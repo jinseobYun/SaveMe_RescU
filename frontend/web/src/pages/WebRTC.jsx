@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Button from "../components/elements/Button";
-// import WebRTC from "../components/webRTC/WebRTC";
+import WebRTC from "../components/webRTC/WebRTC";
 import styled from "styled-components";
 import FirstInfo from "../components/webRTC/FirstInfo";
 import SecondInfo from "../components/webRTC/SecondInfo";
@@ -17,7 +17,7 @@ const WebRtcPage = () => {
       <div className="left-side">
         <Outlet context={{ setDispatchOrderId, dispatchOrderId }} />
       </div>
-      <div className="center">{/* <WebRTC /> */}</div>
+      <div className="center"><WebRTC /></div>
       <div className="right-side">{/* <Chat /> */}</div>
     </div>
   );
