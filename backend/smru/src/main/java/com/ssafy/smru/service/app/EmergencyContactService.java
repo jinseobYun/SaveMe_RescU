@@ -32,6 +32,9 @@ public class EmergencyContactService {
 
     @Transactional(readOnly = true) // 읽기전용으로 설정
     public List<EmergencyContactDto.Response> getEmergencyContactsByMemberId(String memberId) {
+        //  DB에 member가 없는 경우 예외 처리
+        AppMember appMember = appMemberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new UnauthorizedException("등록된 사용자가 아닙니다."));
 
         // DB에서 유저의 비상연락망을 전체 조회
         List<EmergencyContact> emergencyContacts = emergencyContactRepository.findByAppMember_MemberId(memberId);
@@ -47,10 +50,9 @@ public class EmergencyContactService {
 
     // 앱 사용자의 비상연락망 추가
     public EmergencyContactDto.Response createEmergencyContact(String memberId, EmergencyContactDto.Request request) {
-
         // DB에 member가 없는 경우 예외 처리
         AppMember appMember = appMemberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new ResourceNotFoundException("등록된 사용자가 아닙니다."));
+                .orElseThrow(() -> new UnauthorizedException("등록된 사용자가 아닙니다."));
 
         // 휴대폰 번호로 이미 등록되어 있는지 DB에 조회
         Optional<EmergencyContact> emergencyContacts = emergencyContactRepository.findByPhoneNumberAndAppMember(request.getPhoneNumber(), appMember);
@@ -74,7 +76,7 @@ public class EmergencyContactService {
         
         // 사용자 아이디로 DB에서 조회 후 없으면 예외처리
         AppMember appMember = appMemberRepository.findByMemberId(memberId)
-                .orElseThrow(()-> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(()-> new UnauthorizedException("등록된 사용자가 아닙니다."));
 
         // 비상연락망을 등록한 사용자와 현재 수정하려는 사용자와 비교 후
         // 다른 경우 예외처리
@@ -104,7 +106,7 @@ public class EmergencyContactService {
 
         // 사용자 아이디로 DB에서 조회 후 없으면 예외처리
         AppMember appMember = appMemberRepository.findByMemberId(memberId)
-                .orElseThrow(()-> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(()-> new UnauthorizedException("등록된 사용자가 아닙니다."));
 
         if (!emergencyContact.getAppMember().equals(appMember)) {
             throw new UnauthorizedException("해당 정보를 삭제할 권한이 없습니다.");

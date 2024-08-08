@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,11 +21,20 @@ public class MedicalInformationController {
 
     private final MedicalInformationService medicalInformationService;
 
+
+    private String getAuthenticatedUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            System.out.println("추출 로직 : " + userDetails.getUsername());
+            return userDetails.getUsername();
+        }
+        throw new UnauthorizedException("인증된 사용자가 아닙니다.");
+    }
+
     @GetMapping
     public ResponseEntity<?> getMedicalInformation() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String memberId = authentication.getName();
-
+        String memberId = getAuthenticatedUserId();
         try {
             MedicalInformationDto.Response response = medicalInformationService.getMedicalInformationByMemberId(memberId);
 
@@ -54,6 +64,8 @@ public class MedicalInformationController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (EntityExistsException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (UnauthorizedException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         }
     }
 

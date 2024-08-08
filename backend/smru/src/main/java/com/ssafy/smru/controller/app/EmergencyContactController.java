@@ -69,7 +69,7 @@ public class EmergencyContactController {
 
             // 비상연락망 저장
             EmergencyContactDto.Response response = emergencyContactService.createEmergencyContact(memberId, request);
-            Map<String,Object> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>();
             map.put("message", "비상연락망이 정상적으로 등록되었습니다.");
             map.put("emergencyContactId", response.getEmergencyContactId());
             return new ResponseEntity<>(map, HttpStatus.CREATED);
@@ -77,6 +77,8 @@ public class EmergencyContactController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (ResourceConflictException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (UnauthorizedException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
             return new ResponseEntity<>("처리 중 서버에서 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
