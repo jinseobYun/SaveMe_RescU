@@ -49,7 +49,7 @@ const ChangePwPage = () => {
       //     }
       //   },
       //   (error) => {
-      //     console.log(error);
+      //         console.log(error.toJSON());
       //     errorAlert(error.response.data);
       //   }
       // );

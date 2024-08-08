@@ -19,7 +19,7 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
     addDrugInputs,
     isFormEdit,
     inputs,
-    clearAllInput,
+    clearAllInputs,
     deleteMedCdisInput,
     deleteDrugInput,
   } = useFormInputStore();
@@ -41,41 +41,47 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
         medCdis,
         drugInfos,
       };
-      console.log(data);
-      //TODO - 의료정보 저장 api
-      //FIXME - 403 forbidden
-
       if (isFormEdit) {
         updateMedicalInfo(
           data,
           (response) => {
             if (response.status === 200) {
-              Swal.fire("저장되었습니다");
-              clearAllInput();
-
+              clearAllInputs();
               setUserMedicalInfo(data);
-              navigate("/medicalinfo", { replace: true });
+              Swal.fire({
+                title: "저장되었습니다",
+                confirmButtonText: "확인",
+                confirmButtonColor: "#FFCC70",
+                didClose: () => {
+                  navigate("/medicalinfo", { replace: true });
+                },
+              });
             }
           },
           (error) => {
-            console.log(error);
+            console.log(error.toJSON());
           }
         );
       } else {
         registerMedicalInfo(
           data,
           (response) => {
-            if (response.status === 200) {
-              Swal.fire("등록되었습니다");
-
+            console.log(response);
+            if (response.status === 201) {
+              clearAllInputs();
               setUserMedicalInfo(data);
-              clearAllInput();
-
-              navigate("/medicalinfo", { replace: true });
+              Swal.fire({
+                title: "등록되었습니다",
+                confirmButtonText: "확인",
+                confirmButtonColor: "#FFCC70",
+                didClose: () => {
+                  navigate("/medicalinfo", { replace: true });
+                },
+              });
             }
           },
           (error) => {
-            console.log(error);
+            console.log(error.toJSON());
           }
         );
       }
@@ -91,7 +97,7 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
     };
     addDrugInputs(data);
   };
-  //TODO - 지병은 자동검색 기능 없음
+  //TODO - 지병은 자동검색
   const onClickAddBtn = (name) => {
     let formType = "의약품";
     if (form === "disease") formType = "지병";
@@ -122,7 +128,9 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
         );
 
         if (!existsInArray) {
-          Swal.showValidationMessage("해당하는 단어가 약품정보에 없습니다.");
+          Swal.showValidationMessage(
+            `해당하는 단어가 ${formType}정보에 없습니다.`
+          );
           return false;
         }
 
@@ -150,11 +158,9 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
       },
       width: "30em",
       confirmButtonText: "저장하기",
-      confirmButtonColor: "var(--main-orange-color)",
+      confirmButtonColor: "#FFCC70",
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log(result.value);
-        //FIXME - id 안넘어옴
         handleAddInput(result.value);
       }
     });

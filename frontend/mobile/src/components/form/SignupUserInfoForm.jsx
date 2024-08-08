@@ -19,13 +19,11 @@ const SignupUserInfoForm = () => {
       gender: inputs.gender || "",
     },
     onSubmit: (values) => {
-      console.log(values);
       updateInputs(values);
 
       reqVerifyCode(
         values.phoneNumber,
         (response) => {
-          console.log(response);
           if (response.status === 200) {
             navigate("/verification", { state: { type: "signup" } });
             //FIXME - 인증코드 저장 없애기
@@ -36,7 +34,7 @@ const SignupUserInfoForm = () => {
           4867;
         },
         (error) => {
-          console.log(error);
+          console.log(error.toJSON());
         }
       );
     },

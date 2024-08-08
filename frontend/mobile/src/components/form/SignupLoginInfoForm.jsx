@@ -26,7 +26,6 @@ const SignupLoginInfoForm = () => {
 
   const [isTextOnce, setIsTextOnce] = useState(false);
   useEffect(() => {
-    console.log(errors, values);
     if (isTextOnce != (Object.keys(errors).length !== 0)) setIsTextOnce(true);
     if (inputs.id) setIsTextOnce(true);
   }, [errors]);
