@@ -25,6 +25,7 @@ public class ElasticSearchController {
 
     @GetMapping("/search")
     public ResponseEntity<?> searchByMedicineName(@RequestParam String medicineName) {
+        System.out.println("------------여긴 왜들어와 ---------------");
         if (medicineName == null || medicineName.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
         }
