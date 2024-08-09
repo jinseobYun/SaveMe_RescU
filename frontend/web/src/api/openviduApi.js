@@ -3,7 +3,9 @@ import http from './commonHttpApi';
 export const getToken = async (sessionId) => {
   try {
     console.log("요청하는 sessionId는 : ", sessionId)
-    const sessionResponse = await http.post(`/api/sessions`, { customSessionId: sessionId });
+    // sessionId 지정하는 방법
+    // const sessionResponse = await http.post(`/api/sessions`, { customSessionId: sessionId });
+    const sessionResponse = await http.post(`/api/sessions`);
     console.log("sessionResponse : " ,sessionResponse)
     
     const tokenResponse = await http.post(`/api/sessions/${sessionResponse.data}/connections`, {});
