@@ -108,6 +108,7 @@ const GlobalStyles = createGlobalStyle`
 		overflow-x: hidden;
 		width: 100%;
  	 	height: 100%;
+		
 	}
 	img {
 		width: 100%;

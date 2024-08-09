@@ -71,7 +71,7 @@ const FirstAidPage = () => {
 
   return (
     <Container>
-      <Header navText={"내 정보"} goTo="/" />
+      <Header navText="응급 처치" goTo="/" />
 
       <Grid>
         {topics.map((topic, index) => (

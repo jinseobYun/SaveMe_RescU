@@ -1,77 +1,123 @@
-import React from "react";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
-
+import React, { useState } from "react";
+import styled, { keyframes } from "styled-components";
+import { Link, useLocation } from "react-router-dom";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import MedicalServicesOutlinedIcon from "@mui/icons-material/MedicalServicesOutlined";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import useUserStore from "@/store/useUserStore";
 const TabBar = () => {
   const isLogined = useUserStore((state) => state.isLogined);
+  const [$isAnimating, setIsAnimating] = useState(false);
+  const location = useLocation();
+
+  const handleTabClick = () => {
+    setIsAnimating(true);
+    setTimeout(() => setIsAnimating(false), 500);
+  };
 
   return (
     <Wrapper>
-      <Link to="/firstaid">
-        <TabItem>긴급 대처 요령</TabItem>
-      </Link>
-      <Link to="/">
-        <TabItem>홈</TabItem>
-      </Link>
-
+      <StyledLink to="/firstaid" onClick={handleTabClick}>
+        <TabItem
+          $isAnimating={$isAnimating}
+          $currentPath={location.pathname}
+          $targetPath="/firstaid"
+        >
+          <MedicalServicesOutlinedIcon />
+          <span>응급 처치</span>
+        </TabItem>
+      </StyledLink>
+      <StyledLink to="/" onClick={handleTabClick}>
+        <TabItem
+          $isAnimating={$isAnimating}
+          $currentPath={location.pathname}
+          $targetPath="/"
+        >
+          <HomeOutlinedIcon />
+          <span>홈</span>
+        </TabItem>
+      </StyledLink>
       {isLogined ? (
-        <Link to="/menu">
-          <TabItem>내정보</TabItem>
-        </Link>
+        <StyledLink to="/menu" onClick={handleTabClick}>
+          <TabItem
+            $isAnimating={$isAnimating}
+            $currentPath={location.pathname}
+            $targetPath="/menu"
+          >
+            <AccountCircleOutlinedIcon />
+            <span>내정보</span>
+          </TabItem>
+        </StyledLink>
       ) : (
-        <Link to="/login">
-          <TabItem>로그인</TabItem>
-        </Link>
+        <StyledLink to="/login" onClick={handleTabClick}>
+          <TabItem
+            $isAnimating={$isAnimating}
+            $currentPath={location.pathname}
+            $targetPath="/login"
+          >
+            <AccountCircleOutlinedIcon />
+            <span>로그인</span>
+          </TabItem>
+        </StyledLink>
       )}
-
-      {/* <BottomNav>
-        <NavItem>긴급 대처 요청</NavItem>
-        <NavItem>홈</NavItem>
-        <NavItem>내 정보</NavItem>
-      </BottomNav> */}
     </Wrapper>
   );
 };
 
 export default TabBar;
 
+const fadeIn = keyframes`
+  from { opacity: 0; }
+  to { opacity: 1; }
+`;
+
+const fadeOut = keyframes`
+  from { opacity: 1; }
+  to { opacity: 0; }
+`;
+
 const Wrapper = styled.div`
   display: flex;
-  width: 100%;
+  width: 100vw;
   height: 7vh;
   position: fixed;
-  bottom: 0px;
+  bottom: 0;
   align-items: center;
-  flex-direction: row;
-  justify-content: space-between;
-  // background-color: var(--bg-baige-color);
+  justify-content: space-around;
+  background-color: #f8f8f8;
+  border-top: 1px solid #ddd;
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
+  width: 20vw;
 `;
 
 const TabItem = styled.div`
   display: flex;
-
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: 2rem;
-  gap: 8px;
+  font-size: 1.2rem;
+  gap: 4px;
   flex-shrink: 0;
-  &:hover {
-    border: 1px solid var(--main-orange-color);
-    color: var(--black-color-200);
-  }
-`;
-const BottomNav = styled.div`
-  display: flex;
-  justify-content: space-around;
-  padding: 1rem;
-  background-color: #fff;
-  border-top: 1px solid #ddd;
-`;
 
-const NavItem = styled.div`
-  font-size: 0.9rem;
-  text-align: center;
-  cursor: pointer;
+  animation: ${(props) =>
+      props.$isAnimating && props.$currentPath !== props.$targetPath
+        ? fadeOut
+        : fadeIn}
+    0.5s forwards;
+
+  svg {
+    font-size: 2rem;
+  }
+
+  span {
+    font-size: 0.9rem;
+  }
+
+  &:hover {
+    color: #555;
+  }
 `;
