@@ -44,17 +44,16 @@ const MedicalInfoPage = () => {
   };
   const onClickDelteBtn = (contact) => {
     yesorNoAlert(
-      `${contact.relation} 연락처를 삭제하시겠습니까?`,
-      "삭제하기",
+      `의료정보를 삭제하시겠습니까?`,
       "취소",
+      "삭제하기",
       (result) => {
         if (result.isDismissed) {
-          deleteEmergencycontact(
-            contact.emergency_contact_id,
+          deleteMedicalInfo(
             (response) => {
               if (response.status === 200) {
                 successAlert("삭제되었습니다");
-                deleteEmergencyContact(contact.emergency_contact_id);
+                clearUserMedicalInfo();
               }
             },
             (error) => {

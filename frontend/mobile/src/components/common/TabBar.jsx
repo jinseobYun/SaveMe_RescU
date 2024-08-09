@@ -40,16 +40,17 @@ const Wrapper = styled.div`
   display: flex;
   width: 100%;
   height: 7vh;
-  justify-content: center;
   position: fixed;
   bottom: 0px;
-  background-color: var(--bg-baige-color);
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  // background-color: var(--bg-baige-color);
 `;
 
 const TabItem = styled.div`
   display: flex;
-  width: 120px;
-  height: 50px;
+
   flex-direction: column;
   justify-content: center;
   align-items: center;
