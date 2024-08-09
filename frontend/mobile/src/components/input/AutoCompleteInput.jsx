@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
 import debounce from "lodash.debounce";
 
 import useSearchStore from "@/store/useSearchStore";
-import { searchMedicine } from "@/api/medicalInfoApi";
 import { Text } from "@components/elements";
 
-const AutoCompleteInput = ({ $prev, $onChange }) => {
+const AutoCompleteInput = ({ $prev, $onChange, $formType }) => {
   const searchResults = useSearchStore((state) => state.searchResults);
   const setSearchResults = useSearchStore((state) => state.setSearchResults);
   const fetchSearchResults = useSearchStore(
@@ -19,13 +18,17 @@ const AutoCompleteInput = ({ $prev, $onChange }) => {
   const [isHaveInputValue, setIsHaveInputValue] = useState(false);
   const [dropDownItemIndex, setDropDownItemIndex] = useState(-1);
 
-  const debouncedSearch = debounce((input) => {
-    fetchSearchResults(input);
-  }, 600);
+  //FIXME - 입력 디바운스
+  const debouncedSearch = useCallback(
+    debounce((value) => {
+      console.log(value);
+      fetchSearchResults(value, $formType);
+    }, 500),
+    []
+  );
 
   const changeInputValue = (event) => {
     const newValue = event.target.value;
-
     setInputValue(newValue);
     setIsHaveInputValue(true);
     debouncedSearch(newValue);
@@ -54,28 +57,50 @@ const AutoCompleteInput = ({ $prev, $onChange }) => {
 
       {isHaveInputValue && (
         <DropDownBox>
-          {/* {searchResults.length === 0 && (
+          {inputValue.length > 0 && searchResults.length === 0 && (
             <DropDownItem>해당하는 단어가 없습니다</DropDownItem>
-          )} */}
-          {searchResults.map(({ medicineId, medicineName }, dropDownIndex) => {
-            return (
-              <DropDownItem
-                key={dropDownIndex}
-                onClick={() => clickDropDownItem(medicineName)}
-                onMouseOver={() => setDropDownItemIndex(dropDownIndex)}
-                className={
-                  dropDownItemIndex === dropDownIndex ? "selected" : ""
+          )}
+          {$formType === "disease"
+            ? searchResults.map(
+                ({ medicineId, medicineName }, dropDownIndex) => {
+                  return (
+                    <DropDownItem
+                      key={dropDownIndex}
+                      onClick={() => clickDropDownItem(medicineName)}
+                      onMouseOver={() => setDropDownItemIndex(dropDownIndex)}
+                      className={
+                        dropDownItemIndex === dropDownIndex ? "selected" : ""
+                      }
+                    >
+                      <Text
+                        $size="1.5rem"
+                        children={medicineName}
+                        $padding="2rem"
+                        $lineHeight=""
+                      />
+                    </DropDownItem>
+                  );
                 }
-              >
-                <Text
-                  $size="1.5rem"
-                  children={medicineName}
-                  $padding="2rem"
-                  $lineHeight=""
-                />
-              </DropDownItem>
-            );
-          })}
+              )
+            : searchResults.map(({ cdInfoId, cdName }, dropDownIndex) => {
+                return (
+                  <DropDownItem
+                    key={dropDownIndex}
+                    onClick={() => clickDropDownItem(cdName)}
+                    onMouseOver={() => setDropDownItemIndex(dropDownIndex)}
+                    className={
+                      dropDownItemIndex === dropDownIndex ? "selected" : ""
+                    }
+                  >
+                    <Text
+                      $size="1.5rem"
+                      children={cdName}
+                      $padding="2rem"
+                      $lineHeight=""
+                    />
+                  </DropDownItem>
+                );
+              })}
         </DropDownBox>
       )}
     </WholeBox>

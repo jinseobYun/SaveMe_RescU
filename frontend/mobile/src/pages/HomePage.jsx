@@ -7,9 +7,9 @@ import { Button, Grid, Text, Toggle } from "@components/elements";
 import useFormInputStore from "@/store/useFormInputStore";
 import { yesorNoAlert, errorAlert } from "@/util/notificationAlert";
 import { tagReport } from "@/api/reportApi";
+import embulance from "@/assets/img/embulance.jpg";
 const Home = () => {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
 
   const [searchParams] = useSearchParams();
   const tagId = searchParams.get("tagId");
@@ -41,20 +41,15 @@ const Home = () => {
     }
   }, []);
   return (
-    <>
+    <Container>
       {/* 헤더 */}
-      <Grid
-        $display="grid"
-        $height="20vh"
-        $padding="0 0 0 "
-        $flex_direction="column"
-        $bg="var(--bg-baige-color)"
-        $align_items="flex-start"
-      >
+      <StyledHeader>
         {/* //TODO - 헤더 만들기 */}
         <Text>119 신고 서비스</Text>
-        <Text>SAVE ME</Text>
-      </Grid>
+        <Text $size="4rem" $bold={true} $color="var(--white-color-200)">
+          SAVE ME
+        </Text>
+      </StyledHeader>
       <Grid
         $display="flex"
         $padding="15px 0px 110px 0px"
@@ -116,8 +111,30 @@ const Home = () => {
         />
       </Grid>
       <TabBar />
-    </>
+      {/* <StyledImg src={embulance} /> */}
+    </Container>
   );
 };
 
 export default Home;
+const Container = styled.div`
+  width: 100%;
+  height: 100%;
+  // background-color: rgba(251, 200, 30, 0.6);
+  background-color: var(--white-color-200);
+`;
+const StyledHeader = styled.div`
+  display: flex;
+  height: 20vh;
+  padding: 0 0 0;
+  flex-direction: column;
+  align-items: flex-start;
+  background: rgb(255, 110, 76);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 110, 76, 0.86214987704066) 0%,
+    rgba(255, 194, 44, 0.5624299890854779) 50%,
+    rgba(255, 242, 77, 0) 100%
+  );
+`;
+const StyledImg = styled.img``;

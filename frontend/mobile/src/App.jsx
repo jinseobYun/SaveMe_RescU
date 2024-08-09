@@ -28,6 +28,8 @@ import {
   ChangePwPage,
   EmptyPage,
   NfcInfoPage,
+  ReportOpenViduPage,
+  DetailFirstAid,
 } from "@/pages";
 import GlobalStyle from "@/globalStyles.js";
 function App() {
@@ -40,12 +42,14 @@ function App() {
           {/* <Route path="/" element={<Navigate to="/home" />} /> */}
           {/* <Route path="/home" element={<HomePage />} /> */}
           <Route path="/" element={<HomePage />} />
+          <Route path="/gps" element={<ReportOpenViduPage />} />
 
           <Route path="/verification" element={<VerifyCodeForm />} />
           <Route path="/report" element={<ReportCallPage />} />
 
           <Route path="/changepassword" element={<ChangePwPage />} />
           <Route path="/firstaid" element={<FirstAidPage />} />
+          <Route path="/firstaid/detail" element={<DetailFirstAid />} />
           <Route path="/findpassword" element={<FindIdPwPage />} />
 
           {/* 인증을 해야만 */}
@@ -94,10 +98,10 @@ const Container = styled.div`
   flex-direction: column;
   height: 100vh;
   width: 100vw;
-  min-height: 640px;
-  // max-width: 360px;
-  max-height: 800px;
-  min-width: 360px;
+  // min-height: 640px;
+  // // max-width: 360px;
+  // max-height: 800px;
+  // min-width: 360px;
   padding-bottom: 4px;
   align-items: flex-start;
 `;

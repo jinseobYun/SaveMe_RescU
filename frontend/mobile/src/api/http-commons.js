@@ -69,7 +69,7 @@ function loginAxios() {
             window.location.replace("/login");
           });
         } else {
-          notificationAlert("error", "실패하셨습니다", () => { });
+          notificationAlert("error", "실패하셨습니다", () => { console.log(error) });
         }
         return new Promise(() => { });
       }
