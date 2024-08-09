@@ -41,6 +41,7 @@ public class ElasticSearchController {
     }
     @GetMapping("/search-2")
     public ResponseEntity<?> searchByCdName(@RequestParam String cdName) {
+        System.out.println("----------요청은 들어옴?---------------");
         if (cdName == null || cdName.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
         }
