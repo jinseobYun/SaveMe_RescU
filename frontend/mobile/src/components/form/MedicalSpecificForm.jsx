@@ -88,7 +88,6 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
     };
     addDrugInputs(data);
   };
-  //TODO - 지병은 자동검색
   const onClickAddBtn = (name) => {
     let formType = "의약품";
     if (form === "disease") formType = "지병";
@@ -103,6 +102,7 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
           <AutoCompleteInput
             $onChange={Swal.resetValidationMessage}
             $prev={name}
+            $formType={form}
           />
         );
       },
@@ -111,12 +111,15 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
           "#swal-react-container input"
         ).value;
         const searchResults = useSearchStore.getState().searchResults;
-        const existsInArray = searchResults.some(
-          (item) => item.medicineName === inputValue
+        const existsInArray = searchResults.some((item) =>
+          form === "disease"
+            ? item.cdName === inputValue
+            : item.medicineName === inputValue
         );
-        const existsInInputs = drugInputs.some(
-          (item) => item.name === inputValue
-        );
+        const existsInInputs =
+          form === "disease"
+            ? medCdisInputs.some((item) => item.name === inputValue)
+            : drugInputs.some((item) => item.name === inputValue);
 
         if (!existsInArray) {
           Swal.showValidationMessage(
@@ -130,6 +133,14 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
           return false;
         } else {
           if (name && inputValue !== name) {
+            if (form === "disease") {
+              const prevIndex = medCdisInputs.findIndex(
+                (item) => item.name === name
+              );
+              if (prevIndex !== -1) {
+                deleteMedCdisInput(prevIndex);
+              }
+            }
             const prevIndex = drugInputs.findIndex(
               (item) => item.name === name
             );
@@ -139,8 +150,10 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
           }
         }
         // 추가 처리 로직
-        const newItem = searchResults.find(
-          (item) => item.medicineName === inputValue
+        const newItem = searchResults.find((item) =>
+          form === "disease"
+            ? item.cdName === inputValue
+            : item.medicineName === inputValue
         );
 
         return inputValue

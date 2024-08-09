@@ -15,19 +15,16 @@ async function updateMedicalInfo(data, success, fail) {
 }
 
 async function deleteMedicalInfo(success, fail) {
-  await http
-    .delete(`/medical-info`)
-    .then(success)
-    .catch(fail);
+  await http.delete(`/medical-info`).then(success).catch(fail);
 }
 
-async function searchMedicine(keyword, success, fail) {
-  await http.get(`/search?medicineName=${keyword}`).then(success).catch(fail);
-}
+// async function searchMedicine(keyword, success, fail) {
+//   await http.get(`/search?medicineName=${keyword}`).then(success).catch(fail);
+// }
 export {
   registerMedicalInfo,
   getMedicalInfo,
   updateMedicalInfo,
   deleteMedicalInfo,
-  searchMedicine
+  // searchMedicine
 };
