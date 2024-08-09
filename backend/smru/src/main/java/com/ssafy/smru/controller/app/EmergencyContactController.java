@@ -96,7 +96,7 @@ public class EmergencyContactController {
             emergencyContactService.updateEmergencyContact(emergencyContactId, request, memberId);
             return new ResponseEntity<>("비상연락망을 정상적으로 수정했습니다.", HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (UnauthorizedException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
@@ -115,7 +115,7 @@ public class EmergencyContactController {
             emergencyContactService.deleteEmergencyContact(emergencyContactId, memberId);
             return new ResponseEntity<>("비상연락망을 정상적으로 삭제했습니다.", HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (UnauthorizedException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
