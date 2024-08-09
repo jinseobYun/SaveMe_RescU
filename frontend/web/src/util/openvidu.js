@@ -13,6 +13,7 @@ export const initOpenVidu = async (sessionId, user) => {
     OV.enableProdMode();
     session = OV.initSession();
 
+    // 초기 연결 이벤트
     session.on('streamCreated', (event) => {
       console.log('streamCreated 이벤트 발생: ', event);
       console.log('streamCreated 이벤트 발생: ', event.stream);
@@ -33,10 +34,17 @@ export const initOpenVidu = async (sessionId, user) => {
       console.warn(exception);
     });
 
+    // 채팅관련 기능 (signal을 통해서) 추가
+    session.on('signal', (event) => {
+      console.log('Received signal:', event.data);
+    });
+
     const token = await getToken(sessionId);
     console.log("Token획득성공!!!")
+    console.log("token은 : " ,token)
     await session.connect(token, { clientData: user});
 
+    // audioSource 가 마이크 
     publisher = await OV.initPublisherAsync(undefined, {
       audioSource: undefined,
       videoSource: undefined,
@@ -78,5 +86,22 @@ export const toggleVideo = () => {
     const enabled = !publisher.stream.videoActive;
     publisher.publishVideo(enabled);
     return enabled;
+  }
+};
+
+// 이거 지우면 오류남.... 
+export const sendChatMessage = (message) => {
+  if (session) {
+    session.signal({
+      data: message,
+      to: [], // 빈 배열은 모든 사용자에게 메시지 전송
+      type: 'chat'
+    })
+    .then(() => {
+      console.log('Message successfully sent');
+    })
+    .catch(error => {
+      console.error('Error sending message:', error);
+    });
   }
 };
