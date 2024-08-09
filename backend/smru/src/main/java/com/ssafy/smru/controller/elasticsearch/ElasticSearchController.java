@@ -25,16 +25,13 @@ public class ElasticSearchController {
 
     @GetMapping("/search")
     public ResponseEntity<?> searchByMedicineName(@RequestParam String medicineName) {
-        System.out.println("------------여긴 왜들어와 ---------------");
         if (medicineName == null || medicineName.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
         }
         try {
 
             List<MedicineEs> medicineList = elasticSearchService.searchByMedicineName(medicineName);
-            if (medicineList == null || medicineList.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(medicineName + "와(과) 일치하는 검색결과가 없습니다.");
-            }
+
             return new ResponseEntity<>(medicineList,HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -42,15 +39,12 @@ public class ElasticSearchController {
     }
     @GetMapping("/search-2")
     public ResponseEntity<?> searchByCdName(@RequestParam String cdName) {
-        System.out.println("----------요청은 들어옴?---------------");
         if (cdName == null || cdName.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
         }
         try {
             List<CdInfoEs> cdInfoList = cdinfoService.searchByCdName(cdName);
-            if (cdInfoList == null || cdInfoList.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(cdName+"와(과) 일치하는 검색결과가 없습니다.");
-            }
+
             return new ResponseEntity<>(cdInfoList,HttpStatus.OK);
         }catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
