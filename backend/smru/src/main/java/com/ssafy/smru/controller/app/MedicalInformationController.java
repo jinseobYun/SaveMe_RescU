@@ -26,7 +26,6 @@ public class MedicalInformationController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            System.out.println("추출 로직 : " + userDetails.getUsername());
             return userDetails.getUsername();
         }
         throw new UnauthorizedException("인증된 사용자가 아닙니다.");
@@ -39,7 +38,7 @@ public class MedicalInformationController {
             MedicalInformationDto.Response response = medicalInformationService.getMedicalInformationByMemberId(memberId);
 
             if (response == null) {
-                return new ResponseEntity<>("등록된 의료정보가 없습니다.", HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>("등록된 의료정보가 없습니다.", HttpStatus.OK);
             }
             return ResponseEntity.ok(response);
         } catch (ResourceNotFoundException e) {
