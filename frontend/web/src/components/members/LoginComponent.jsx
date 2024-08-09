@@ -4,8 +4,8 @@ import useCustomLogin from "../../hooks/useCustomLogin";
 
 import Button from "../../components/elements/Button";
 import Input from "../../components/elements/Input";
+import logoImage from '../../assets/RescULogo.png'
 // import { loginPost } from "../../api/membersApi";
-
 import "./LoginComponent.css";
 
 const initState = {
@@ -25,23 +25,6 @@ export default function LoginComponent() {
     }));
   };
 
-  // 수정전 ★★★★★★★★★★★★★★★★★★★★★★★★★★
-  // const handleSubmit = () => {
-  //   console.log(loginParam);
-
-  //   doLogin(loginParam).then((data) => {
-  //     console.log(data);
-  //     if (data.error) {
-  //       alert("이메일,패스워드 확인");
-  //     } else {
-  //       alert("로그인성공");
-  //       navigate("/main");
-  //     }
-  //   });
-  // };
-  // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-
-  // 수정후 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
   const handleSubmit = async () => {
   try {
     const data = await doLogin(loginParam);
@@ -65,35 +48,42 @@ export default function LoginComponent() {
 return (
   <div className="logincontainer">
     <div className="login-info">
-      <div className="info-text">로그인 페이지</div>
+      <img src={logoImage} alt="로고" className="logo-image" />
     </div>
     <div className="login-input">
       <div className="id">
-        <div className="input-tag">아이디 입력</div>
+        <div className="input-tag">아이디</div>
         <Input
           type="text"
           name="memberId"
           value={loginParam.memberId}
           onChange={handleInputChange}
-          placeholder="아이디를 입력하세요"
+          placeholder="아이디"
           showClearButton={true}
         />
       </div>
       <div className="password">
-        <div className="input-tag">비밀번호 입력</div>
+        <div className="input-tag">비밀번호</div>
         <Input
           type="password"
           name="password"
           value={loginParam.password}
           onChange={handleInputChange}
-          placeholder="비밀번호를 입력하세요"
+          placeholder="비밀번호"
           showClearButton={true}
         />
       </div>
+      <Button 
+       className="login-button btn-12" 
+      _onClick={handleSubmit} 
+       disabled={false}
+      $bg={{ default: "#fff5b3", hover: "#ffde4d" }} >
+          <span className="login-text">로그인</span>
+        </Button>
+
+
+
     </div>
-    <Button className="login-button" _onClick={handleSubmit} disabled={false}>
-      <div className="login-text">로그인</div>
-    </Button>
   </div>
 );
 }
