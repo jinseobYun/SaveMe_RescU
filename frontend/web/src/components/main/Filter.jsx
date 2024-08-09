@@ -29,9 +29,9 @@ const Filter = ({ formData, handleInputChange, handleFilter }) => (
       <div className="charge-input">
         <Input
           type="text"
-          name="charge"
+          name="createdBy"
           label="담당자"
-          value={formData.charge}
+          value={formData.createdBy}
           onChange={handleInputChange}
           // setValue={(value) => handleInputChange("charge", value)}
         />

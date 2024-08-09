@@ -2,10 +2,11 @@ import axios from 'axios';
 
 import { API_SERVER_DOMAIN } from '../config/apiConfig';
 
-const serverHost = `${API_SERVER_DOMAIN}/dispatch-orders`;
+const serverDispatchHost = `${API_SERVER_DOMAIN}/dispatch-orders`;
+const serverHost = `${API_SERVER_DOMAIN}`;
 
-export const fetchIncidentListApi = async ({ page = 1, startDate, endDate, createdBy }) => {
-  const response = await axios.get(`${serverHost}`, {
+export const fetchIncidentListApi = async ({ page, startDate, endDate, createdBy }) => {
+  const response = await axios.get(`${serverHost}/dispatch-orders`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("JWT-AccessToken")}`,
     },
@@ -20,7 +21,7 @@ export const fetchIncidentListApi = async ({ page = 1, startDate, endDate, creat
 };
 
 export const fetchIncidentDetailsApi = async (id) => {
-  const response = await axios.get(`${API_BASE_URL}/dispatch-orders/${id}`, {
+  const response = await axios.get(`${serverHost}/dispatch-orders/${id}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("JWT-AccessToken")}`,
     },

@@ -5,6 +5,7 @@
      /* transform 좌우반전 적용 */
     transform: scaleX(-1);
     position :relative;
+    border: 1px solid;
 }
 
 .local-position {

@@ -1,28 +1,30 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getReport, postFirstInfo, postSecondInfo } from "../api/reportApi";
+import { getReport, postFirstInfo, putSecondInfo } from "../api/reportApi";
 
 export const getReportAsync = createAsyncThunk(
   "getReportAsync",
   async ({ patientId, reporterId, latitude, longitude }) => {
-    return await getReport( patientId, reporterId, latitude, longitude );
+    return await getReport(patientId, reporterId, latitude, longitude);
   }
 );
 
 export const postFirstInfoAsync = createAsyncThunk(
   "postFirstInfoAsync",
   async (param) => {
+    console.log(param);
     return await postFirstInfo(param);
   }
 );
 
-export const postSecondInfoAsync = createAsyncThunk(
-  "postSecondInfoAsync",
+export const putSecondInfoAsync  = createAsyncThunk(
+  "putSecondInfoAsync",
   async (param) => {
-    return await postSecondInfo(param);
+    return await putSecondInfo(param);
   }
 );
 
 const initState = {
+  hospitals:"",
   latitude: "",
   longitude: "",
   reportedTime: "",
@@ -31,53 +33,63 @@ const initState = {
   rescueTeams: [],
   lotNumberAddress: "",
   roadNameAddress: "",
-  patientMedicalInformation: {
+  taggingMedicalInformation: {
     medicalInformationId: null,
     bloodType1: "",
     bloodType2: "",
     otherInfo: "",
-    drugInfos: [],
-    medCdis: [],
+    drugInfos: [""],
+    medCdis: [""],
     memberName: "",
     phoneNumber: "",
-    birth: ""
+    birth: "",
+    gender:"",
   },
   reporterMedicalInformation: {
     medicalInformationId: null,
     bloodType1: "",
     bloodType2: "",
     otherInfo: "",
-    drugInfos: [],
-    medCdis: [],
+    drugInfos: [""],
+    medCdis: [""],
     memberName: "",
     phoneNumber: "",
-    birth: ""
-  }
+    birth: "",
+    gender:"",
+  },
+  dispatchOrderId: null,
 };
-
 
 const reportSlice = createSlice({
   name: "reportSlice",
   initialState: initState,
-  reducers: {},
+  reducers: {
+    setDispatchOrderId: (state, action) => {
+      state.dispatchOrderId = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getReportAsync.fulfilled, (state, action) => {
         console.log(action.payload);
-
-        return action.payload;
+        return {
+          ...state,
+          reportData: action.payload,
+        };
       })
       .addCase(postFirstInfoAsync.fulfilled, (state, action) => {
-        console.log(action.payload);
-
-        return action.payload;
+        if (action.payload && action.payload.dispatchOrderId) {
+          return {
+            ...state,
+            dispatchOrderId: action.payload.dispatchOrderId,
+          };
+        }
       })
-      .addCase(postSecondInfoAsync.fulfilled, (state, action) => {
+      .addCase(putSecondInfoAsync.fulfilled, (state, action) => {
         console.log(action.payload);
-        return action.payload;
-      })
-      ;
+      });
   },
 });
 
+export const { setDispatchOrderId } = reportSlice.actions;
 export default reportSlice.reducer;

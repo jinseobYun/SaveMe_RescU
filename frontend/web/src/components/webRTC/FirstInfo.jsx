@@ -7,36 +7,42 @@ import Textarea from "../elements/Textarea";
 
 // Api 연결
 import { useDispatch, useSelector } from "react-redux";
-import { getReportAsync, postFirstInfoAsync } from "../../slices/reportSlice";
+import {
+  getReportAsync,
+  postFirstInfoAsync,
+  setDispatchOrderId,
+} from "../../slices/reportSlice";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 
 const FirstInfo = () => {
   const [formData, setFormData] = useState({
-    rescueTeamName: "",
+    rescueTeamId: "",
+    firestation: "",
     jibunLocationInfo: "",
     doroLocationInfo: "",
     emergencyType: "",
     reporterName: "",
-    reportedTime: "",
     reporterPhone: "",
     reportDetail: "",
   });
 
   // api를 위한 호출
   const dispatch = useDispatch();
-  const reportData = useSelector((state) => state.reportSlice);
+  const reportData = useSelector((state) => state.reportSlice.reportData);
   const navigate = useNavigate();
 
+  // Context로 데이터 전달하기.
+  // const { setDispatchOrderId } = useOutletContext();
+
   const [rescueTeamNameOptions, setRescueTeamNameOptions] = useState([]);
-  const [dispatchOrderId, setDispatchOrderId] = useState(null);
 
   // Api 호출 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
   // Mock Data 에대해서 추가적인 처리 필요!!
   useEffect(() => {
     const params = {
-      patientId: "user", // mock 값
-      reporterId: "ssafy", // mock 값
+      patientId: "ssafy", // mock 값
+      reporterId: "ssafy2", // mock 값
       latitude: "37.5665", // mock 값
       longitude: "126.9780", // mock 값
     };
@@ -46,17 +52,18 @@ const FirstInfo = () => {
 
   useEffect(() => {
     if (reportData && reportData.rescueTeams.length > 0) {
+      console.log("이거확인!!",reportData)
       setRescueTeamNameOptions(
         reportData.rescueTeams.map((team) => team.teamName)
       );
       setFormData({
-        rescueTeamName: reportData.rescueTeams[0].teamName,
+        rescueTeamId: reportData.rescueTeams[0].rescueTeamId,
+        firestation: reportData.rescueTeams[0].teamName,
         jibunLocationInfo: reportData.lotNumberAddress,
         doroLocationInfo: reportData.roadNameAddress,
         emergencyType: "",
         reporterName: reportData.reporterName,
         reporterPhone: reportData.reporterPhone,
-        reportedTime: reportData.reportedTime,
         reportDetail: "",
       });
     }
@@ -65,27 +72,24 @@ const FirstInfo = () => {
   const handleInputChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
-      [e.target.name]: e.target.value,
+      [e.target.name]:
+        e.target.name === "emergencyType"
+          ? parseInt(e.target.value, 10)
+          : e.target.value,
+      // [e.target.name]: e.target.value,
     }));
   };
-
-  // 반환이 없는 경우 요청만 ★★★★★★★★★★★★★★★★★★
-  // const handleSubmit = () => {
-  //   dispatch(postFirstInfoAsync(formData));
-  //   console.log(formData);
-  // };
-  // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-
   // 반환 필요
   const handleSubmit = async () => {
     const result = await dispatch(postFirstInfoAsync(formData));
     if (result.payload && result.payload.dispatchOrderId) {
-      setDispatchOrderId(result.payload.dispatchOrderId);
+      dispatch(setDispatchOrderId(result.payload.dispatchOrderId));
+      navigate("/webrtc/second-info");
 
       // 페이지네비게이션 수정필요※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
-      navigate("/second-info", {
-        state: { dispatchOrderId: result.payload.dispatchOrderId },
-      });
+      // navigate("/second-info", {
+      //   state: { dispatchOrderId: result.payload.dispatchOrderId },
+      // });
     }
     console.log(result.payload);
   };
@@ -97,7 +101,9 @@ const FirstInfo = () => {
         name="rescueTeamName"
         options={rescueTeamNameOptions}
         selectedValue={formData.rescueTeamName}
-        setSelectedValue={(value) => handleInputChange({ target: { name: "rescueTeamName", value } })}
+        setSelectedValue={(value) =>
+          handleInputChange({ target: { name: "firestation", value } })
+        }
       />
 
       <Input
