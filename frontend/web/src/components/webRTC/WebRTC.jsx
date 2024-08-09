@@ -1,6 +1,13 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { initOpenVidu, leaveSession, mainStreamManager, subscribers, toggleAudio, toggleVideo } from "../../util/openvidu";
+import {
+  initOpenVidu,
+  leaveSession,
+  mainStreamManager,
+  subscribers,
+  toggleAudio,
+  toggleVideo,
+} from "../../util/openvidu";
 import styled from "styled-components";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import VideocamIcon from "@mui/icons-material/Videocam";
@@ -15,70 +22,52 @@ const WebRTC = () => {
   const [muted, setMuted] = useState(true);
   const [cameraOff, setCameraOff] = useState(true);
   const [currentVideoDevice, setCurrentVideoDevice] = useState(null);
+
+  // 상대방 스트림 상태 관리
+  const [remoteStream, setRemoteStream] = useState(null);
   const navigate = useNavigate();
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
-
-
-  const session = useRef(null);
-  const OV = useRef(null);
+  //remoteVideo 자체를 state로 관리
 
   const handleMuteClick = () => {
     const enabled = toggleAudio();
-    setMuted(!enabled);
+    setMuted(enabled);
   };
 
   const handleCameraClick = () => {
     const enabled = toggleVideo();
-    setCameraOff(!enabled);
+    setCameraOff(enabled);
   };
-
-  const switchCamera = useCallback(async () => {
-    try {
-      const devices = await OV.current.getDevices();
-      const videoDevices = devices.filter(device => device.kind === 'videoinput');
-
-      if (videoDevices && videoDevices.length > 1) {
-        const newVideoDevice = videoDevices.filter(device => device.deviceId !== currentVideoDevice.deviceId);
-
-        if (newVideoDevice.length > 0) {
-          const newPublisher = OV.current.initPublisher(undefined, {
-            videoSource: newVideoDevice[0].deviceId,
-            publishAudio: true,
-            publishVideo: true,
-            mirror: true,
-          });
-
-          if (session) {
-            await session.unpublish(mainStreamManager);
-            await session.publish(newPublisher);
-            setCurrentVideoDevice(newVideoDevice[0]);
-            setMainStreamManager(newPublisher);
-            setPublisher(newPublisher);
-          }
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }, [currentVideoDevice, session, mainStreamManager]);
 
   useEffect(() => {
     const user = { username: "myname", userno: 1 }; // 실제 사용자 정보로 대체
-    const sessionId = "ses_WEyWspxXTD"; // 실제 세션 ID로 대체
+    // const sessionId = "ses_WEyWspxXTD"; // 실제 세션 ID로 대체
+    const sessionId = "ses_WEyWspxXTA"; // 실제 세션 ID로 대체
 
-    initOpenVidu(sessionId, user.username).then(() => {
-      console.log("OpenVidu Init 시작!!!!!!!!!!!!!")
-      localVideoRef.current.srcObject = mainStreamManager.stream.getMediaStream();
-      console.log("OpenVidu Init 성공!!!!!!!!!!!!!")
+    initOpenVidu(sessionId, user).then(() => {
+      console.log("OpenVidu Init 시작!");
+      if (mainStreamManager) {
+        localVideoRef.current.srcObject =
+          mainStreamManager.stream.getMediaStream();
+      }
+      console.log("OpenVidu Init 성공!");
     });
 
-    window.addEventListener("streamCreated", (event) => {
-      console.log("상대방접속 시작!!!!!!!!!!!!!")
-      remoteVideoRef.current.srcObject = event.detail.subscriber.stream.getMediaStream();
-      console.log("상대방 컴퓨터 연결 완료!!!!!!!!!!!!!")
-    });
+    const handleStreamCreated = (event) => {
+      console.log("상대방 접속 시작!");
+      const subscriber = event.detail.subscriber;
+      if (subscriber) {
+        const stream = event.detail.subscriber.stream.getMediaStream();
+        setRemoteStream(stream)
+        // setRemoteStream(subscriber.stream.getMediaStream());
+        console.log("상대방 비디오 연결 완료");
+      }
+      console.log("상대방 컴퓨터 연결 완료!");
+    };
 
+    window.addEventListener("streamCreated", handleStreamCreated);
+    
     return () => {
       leaveSession();
     };
@@ -89,10 +78,20 @@ const WebRTC = () => {
     navigate("/");
   };
 
+  useEffect(() => {
+    if (remoteStream) {
+      console.log("remoteStream 설정됨:", remoteStream);
+      if (remoteVideoRef.current) {
+        console.log("상대방 컴퓨터 정보:", remoteVideoRef.current);
+        remoteVideoRef.current.srcObject = remoteStream;
+      }
+    }
+  }, [remoteStream]);
+
   return (
     <VideoContainer>
       <div className="remote-position">
-        <Video ref={remoteVideoRef} autoPlay playsInline />
+        <Video ref={remoteVideoRef} muted autoPlay playsInline />
         <div className="local-position">
           <LocalVideo ref={localVideoRef} muted autoPlay playsInline />
         </div>
@@ -110,7 +109,11 @@ const WebRTC = () => {
             $radius="40px"
             $border="none"
           >
-            {cameraOff ? <VideocamIcon style={{ fontSize: "36px" }} /> : <VideocamOffIcon style={{ fontSize: "36px" }} />}
+            {cameraOff ? (
+              <VideocamIcon style={{ fontSize: "36px" }} />
+            ) : (
+              <VideocamOffIcon style={{ fontSize: "36px" }} />
+            )}
           </Button>
         </div>
         <div className="rtc-btn">
@@ -139,7 +142,11 @@ const WebRTC = () => {
             $radius="40px"
             $border="none"
           >
-            {muted ? <MicNoneIcon style={{ fontSize: "36px" }} /> : <MicOffIcon style={{ fontSize: "36px" }} />}
+            {muted ? (
+              <MicNoneIcon style={{ fontSize: "36px" }} />
+            ) : (
+              <MicOffIcon style={{ fontSize: "36px" }} />
+            )}
           </Button>
         </div>
       </div>
@@ -155,7 +162,6 @@ const VideoContainer = styled.div`
 const Video = styled.video`
   width: 100%;
   height: 100%;
-  background-color: white;
 `;
 
 const LocalVideo = styled.video`

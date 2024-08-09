@@ -14,8 +14,12 @@ export const initOpenVidu = async (sessionId, user) => {
     session = OV.initSession();
 
     session.on('streamCreated', (event) => {
+      console.log('streamCreated 이벤트 발생: ', event);
+      console.log('streamCreated 이벤트 발생: ', event.stream);
+      console.log('streamCreated 이벤트 발생: ', event.stream.session);
       const subscriber = session.subscribe(event.stream, undefined);
       subscribers.push(subscriber);
+
       const streamEvent = new CustomEvent('streamCreated', { detail: { subscriber } });
       window.dispatchEvent(streamEvent);
     });
@@ -38,9 +42,9 @@ export const initOpenVidu = async (sessionId, user) => {
       videoSource: undefined,
       publishAudio: true,
       publishVideo: true,
-      resolution: '640x480',
+      // resolution: '640x480',
       frameRate: 30,
-      insertMode: 'APPEND',
+      // insertMode: 'APPEND',
       mirror: true,
     });
 
