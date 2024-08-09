@@ -1,0 +1,30 @@
+{
+  "properties": {
+    "cd_info_id": {
+      "type": "integer"
+    },
+    "cd_name": {
+      "type": "text",
+      "analyzer": "standard",
+      "search_analyzer": "standard",
+      "fields": {
+        "nori": {
+          "type": "text",
+          "analyzer": "my_nori_analyzer",
+          "search_analyzer": "my_nori_analyzer"
+        },
+        "ngram": {
+          "type": "text",
+          "analyzer": "my_ngram_analyzer",
+          "search_analyzer": "my_ngram_analyzer"
+        },
+        "edge":{
+          "type": "text",
+          "analyzer": "my_edge_ngram_analyzer",
+          "search_analyzer": "my_edge_ngram_analyzer"
+        }
+
+      }
+    }
+  }
+}
