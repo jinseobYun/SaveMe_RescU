@@ -7,8 +7,9 @@ export const getToken = async (sessionId) => {
     // const sessionResponse = await http.post(`/api/sessions`, { customSessionId: sessionId });
     const sessionResponse = await http.post(`/api/sessions`);
     console.log("sessionResponse : " ,sessionResponse)
+    console.log("sessionResponse : " ,sessionResponse.data)
     
-    const tokenResponse = await http.post(`/api/sessions/${sessionResponse.data}/connections`, {});
+    const tokenResponse = await http.post(`/api/sessions/${sessionResponse.data.id}/connections`, {});
     console.log("tokenResponse : " ,tokenResponse.data)
     return tokenResponse.data;
   } catch (error) {
