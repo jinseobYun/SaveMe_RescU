@@ -43,7 +43,7 @@ const WebRTC = () => {
   useEffect(() => {
     const user = { username: "myname", userno: 1 }; // 실제 사용자 정보로 대체
     // const sessionId = "ses_WEyWspxXTD"; // 실제 세션 ID로 대체
-    const sessionId = "ses_WEyWspxXTA"; // 실제 세션 ID로 대체
+    const sessionId = "ses_WEyWspxXTW"; // 실제 세션 ID로 대체
 
     initOpenVidu(sessionId, user).then(() => {
       console.log("OpenVidu Init 시작!");
