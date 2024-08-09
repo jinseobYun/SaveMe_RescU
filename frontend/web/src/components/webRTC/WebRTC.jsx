@@ -43,7 +43,7 @@ const WebRTC = () => {
   useEffect(() => {
     const user = { username: "myname", userno: 1 }; // 실제 사용자 정보로 대체
     // const sessionId = "ses_WEyWspxXTD"; // 실제 세션 ID로 대체
-    const sessionId = "ses_WEyWspxXTW"; // 실제 세션 ID로 대체
+    const sessionId = "ses_WEyWspxXAZ"; // 실제 세션 ID로 대체
 
     initOpenVidu(sessionId, user).then(() => {
       console.log("OpenVidu Init 시작!");
@@ -96,9 +96,9 @@ const WebRTC = () => {
   return (
     <VideoContainer>
       <div className="remote-position">
-        <Video ref={remoteVideoRef} muted autoPlay playsInline />
+        <Video ref={remoteVideoRef} autoPlay playsInline />
         <div className="local-position">
-          <LocalVideo ref={localVideoRef} muted autoPlay playsInline />
+          <LocalVideo ref={localVideoRef} autoPlay playsInline />
         </div>
       </div>
       <div className="control-panel">
