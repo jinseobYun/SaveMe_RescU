@@ -57,11 +57,16 @@ const WebRTC = () => {
     const handleStreamCreated = (event) => {
       console.log("상대방 접속 시작!");
       const subscriber = event.detail.subscriber;
+      console.log("subscriber이에요:" , subscriber)
       if (subscriber) {
-        const stream = event.detail.subscriber.stream.getMediaStream();
-        setRemoteStream(stream)
-        // setRemoteStream(subscriber.stream.getMediaStream());
-        console.log("상대방 비디오 연결 완료");
+        setTimeout(() => {
+          const stream = subscriber.stream.getMediaStream();
+          console.log("지연 후 Stream이에요!!", stream);
+          if (stream) {
+            setRemoteStream(stream);
+            console.log("상대방 비디오 연결 완료");
+          }
+        }, 1000);
       }
       console.log("상대방 컴퓨터 연결 완료!");
     };
