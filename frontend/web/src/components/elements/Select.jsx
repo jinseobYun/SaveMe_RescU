@@ -4,6 +4,13 @@ import styled from "styled-components";
 import Text from "./Text";
 
 const Select = ({ label, options, selectedValue, setSelectedValue }) => {
+
+  const handleChange = (e) => {
+    const selectedIndex = e.target.selectedIndex;
+    const value = e.target.value;
+    setSelectedValue(value, selectedIndex);
+  };
+
   return (
     <SelectContainer>
       {label && (
@@ -19,7 +26,7 @@ const Select = ({ label, options, selectedValue, setSelectedValue }) => {
       <SelectWrapper>
         <StyledSelect
           value={selectedValue}
-          onChange={(e) => setSelectedValue(e.target.value)}
+          onChange={handleChange}
         >
           {options.map((option, index) => (
             <option key={index} value={option}>
