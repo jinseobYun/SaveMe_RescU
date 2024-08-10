@@ -41,3 +41,4 @@ openAPI.properties
 elastic.properties
 redis.properties
 application-prod.properties
+firebase_service_key.json
