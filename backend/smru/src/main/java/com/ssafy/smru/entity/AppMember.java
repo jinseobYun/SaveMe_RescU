@@ -49,6 +49,9 @@ public class AppMember implements UserDetails {
     @JoinColumn(name = "medical_information_id")
     private MedicalInformation medicalInformation;
 
+    @Column
+    private String deviceToken;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -65,9 +68,8 @@ public class AppMember implements UserDetails {
         return memberId;
     }
 
-
     @Builder
-    public AppMember(Long appMemberId, String memberId, String password, String memberName, LocalDate birth, boolean gender, String phoneNumber, boolean deleted, MedicalInformation medicalInformation) {
+    public AppMember(Long appMemberId, String memberId, String password, String memberName, LocalDate birth, boolean gender, String phoneNumber, boolean deleted, MedicalInformation medicalInformation, String deviceToken) {
         this.appMemberId = appMemberId;
         this.memberId = memberId;
         this.password = password;
@@ -77,6 +79,7 @@ public class AppMember implements UserDetails {
         this.phoneNumber = phoneNumber;
         this.deleted = deleted;
         this.medicalInformation = medicalInformation;
+        this.deviceToken = deviceToken;
     }
 
     public void changePassword(String password) {
@@ -88,5 +91,8 @@ public class AppMember implements UserDetails {
     }
     public void changePhone(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+    public void changeDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
     }
 }
