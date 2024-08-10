@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
     private PermissionUtil permissionUtil;
     private CustomToastUtil toastUtil;
 
+    private static final String URL_MAIN = "https://i11b305.p.ssafy.io/app/";
+    private static final String URL_NFC_REPORT = "https://i11b305.p.ssafy.io/app/";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         if (!permissionUtil.checkPermission(context, activity)) {
             showCustomDialog();
         }
-
+        setContentView(R.layout.activity_main);
         // URI 스킴을 통해 전달된 데이터를 처리
         Intent intent = getIntent();
         Uri uri = intent.getData();
@@ -58,12 +61,14 @@ public class MainActivity extends AppCompatActivity {
             // 예: saveme://open?tagId=123456
             String tagId = uri.getQueryParameter("tagId");
             toastUtil.showCustomToast("NFC 태깅 감지됨.\ntagId = " + tagId);
+            initializeWebView(URL_NFC_REPORT);
+        } else {
+            initializeWebView(URL_MAIN);
         }
-        setContentView(R.layout.activity_main);
-        initializeWebView();
+
     }
 
-    private void initializeWebView() {
+    private void initializeWebView(String url) {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -88,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 request.grant(request.getResources());
             }
         });
-        webView.loadUrl("https://i11b305.p.ssafy.io/app");
+        webView.loadUrl(url);
 
         // 새로운 OnBackPressedCallback을 추가하여 뒤로 가기 동작을 설정합니다.
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
