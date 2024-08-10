@@ -24,7 +24,11 @@ export const getToken = async (sessionId) => {
   try {
     console.log("요청하는 sessionId는 : ", sessionId);
 
-    const sessionResponse = await http.post(`/api/sessions`, { customSessionId: sessionId });
+    // 세션아이디를 생성하며 요청
+    const sessionResponse = await http.post(`/api/sessions`);
+    
+    // 세션아이디를 지정해서 요청
+    // const sessionResponse = await http.post(`/api/sessions`, { customSessionId: sessionId });
     console.log("sessionResponse : ", sessionResponse);
     console.log("sessionResponse : ", sessionResponse.data);
 
@@ -35,7 +39,7 @@ export const getToken = async (sessionId) => {
     while (!tokenResponse && attempts < maxAttempts) {
       try {
         // tokenResponse = await http.post(`/api/sessions/${sessionResponse.data.id}/connections`, {});
-        tokenResponse = await http.post(`/api/sessions/${sessionResponse.data.id}/connections`, {});
+        tokenResponse = await http.post(`/api/sessions/${sessionResponse.data}/connections`, {});
         console.log("tokenResponse : ", tokenResponse.data);
       } catch (err) {
         console.log("Retrying to get token...", attempts + 1);
