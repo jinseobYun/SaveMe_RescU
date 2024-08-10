@@ -16,6 +16,9 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 public class CustomFirebaseMessagingService extends FirebaseMessagingService {
+    private static final String CHANNEL_ID = "default_channel_id";
+    private static final String CHANNEL_NAME = "Default Channel";
+
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
@@ -37,22 +40,13 @@ public class CustomFirebaseMessagingService extends FirebaseMessagingService {
         // NotificationManagerCompat를 통해 알림 매니저 생성
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
 
-        // NotificationCompat.Builder 초기화
-        NotificationCompat.Builder builder = null;
-
         // 안드로이드 오레오(API 26) 이상에서 알림 채널 필요
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String CHANNEL_ID = "default_channel_id";
-            String CHANNEL_NAME = "Default Channel";
-
             // 알림 채널이 존재하지 않으면 생성
             if (notificationManager.getNotificationChannel(CHANNEL_ID) == null) {
-                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
                 notificationManager.createNotificationChannel(channel);
             }
-            builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID);
-        } else {
-            builder = new NotificationCompat.Builder(getApplicationContext());
         }
 
         // RemoteMessage로부터 알림 데이터 가져오기
@@ -60,15 +54,15 @@ public class CustomFirebaseMessagingService extends FirebaseMessagingService {
         String body = remoteMessage.getNotification() != null ? remoteMessage.getNotification().getBody() : "Default Body";
 
         // 알림 빌더 설정
-        builder.setContentTitle(title)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                .setContentTitle(title)
                 .setContentText(body)
                 .setSmallIcon(R.drawable.ic_launcher_background)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT) // 알림 우선순위 설정
+                .setPriority(NotificationCompat.PRIORITY_HIGH) // 알림 우선순위를 높여 상단에 표시되도록 설정
                 .setAutoCancel(true); // 알림 클릭 시 자동 제거
 
         // 알림 생성 및 표시
         Notification notification = builder.build();
         notificationManager.notify(1, notification);
     }
-
 }
