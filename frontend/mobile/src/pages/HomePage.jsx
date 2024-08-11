@@ -17,14 +17,13 @@ const geolocationOptions = {
 };
 const Home = () => {
   const navigate = useNavigate();
-  const { setGps, setTagId } = useUserStore();
-  const [toggleOn, setToggleOn] = useState(true);
+  const { setGps, setTagId, setGpsTermAgree, gpsTermAgree } = useUserStore();
   const currentLocation = useCurrentLocation(geolocationOptions);
 
   const [searchParams] = useSearchParams();
   const tagId = searchParams.get("tagId");
   const onClickReportBtn = () => {
-    if (!toggleOn) errorAlert("위치 정보 제공에 동의해주세요");
+    if (!gpsTermAgree) errorAlert("위치 정보 제공에 동의해주세요");
     else navigate("/report");
   };
   const { clearAllInputs } = useFormInputStore();
@@ -47,11 +46,11 @@ const Home = () => {
     }
   }, []);
   const onToggleOff = () => {
-    setToggleOn(false);
+    setGpsTermAgree(false);
     errorAlert("위치 정보 제공에 동의해주세요");
   };
   const onToggleOn = () => {
-    setToggleOn(true);
+    setGpsTermAgree(true);
   };
   return (
     <Container>
@@ -91,6 +90,7 @@ const Home = () => {
 
         {/* gps  */}
         <Toggle
+          $default={gpsTermAgree}
           _onToggleOff={onToggleOff}
           _onToggleOn={onToggleOn}
           $toggleColor="var(--main-yellow-color)"
