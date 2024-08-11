@@ -33,7 +33,7 @@ public class AppJwtProvider {
     /**
      * 유저 정보를 갖고 엑세트 토큰, 리프레시 토큰을 생성하는 함수
      * */
-    public TokenInfo generateToken(Authentication authentication, Long appMemberId) {
+    public TokenInfo generateToken(Authentication authentication, Long appMemberId, String memberName) {
         // 권한 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -46,6 +46,7 @@ public class AppJwtProvider {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("appMemberId", appMemberId)
+                .claim("memberName", memberName)
                 .claim("auth", authorities)
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -117,5 +118,10 @@ public class AppJwtProvider {
     public Long getAppMemberIdFromToken(String token) {
         Claims claims = parseClaims(token);
         return claims.get("appMemberId", Long.class);
+    }
+
+    public String getMemberNameFromToken(String token) {
+        Claims claims = parseClaims(token);
+        return claims.get("memberName", String.class);
     }
 }

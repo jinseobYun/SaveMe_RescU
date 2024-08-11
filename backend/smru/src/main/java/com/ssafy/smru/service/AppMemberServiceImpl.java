@@ -71,7 +71,7 @@ public class AppMemberServiceImpl implements AppMemberService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 일치하지 않습니다."));
         appMember.changeDeviceToken(dto.getDeviceToken()); // 기기의 토큰 값 저장
         //--- 3. 인증 정보를 기반으로 JWT 생성
-        return appJwtProvider.generateToken(authentication, appMember.getAppMemberId());
+        return appJwtProvider.generateToken(authentication, appMember.getAppMemberId(), appMember.getMemberName());
     }
 
 
@@ -161,7 +161,7 @@ public class AppMemberServiceImpl implements AppMemberService {
         // 토큰이 있다면 토큰이 유효한지 확인
         if (!appJwtProvider.validateToken(refreshToken) /* TODO: 여기에 DB와 해당 사용자의 refreshToken인지 검증 */) throw new UnauthorizedException("유효하지 않는 토큰입니다.");
         // 유효한 토큰이라면 액세스, 리프레시 토큰 재발급
-        TokenInfo tokenInfo = appJwtProvider.generateToken(appJwtProvider.getAuthentication(accessToken), appJwtProvider.getAppMemberIdFromToken(accessToken));
+        TokenInfo tokenInfo = appJwtProvider.generateToken(appJwtProvider.getAuthentication(accessToken), appJwtProvider.getAppMemberIdFromToken(accessToken), appJwtProvider.getMemberNameFromToken(accessToken));
         // TODO: DB의 사용자 refreshToken을 교체
         return tokenInfo;
     }
