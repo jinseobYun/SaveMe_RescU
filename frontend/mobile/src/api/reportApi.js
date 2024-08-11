@@ -4,12 +4,21 @@ import axiosRetry from 'axios-retry';
 const http = Axios();
 const ovHttp = ovAxios();
 
-axiosRetry(http, { retries: 10 });
-//TODO - axios retry handle
-const getReportSessionId = async (success, fail) => {
-  await http.get("/sessions/rooms").then(success).catch(fail);
-}
+// axiosRetry 설정
+axiosRetry(ovHttp, {
+  retries: 5, // 최대 5번 재시도
+  retryCondition: (error) => error.response && error.response.status === 404, // 404 에러에 대해서만 재시도
+  retryDelay: (retryCount) => 1000 // 1초 간격으로 재시도
+});
 
+const getReportSessionId = async (success, fail) => {
+  try {
+    const response = await ovHttp.get("/sessions/rooms");
+    success(response);
+  } catch (error) {
+    fail(error);
+  }
+};
 
 const getToken = async (sessionId) => {
   try {

@@ -17,7 +17,7 @@ const geolocationOptions = {
 };
 const Home = () => {
   const navigate = useNavigate();
-  const { setGps } = useUserStore();
+  const { setGps, setTagId } = useUserStore();
 
   const currentLocation = useCurrentLocation(geolocationOptions);
 
@@ -38,6 +38,7 @@ const Home = () => {
     if (tagId) {
       yesorNoAlert("태깅이 감지되었습니다.", "취소", "신고하기", (result) => {
         if (result.isDismissed) {
+          setTagId(tagId);
           //TODO - 태깅 신고 로직
           navigate("/report");
         } else navigate("/ ");

@@ -24,12 +24,14 @@ import SendIcon from "@mui/icons-material/Send";
 import { Button, Text, Grid } from "@components/elements";
 import useUserStore from "@/store/useUserStore";
 import { getReportSessionId } from "@api/reportApi";
-
+import { LoadingScreen } from "@components/common";
+import { successAlert } from "@/util/notificationAlert";
 const ReportOpenViduPage = () => {
   //SECTION - user settings
   const userId = useUserStore((state) => state.userId);
+  const tagId = useUserStore((state) => state.tagId);
   const currentLocation = useUserStore((state) => state.gps);
-  //FIXME - useEfftct에서 값이 없음
+
   const [loading, setLoading] = useState(true);
   const [isChatting, setIsChatting] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -60,27 +62,19 @@ const ReportOpenViduPage = () => {
   };
 
   useEffect(() => {
-    //FIXME - 세션id 요청
-    // getReportSessionId(
-    //   (response) => {
-    //     console.log("getReportSessionId success: ", response);
-    //     setSessionId(response.data.sessionId);
-    //   },
-    //   (error) => {
-    //     console.log(error);
-    //   }
-    // );
-    setSessionId("ses_G4tWX7SMuX");
-
-    //TODO - 태깅정보
-    const tagId = "tagID";
-
-    const reportData = {
-      userId: userId,
-      location: currentLocation,
-    };
-    if (tagId) reportData.tagId = tagId;
-    console.log("reportData: ", reportData);
+    getReportSessionId(
+      (response) => {
+        console.log("getReportSessionId success: ", response);
+        setSessionId(response.data.sessionId);
+      },
+      (error) => {
+        setLoading(false);
+        successAlert(
+          "현재 연결 가능한 119 대원이 없습니다.잠시후 시도해주세요",
+          () => navigate(-1)
+        );
+      }
+    );
 
     return () => {
       leaveSession();
@@ -133,6 +127,7 @@ const ReportOpenViduPage = () => {
       if (remoteVideoRef.current) {
         console.log("상대방 컴퓨터 정보:", remoteVideoRef.current);
         remoteVideoRef.current.srcObject = remoteStream;
+        setLoading(false);
       }
     }
   }, [remoteStream]);
@@ -280,11 +275,11 @@ const ReportOpenViduPage = () => {
       session.on("signal:my-chat", handleChatMessage);
 
       //TODO - 태깅정보
-      const tagId = "tagID";
       const reportData = {
         userId: userId,
         location: currentLocation,
       };
+      console.log("tagId:", tagId);
       if (tagId) reportData.tagId = tagId;
       console.log("reportData: ", reportData);
 
@@ -309,112 +304,120 @@ const ReportOpenViduPage = () => {
 
   return (
     <>
-      <PeerVideo
-        onClick={onClickScreen}
-        ref={remoteVideoRef}
-        autoPlay
-        playsInline
-      />
-      {showMenuAll && (
-        <VideoBtn>
-          <Button
-            _onClick={handleCameraClick}
-            $width="55px"
-            $height="55px"
-            $radius="50%"
-            $bg={{ default: "var(--white-color-200)" }}
-            children={cameraOff ? <VideocamIcon /> : <VideocamOffIcon />}
+      {loading ? (
+        <LoadingScreen />
+      ) : (
+        <>
+          <PeerVideo
+            onClick={onClickScreen}
+            ref={remoteVideoRef}
+            autoPlay
+            playsInline
           />
-          <Button
-            _onClick={handleMuteClick}
-            $width="55px"
-            $height="55px"
-            $radius="50%"
-            $bg={{ default: "var(--white-color-200)" }}
-            children={muted ? <MicNoneIcon /> : <MicOffIcon />}
-          />
-          <Button
-            onClick={handleCameraChange}
-            $width="55px"
-            $height="55px"
-            $radius="50%"
-            $bg={{ default: "var(--white-color-200)" }}
-            children={<CameraswitchIcon />}
-          />
-          <Button
-            _onClick={onClickCallEnd}
-            $width="55px"
-            $height="55px"
-            $radius="50%"
-            $margin="0 0 0 6rem"
-            $bg={{ default: "var(--main-red-color)" }}
-            children={<CallEndIcon sx={{ color: "#f4f4f4" }} />}
-          />
-        </VideoBtn>
-      )}
-      {showMenu && isChatting && (
-        <VideoBtn>
-          <Button
-            _onClick={onClickMenu}
-            $width="55px"
-            $height="55px"
-            $radius="50%"
-            $bg={{ default: "var(--white-color-200)" }}
-            children={<MoreHorizOutlinedIcon />}
-          />
-        </VideoBtn>
-      )}
-
-      {isChatting ? (
-        <ChattingWrapper ref={chatWrapperRef}>
-          {chatlog && (
-            <ChattingContents>
-              {chatlog.map((message, index) => (
-                <Grid
-                  key={index}
-                  $display="flex"
-                  $justify_content={
-                    message.alignment === "right" ? "flex-end" : "flex-start"
-                  }
-                  $align_items=""
-                >
-                  <ChattingMessage
-                    alignment={message.alignment}
-                    message={message.message}
-                  >
-                    <Text children={message.message} $size="2rem" />
-                  </ChattingMessage>
-                </Grid>
-              ))}
-            </ChattingContents>
+          {showMenuAll && (
+            <VideoBtn>
+              <Button
+                _onClick={handleCameraClick}
+                $width="55px"
+                $height="55px"
+                $radius="50%"
+                $bg={{ default: "var(--white-color-200)" }}
+                children={cameraOff ? <VideocamIcon /> : <VideocamOffIcon />}
+              />
+              <Button
+                _onClick={handleMuteClick}
+                $width="55px"
+                $height="55px"
+                $radius="50%"
+                $bg={{ default: "var(--white-color-200)" }}
+                children={muted ? <MicNoneIcon /> : <MicOffIcon />}
+              />
+              <Button
+                onClick={handleCameraChange}
+                $width="55px"
+                $height="55px"
+                $radius="50%"
+                $bg={{ default: "var(--white-color-200)" }}
+                children={<CameraswitchIcon />}
+              />
+              <Button
+                _onClick={onClickCallEnd}
+                $width="55px"
+                $height="55px"
+                $radius="50%"
+                $margin="0 0 0 6rem"
+                $bg={{ default: "var(--main-red-color)" }}
+                children={<CallEndIcon sx={{ color: "#f4f4f4" }} />}
+              />
+            </VideoBtn>
           )}
-          <ChatInputBox>
-            <input type="text" onChange={onChangeMessage} value={input} />
-            <button onClick={handleMessageSubmit}>
-              <SendIcon fontSize="large" />
-            </button>
-            {/* <Button
+          {showMenu && isChatting && (
+            <VideoBtn>
+              <Button
+                _onClick={onClickMenu}
+                $width="55px"
+                $height="55px"
+                $radius="50%"
+                $bg={{ default: "var(--white-color-200)" }}
+                children={<MoreHorizOutlinedIcon />}
+              />
+            </VideoBtn>
+          )}
+
+          {isChatting ? (
+            <ChattingWrapper ref={chatWrapperRef}>
+              {chatlog && (
+                <ChattingContents>
+                  {chatlog.map((message, index) => (
+                    <Grid
+                      key={index}
+                      $display="flex"
+                      $justify_content={
+                        message.alignment === "right"
+                          ? "flex-end"
+                          : "flex-start"
+                      }
+                      $align_items=""
+                    >
+                      <ChattingMessage
+                        alignment={message.alignment}
+                        message={message.message}
+                      >
+                        <Text children={message.message} $size="2rem" />
+                      </ChattingMessage>
+                    </Grid>
+                  ))}
+                </ChattingContents>
+              )}
+              <ChatInputBox>
+                <input type="text" onChange={onChangeMessage} value={input} />
+                <button onClick={handleMessageSubmit}>
+                  <SendIcon fontSize="large" />
+                </button>
+                {/* <Button
               _onClick={handleMessageSubmit}
               $width="39px"
               $height="48px"
               $bg={{ default: "transparent" }}
               children={}
-            /> */}
-          </ChatInputBox>
-        </ChattingWrapper>
-      ) : (
-        <ChatBtn>
-          <Button
-            _onClick={startChatting}
-            $width="55px"
-            $height="55px"
-            $radius="50%"
-            $bg={{ default: chatBtnColor }}
-            children={<ForumIcon />}
-          />
-        </ChatBtn>
+              /> */}
+              </ChatInputBox>
+            </ChattingWrapper>
+          ) : (
+            <ChatBtn>
+              <Button
+                _onClick={startChatting}
+                $width="55px"
+                $height="55px"
+                $radius="50%"
+                $bg={{ default: chatBtnColor }}
+                children={<ForumIcon />}
+              />
+            </ChatBtn>
+          )}
+          <MyVideo ref={localVideoRef} autoPlay />
+        </>
       )}
-      <MyVideo ref={localVideoRef} autoPlay />
     </>
   );
 };

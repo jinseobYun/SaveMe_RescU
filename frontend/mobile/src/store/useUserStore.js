@@ -15,6 +15,9 @@ const store = (set) => ({
   setGps: (userData) => set({ gps: userData }),
   clearGps: () => set({ gps: null }),
 
+  tagId: null,
+  setTagId: (userData) => set({ tagId: userData }),
+  clearTagId: () => set({ tagId: null }),
   userMedicalInfo: null,
   setUserMedicalInfo: (userData) => {
     set({ userMedicalInfo: userData });
