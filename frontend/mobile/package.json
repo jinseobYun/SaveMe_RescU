@@ -17,6 +17,7 @@
     "@reduxjs/toolkit": "^2.2.6",
     "axios": "^1.7.2",
     "axios-retry": "^4.5.0",
+    "base-64": "^1.0.0",
     "eslint-plugin-prettier": "^5.2.1",
     "lodash.debounce": "^4.0.8",
     "openvidu-browser": "^2.23.0",
@@ -28,6 +29,7 @@
     "styled-components": "^6.1.12",
     "sweetalert2": "^11.12.3",
     "sweetalert2-react-content": "^5.0.7",
+    "utf8": "^3.0.0",
     "zustand": "^4.5.4"
   },
   "devDependencies": {
