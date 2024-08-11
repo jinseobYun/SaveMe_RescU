@@ -7,7 +7,7 @@ export let mainStreamManager;
 export let publisher;
 export let subscribers = [];
 
-export const initOpenVidu = async (sessionId, user) => {
+export const initOpenVidu = async (sessionId) => {
   try {
     OV = new OpenVidu();
     OV.enableProdMode();
@@ -43,7 +43,7 @@ export const initOpenVidu = async (sessionId, user) => {
     const token = await getToken(sessionId);
     console.log("Token 획득 성공!!!");
     console.log("token은 : ", token);
-    await session.connect(token, { clientData: user });
+    await session.connect(token);
 
 
     // 마이크 성능설정 최대치 

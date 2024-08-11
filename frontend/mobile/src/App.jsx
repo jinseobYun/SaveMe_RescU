@@ -17,7 +17,6 @@ import {
   HomePage,
   LoginPage,
   SignupPage,
-  ReportCallPage,
   AgreeTermsPage,
   MenuPage,
   MedicalInfoPage,
@@ -42,8 +41,7 @@ function App() {
           {/* <Route path="/" element={<Navigate to="/home" />} /> */}
           {/* <Route path="/home" element={<HomePage />} /> */}
           <Route path="/" element={<HomePage />} />
-          //TODO - 라우터 삭제
-          {/* <Route path="/report" element={<ReportCallPage />} /> */}
+
           <Route path="/report" element={<ReportOpenViduPage />} />
           <Route path="/verification" element={<VerifyCodeForm />} />
           <Route path="/changepassword" element={<ChangePwPage />} />

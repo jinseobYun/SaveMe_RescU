@@ -46,6 +46,10 @@ const Button = ({
 };
 
 const BasicButton = styled.button`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
   box-sizing: border-box;
   width: ${(props) => props.$width};
   height: ${(props) => props.$height};
