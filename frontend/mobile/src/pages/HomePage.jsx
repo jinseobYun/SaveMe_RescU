@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 
@@ -18,13 +18,14 @@ const geolocationOptions = {
 const Home = () => {
   const navigate = useNavigate();
   const { setGps, setTagId } = useUserStore();
-
+  const [toggleOn, setToggleOn] = useState(true);
   const currentLocation = useCurrentLocation(geolocationOptions);
 
   const [searchParams] = useSearchParams();
   const tagId = searchParams.get("tagId");
   const onClickReportBtn = () => {
-    navigate("/report");
+    if (!toggleOn) errorAlert("위치 정보 제공에 동의해주세요");
+    else navigate("/report");
   };
   const { clearAllInputs } = useFormInputStore();
   useEffect(() => {
@@ -45,6 +46,13 @@ const Home = () => {
       });
     }
   }, []);
+  const onToggleOff = () => {
+    setToggleOn(false);
+    errorAlert("위치 정보 제공에 동의해주세요");
+  };
+  const onToggleOn = () => {
+    setToggleOn(true);
+  };
   return (
     <Container>
       {/* 헤더 */}
@@ -83,6 +91,8 @@ const Home = () => {
 
         {/* gps  */}
         <Toggle
+          _onToggleOff={onToggleOff}
+          _onToggleOn={onToggleOn}
           $toggleColor="var(--main-yellow-color)"
           $toggleOnText={
             <Text
