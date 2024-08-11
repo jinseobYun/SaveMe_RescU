@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.GeolocationPermissions;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -105,6 +107,13 @@ public class MainActivity extends AppCompatActivity {
             public void onPermissionRequest(final PermissionRequest request) {
                 request.grant(request.getResources());
             }
+
+            @Override
+            public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
+                super.onGeolocationPermissionsShowPrompt(origin, callback);
+                callback.invoke(origin, true, true);
+            }
+
         });
         webView.loadUrl(url);
 
