@@ -8,12 +8,15 @@ const store = (set) => ({
   clearUserId: () => set({ userId: null }),
 
   userName: null,
-  setUserName: (userData) => set({ userName: userData.userName }),
+  setUserName: (userData) => set({ userName: userData }),
   clearUserName: () => set({ userName: null }),
 
   gps: null,
   setGps: (userData) => set({ gps: userData }),
   clearGps: () => set({ gps: null }),
+  gpsTermAgree: true,
+  setGpsTermAgree: (agree) => set({ gpsTermAgree: agree }),
+  clearGpsTermAgree: () => set({ gpsTermAgree: false }),
 
   tagId: null,
   setTagId: (userData) => set({ tagId: userData }),
@@ -50,7 +53,11 @@ const store = (set) => ({
 
   isLogined: false,
   login: () => set({ isLogined: true }),
-  logout: () => set({ isLogined: false, userId: null, userMedicalInfo: null }),
+  logout: () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    set({ isLogined: false, userId: null, userMedicalInfo: null, userName: null, gpsTermAgree: false, accessToken: null, refreshToken: null, emergencyContactList: [] });
+  },
 
   accessToken: null,
   setAccessToken: (token) => set({ accessToken: token }),

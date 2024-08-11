@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-
+import base64 from "base-64";
+import utf8 from "utf8";
 import { Grid, Button, Text, Input } from "@components/elements";
 import { Header } from "@components/common";
 import useForm from "@/hooks/useForm";
@@ -12,7 +13,8 @@ import { errorAlert } from "@/util/notificationAlert";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setAccessToken, setReFreshToken, login, setUserId } = useUserStore();
+  const { setAccessToken, setReFreshToken, login, setUserId, setUserName } =
+    useUserStore();
   const { clearInputs } = useFormInputStore();
   const { values, errors, isLoading, handleChange, handleSubmit } = useForm({
     initialValues: { id: "", password: "" },
@@ -20,6 +22,7 @@ const Login = () => {
       loginApi(
         values.id,
         values.password,
+        deviceToken,
         (response) => {
           if (response.status === 200) {
             setAccessToken(response.data.accessToken);
@@ -28,12 +31,23 @@ const Login = () => {
             login();
             localStorage.setItem("accessToken", response.data.accessToken);
             localStorage.setItem("refreshToken", response.data.refreshToken);
+            let payload = response.data.accessToken.substring(
+              response.data.accessToken.indexOf(".") + 1,
+              response.data.accessToken.lastIndexOf(".")
+            );
+            let dec = base64.decode(payload);
+            let decUtf8 = utf8.decode(dec);
+            let decJson = JSON.parse(decUtf8);
+            console.log("dec: " + dec);
+            console.log(decUtf8);
+            console.log(decJson);
+            setUserName(decJson.memberName);
             clearInputs();
             navigate("/");
           }
         },
         (error) => {
-          console.log(error.toJSON());
+          console.log(error);
           //FIXME - 백에게 에러 메세지 요청하기
           errorAlert(error.response.data);
         }
@@ -41,6 +55,12 @@ const Login = () => {
     },
     validate: null,
   });
+  const [deviceToken, setDeviceToken] = useState();
+  useEffect(() => {
+    const deviceToken = window.AndroidInterface.getDeviceToken();
+    console.log("deviceToken: " + deviceToken);
+    setDeviceToken(deviceToken);
+  }, []);
   return (
     <Container>
       <Header navText="로그인" />

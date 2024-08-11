@@ -5,10 +5,11 @@ const http = Axios();
 async function registerUser(data, success, fail) {
   await http.post("/members/register", data).then(success).catch(fail);
 }
-async function loginApi(id, pw, success, fail) {
+async function loginApi(id, pw, deviceToken, success, fail) {
   const data = {
     memberId: id,
     password: pw,
+    deviceToken: deviceToken
   };
   await http.post("/members/login", data).then(success).catch(fail);
 }

@@ -10,13 +10,17 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import PhoneAndroidOutlinedIcon from "@mui/icons-material/PhoneAndroidOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import MedicalServicesOutlinedIcon from "@mui/icons-material/MedicalServicesOutlined";
+import LogoutIcon from "@mui/icons-material/Logout";
 import LockIcon from "@mui/icons-material/Lock";
+
 import { Header, TabBar } from "@components/common";
 import useFormInputStore from "@/store/useFormInputStore";
+import { yesorNoAlert } from "@/util/notificationAlert";
+import useUserStore from "@/store/useUserStore";
 const MenuPage = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-
+  const { logout } = useUserStore();
   const menuItems = [
     {
       icon: <PaperclipOutlinedIcon />,
@@ -60,15 +64,25 @@ const MenuPage = () => {
       label: "휴대폰 번호 변경",
       path: "/medicalinfo",
     },
+    {
+      icon: <LogoutIcon />,
+      label: "로그아웃",
+      path: "/logout",
+    },
   ];
   const handleNavigation = (path) => {
-    navigate(path);
+    if (path === "/logout") {
+      console.log("logout");
+      yesorNoAlert("정말 로그아웃 하시겠습니까?", "네", "아니오", () => {
+        logout();
+        navigate("/");
+      });
+    } else navigate(path);
   };
   const { clearAllInputs } = useFormInputStore();
 
   useEffect(() => {
     clearAllInputs();
-    console.log(pathname);
   }, []);
   return (
     <Container>
