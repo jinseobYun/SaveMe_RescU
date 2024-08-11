@@ -22,14 +22,13 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 // 서버 오류 테스트용 지연 호출 코드 // 
 export const getToken = async (sessionId) => {
   try {
-    console.log("요청하는 sessionId는 : ", sessionId);
-
     // 세션아이디를 생성하며 요청
-    const sessionResponse = await http.post(`/api/sessions`);
+    // const sessionResponse = await http.post(`/api/sessions`);
     
     // 세션아이디를 지정해서 요청
-    // const sessionResponse = await http.post(`/api/sessions`, { customSessionId: sessionId });
-    console.log("sessionResponse : ", sessionResponse);
+    const sessionResponse = await http.post(`/api/sessions`, { customSessionId: sessionId });
+
+    // 반환되는 세션아이디
     console.log("sessionResponse : ", sessionResponse.data);
 
     let tokenResponse;
@@ -38,7 +37,7 @@ export const getToken = async (sessionId) => {
 
     while (!tokenResponse && attempts < maxAttempts) {
       try {
-        // tokenResponse = await http.post(`/api/sessions/${sessionResponse.data.id}/connections`, {});
+        // 세션 아이디에 대한 토큰값 반환 
         tokenResponse = await http.post(`/api/sessions/${sessionResponse.data}/connections`, {});
         console.log("tokenResponse : ", tokenResponse.data);
       } catch (err) {
