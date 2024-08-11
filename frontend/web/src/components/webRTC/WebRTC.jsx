@@ -48,6 +48,7 @@ const WebRTC = () => {
     initOpenVidu(sessionId, user).then(() => {
       console.log("OpenVidu Init 시작!");
       if (mainStreamManager) {
+        console.log("여기확인하세요!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         localVideoRef.current.srcObject =
           mainStreamManager.stream.getMediaStream();
       }
