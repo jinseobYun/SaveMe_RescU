@@ -43,9 +43,9 @@ function App() {
           {/* <Route path="/home" element={<HomePage />} /> */}
           <Route path="/" element={<HomePage />} />
           //TODO - 라우터 삭제
-          <Route path="/gps" element={<ReportOpenViduPage />} />
+          {/* <Route path="/report" element={<ReportCallPage />} /> */}
+          <Route path="/report" element={<ReportOpenViduPage />} />
           <Route path="/verification" element={<VerifyCodeForm />} />
-          <Route path="/report" element={<ReportCallPage />} />
           <Route path="/changepassword" element={<ChangePwPage />} />
           <Route path="/firstaid" element={<FirstAidPage />} />
           <Route path="/firstaid/detail" element={<DetailFirstAid />} />

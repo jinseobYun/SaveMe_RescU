@@ -23,7 +23,7 @@ const TabBar = () => {
           $currentPath={location.pathname}
           $targetPath="/firstaid"
         >
-          <MedicalServicesOutlinedIcon />
+          <MedicalServicesOutlinedIcon sx={{ fontSize: "3rem" }} />
           <span>응급 처치</span>
         </TabItem>
       </StyledLink>
@@ -33,7 +33,7 @@ const TabBar = () => {
           $currentPath={location.pathname}
           $targetPath="/"
         >
-          <HomeOutlinedIcon />
+          <HomeOutlinedIcon sx={{ fontSize: "3rem" }} />
           <span>홈</span>
         </TabItem>
       </StyledLink>
@@ -44,7 +44,7 @@ const TabBar = () => {
             $currentPath={location.pathname}
             $targetPath="/menu"
           >
-            <AccountCircleOutlinedIcon />
+            <AccountCircleOutlinedIcon sx={{ fontSize: "3rem" }} />
             <span>내정보</span>
           </TabItem>
         </StyledLink>
@@ -55,7 +55,7 @@ const TabBar = () => {
             $currentPath={location.pathname}
             $targetPath="/login"
           >
-            <AccountCircleOutlinedIcon />
+            <AccountCircleOutlinedIcon sx={{ fontSize: "3rem" }} />
             <span>로그인</span>
           </TabItem>
         </StyledLink>
@@ -79,7 +79,7 @@ const fadeOut = keyframes`
 const Wrapper = styled.div`
   display: flex;
   width: 100vw;
-  height: 7vh;
+  height: 9vh;
   position: fixed;
   bottom: 0;
   align-items: center;
@@ -108,10 +108,6 @@ const TabItem = styled.div`
         ? fadeOut
         : fadeIn}
     0.5s forwards;
-
-  svg {
-    font-size: 2rem;
-  }
 
   span {
     font-size: 0.9rem;

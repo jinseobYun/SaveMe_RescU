@@ -5,11 +5,21 @@ import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { TabBar } from "@components/common";
 import { Button, Grid, Text, Toggle, Image } from "@components/elements";
 import useFormInputStore from "@/store/useFormInputStore";
+import useUserStore from "@/store/useUserStore";
 import { yesorNoAlert, errorAlert } from "@/util/notificationAlert";
-import { tagReport } from "@/api/reportApi";
 import logo from "@/assets/img/logo.png";
+import useCurrentLocation from "@/hooks/useCurrentLocation";
+
+const geolocationOptions = {
+  enableHighAccuracy: true,
+  timeout: 1000 * 60 * 1, // 1 min (1000 ms * 60 sec * 1 minute = 60 000ms)
+  maximumAge: 1000 * 3600 * 24, // 24 hour
+};
 const Home = () => {
   const navigate = useNavigate();
+  const { setGps } = useUserStore();
+
+  const currentLocation = useCurrentLocation(geolocationOptions);
 
   const [searchParams] = useSearchParams();
   const tagId = searchParams.get("tagId");
@@ -18,25 +28,19 @@ const Home = () => {
   };
   const { clearAllInputs } = useFormInputStore();
   useEffect(() => {
+    console.log(currentLocation);
+    if (currentLocation) {
+      setGps(currentLocation);
+    }
+  }, [currentLocation]);
+  useEffect(() => {
     clearAllInputs();
     if (tagId) {
       yesorNoAlert("태깅이 감지되었습니다.", "취소", "신고하기", (result) => {
         if (result.isDismissed) {
           //TODO - 태깅 신고 로직
-          tagReport(
-            tagId,
-            (response) => {
-              if (response.status === 200) {
-                navigate("/report");
-              }
-            },
-            (error) => {
-              console.log(error);
-              errorAlert(error.response.data);
-              navigate("/home ");
-            }
-          );
-        } else navigate("/home ");
+          navigate("/report");
+        } else navigate("/ ");
       });
     }
   }, []);
@@ -46,8 +50,8 @@ const Home = () => {
       <StyledHeader>
         {/* //TODO - 헤더 만들기 */}
         <Image $src={logo} $width="20vw" $height="20vw" />
-        <Text $size="4rem">SAVE ME</Text>
-        <Text>119 신고 서비스</Text>
+        <Text $size="4rem" children="SAVE ME" $bold={true} />
+        <Text children="119 신고 서비스" />
       </StyledHeader>
       <Grid $display="flex" $padding="" $flex_direction="column">
         <Grid

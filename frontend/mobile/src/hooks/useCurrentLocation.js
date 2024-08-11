@@ -6,7 +6,6 @@ const useCurrentLocation = (options = {}) => {
 
   const handleSuccess = (pos) => {
     const { latitude, longitude } = pos.coords;
-
     setLocation({
       latitude,
       longitude,
@@ -28,7 +27,7 @@ const useCurrentLocation = (options = {}) => {
     geolocation.getCurrentPosition(handleSuccess, handleError, options);
   }, [options]);
 
-  return { location, error };
+  return location;
 };
 
 export default useCurrentLocation;
