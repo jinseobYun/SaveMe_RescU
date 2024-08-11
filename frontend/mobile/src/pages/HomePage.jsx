@@ -29,6 +29,10 @@ const Home = () => {
   const { clearAllInputs } = useFormInputStore();
   useEffect(() => {
     console.log(currentLocation);
+    console.log(
+      "lng: " + currentLocation.longitude,
+      "lat: " + currentLocation.latitude
+    );
     if (currentLocation) {
       setGps(currentLocation);
     }
