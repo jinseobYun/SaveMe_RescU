@@ -43,7 +43,7 @@ const WebRTC = () => {
   useEffect(() => {
     const user = { username: "myname", userno: 1 }; // 실제 사용자 정보로 대체
     // const sessionId = "ses_WEyWspxXTD"; // 실제 세션 ID로 대체
-    const sessionId = "ses_G4tWX7SMuF"; // 실제 세션 ID로 대체
+    const sessionId = "ses_G4tWX7SMuX"; // 실제 세션 ID로 대체
 
     initOpenVidu(sessionId, user).then(() => {
       console.log("OpenVidu Init 시작!");
@@ -56,19 +56,18 @@ const WebRTC = () => {
 
     const handleStreamCreated = (event) => {
       console.log("상대방 접속 시작!");
+      console.log("만약 상대방이 먼저 접속해 있으면 이 이벤트 작동하나?", event.detail.subscriber)
       const subscriber = event.detail.subscriber;
-      console.log("subscriber이에요:" , subscriber)
       if (subscriber) {
         setTimeout(() => {
           const stream = subscriber.stream.getMediaStream();
-          console.log("지연 후 Stream이에요!!", stream);
+          console.log("상대방 MediaStream정보 : ", stream);
           if (stream) {
             setRemoteStream(stream);
-            console.log("상대방 비디오 연결 완료");
+            console.log("상대방 MediaStream 연결 완료");
           }
         }, 1000);
       }
-      console.log("상대방 컴퓨터 연결 완료!");
     };
 
     window.addEventListener("streamCreated", handleStreamCreated);
@@ -85,9 +84,8 @@ const WebRTC = () => {
 
   useEffect(() => {
     if (remoteStream) {
-      console.log("remoteStream 설정됨:", remoteStream);
       if (remoteVideoRef.current) {
-        console.log("상대방 컴퓨터 정보:", remoteVideoRef.current);
+        console.log("상대방 Stream 현재 연결 정보:", remoteVideoRef.current);
         remoteVideoRef.current.srcObject = remoteStream;
       }
     }
