@@ -72,7 +72,7 @@ const Home = () => {
           $margin="6vh"
         >
           {/* 신고 버튼 */}
-          <Button
+          {/* <Button
             _onClick={onClickReportBtn}
             $radius="50%"
             $width="40vw"
@@ -88,9 +88,26 @@ const Home = () => {
                 $bold="true"
               />
             }
-          />
+          /> */}
+          <NeumorphismButton onClick={onClickReportBtn}>
+            <ReportBtnText>
+              <Text
+                $color="var(--white-color-100)"
+                children="119"
+                $size="40px"
+                $bold="true"
+              />
+            </ReportBtnText>
+            <ReportBtnText>
+              <Text
+                $color="var(--white-color-100)"
+                children="신고하기"
+                $size="20px"
+                $bold="true"
+              />
+            </ReportBtnText>
+          </NeumorphismButton>
         </Grid>
-
         {/* gps  */}
         <Toggle
           $default={gpsTermAgree}
@@ -152,3 +169,29 @@ const StyledHeader = styled.div`
   // );
 `;
 const StyledImg = styled.img``;
+
+const NeumorphismButton = styled.button`
+  width: 30vw;
+  height: 30vw;
+  border-radius: 50px;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 2rem;
+  padding-top: 1.4rem;
+  backdrop-filter: blur(10px);
+  background-color: rgb(255, 76, 76, 1);
+  box-shadow: 5px 5px 10px rgba(255, 255, 255, 0.6),
+    /* 오른쪽 아래 그림자 */ -5px -5px 10px rgba(255, 255, 255, 0.6),
+    /* 왼쪽 위 하이라이트 */ inset 5px 5px 10px rgba(255, 255, 255, 0.6),
+    /* 오목하게 만드는 내부 그림자 */ inset -5px -5px 10px
+      rgba(255, 255, 255, 0.6); /* 오목하게 만드는 내부 하이라이트 */
+`;
+
+const ReportBtnText = styled.div`
+  width: fit-content;
+  height: fit-content;
+`;

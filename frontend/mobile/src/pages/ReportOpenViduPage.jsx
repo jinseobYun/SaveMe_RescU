@@ -9,6 +9,7 @@ import {
   toggleAudio,
   toggleVideo,
   session,
+  OV,
 } from "@/util/openvidu";
 
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
@@ -26,6 +27,7 @@ import useUserStore from "@/store/useUserStore";
 import { getReportSessionId } from "@api/reportApi";
 import { LoadingScreen } from "@components/common";
 import { successAlert } from "@/util/notificationAlert";
+
 const ReportOpenViduPage = () => {
   //SECTION - user settings
   const userId = useUserStore((state) => state.userId);
@@ -76,16 +78,16 @@ const ReportOpenViduPage = () => {
         );
       }
     );
-
+    setSessionId("testSession");
+    setLoading(false);
     return () => {
       leaveSession();
     };
   }, []);
 
   useEffect(() => {
-    const user = { username: "myname", userno: 1 }; // 실제 사용자 정보로 대체
     if (sessionId) {
-      initOpenVidu(sessionId, user).then(() => {
+      initOpenVidu(sessionId).then(() => {
         console.log("OpenVidu Init 시작!");
         if (mainStreamManager) {
           localVideoRef.current.srcObject =
@@ -135,16 +137,15 @@ const ReportOpenViduPage = () => {
 
   const handleCameraChange = useCallback(async () => {
     try {
-      const devices = await OV.current.getDevices();
+      const devices = await OV.getDevices();
       const videoDevices = devices.filter(
         (device) => device.kind === "videoinput"
       );
-
       if (videoDevices && videoDevices.length > 1) {
         const newVideoDevice = videoDevices.filter(
           (device) => device.deviceId !== currentVideoDevice.deviceId
         );
-
+        console.log("newVideoDevice : ", newVideoDevice);
         if (newVideoDevice.length > 0) {
           const newPublisher = OV.current.initPublisher(undefined, {
             videoSource: newVideoDevice[0].deviceId,
@@ -154,11 +155,13 @@ const ReportOpenViduPage = () => {
           });
 
           if (session) {
+            console.log("퍼블리쉬 재설정!!");
             await session.unpublish(mainStreamManager);
             await session.publish(newPublisher);
             setCurrentVideoDevice(newVideoDevice[0]);
             localVideoRef.current.srcObject =
               newPublisher.stream.getMediaStream();
+            console.log(newPublisher.stream.getMediaStream());
           }
         }
       }
@@ -207,7 +210,7 @@ const ReportOpenViduPage = () => {
     setShowMenu(false);
     setShowMenuAll(false);
     setChatBtnColor("var(--white-color-200)");
-    localVideoRef.current.style.bottom = `70px`;
+    // localVideoRef.current.style.bottom = `70px`;
   };
 
   //SECTION - chatting
@@ -242,22 +245,29 @@ const ReportOpenViduPage = () => {
         });
     }
   };
-  const [chatWrapperHeight, setChatlogWrapperHeight] = useState(0); // 채팅 높이 상태 추가
+  const [chatlogWrapperHeight, setChatlogWrapperHeight] = useState(0); // 채팅 높이 상태 추가
   const chatWrapperRef = useRef(null);
   useEffect(() => {
     // 채팅 높이 변경에 따라 myVideo의 위치 조정
     if (chatWrapperRef.current && localVideoRef.current) {
       const chatHeight = chatWrapperRef.current.offsetHeight;
-      console.log("chatHeight: ", chatHeight);
+      setChatlogWrapperHeight(chatHeight);
+
       localVideoRef.current.style.bottom = `${chatHeight}px`;
     }
-  }, [chatWrapperHeight]);
+  }, [chatlog, isChatting]);
+  useEffect(() => {
+    // 채팅 높이에 따라 MyVideo의 위치 조정
+    if (localVideoRef.current) {
+      const chatHeight = chatWrapperRef.current.offsetHeight;
+      localVideoRef.current.style.bottom = `${chatlogWrapperHeight + 16}px`; // 1rem = 16px
+    }
+  }, [chatlogWrapperHeight]);
   useEffect(() => {
     if (session) {
       const handleChatMessage = (event) => {
         // 수신된 메시지가 자신이 보낸 것이 아닌 경우에만 처리
         const eventJson = JSON.parse(event.data);
-        console.log(eventJson);
         if (eventJson.sender !== "app") {
           console.log("상대방의 event data:", eventJson.message);
           setChatlog((prev) => [
@@ -323,7 +333,13 @@ const ReportOpenViduPage = () => {
                 $height="55px"
                 $radius="50%"
                 $bg={{ default: "var(--white-color-200)" }}
-                children={cameraOff ? <VideocamIcon /> : <VideocamOffIcon />}
+                children={
+                  cameraOff ? (
+                    <VideocamIcon sx={{ fontSize: 24 }} />
+                  ) : (
+                    <VideocamOffIcon sx={{ color: " #CD3D64", fontSize: 24 }} />
+                  )
+                }
               />
               <Button
                 _onClick={handleMuteClick}
@@ -331,15 +347,21 @@ const ReportOpenViduPage = () => {
                 $height="55px"
                 $radius="50%"
                 $bg={{ default: "var(--white-color-200)" }}
-                children={muted ? <MicNoneIcon /> : <MicOffIcon />}
+                children={
+                  muted ? (
+                    <MicNoneIcon sx={{ fontSize: 24 }} />
+                  ) : (
+                    <MicOffIcon sx={{ color: " #CD3D64", fontSize: 24 }} />
+                  )
+                }
               />
               <Button
-                onClick={handleCameraChange}
+                _onClick={handleCameraChange}
                 $width="55px"
                 $height="55px"
                 $radius="50%"
                 $bg={{ default: "var(--white-color-200)" }}
-                children={<CameraswitchIcon />}
+                children={<CameraswitchIcon sx={{ fontSize: 24 }} />}
               />
               <Button
                 _onClick={onClickCallEnd}
@@ -348,7 +370,9 @@ const ReportOpenViduPage = () => {
                 $radius="50%"
                 $margin="0 0 0 6rem"
                 $bg={{ default: "var(--main-red-color)" }}
-                children={<CallEndIcon sx={{ color: "#f4f4f4" }} />}
+                children={
+                  <CallEndIcon sx={{ color: "#f4f4f4", fontSize: 24 }} />
+                }
               />
             </VideoBtn>
           )}
@@ -360,11 +384,10 @@ const ReportOpenViduPage = () => {
                 $height="55px"
                 $radius="50%"
                 $bg={{ default: "var(--white-color-200)" }}
-                children={<MoreHorizOutlinedIcon />}
+                children={<MoreHorizOutlinedIcon sx={{ fontSize: 24 }} />}
               />
             </VideoBtn>
           )}
-
           {isChatting ? (
             <ChattingWrapper ref={chatWrapperRef}>
               {chatlog && (
@@ -373,17 +396,13 @@ const ReportOpenViduPage = () => {
                     <Grid
                       key={index}
                       $display="flex"
-                      $justify_content={
+                      $align_items={
                         message.alignment === "right"
                           ? "flex-end"
                           : "flex-start"
                       }
-                      $align_items=""
                     >
-                      <ChattingMessage
-                        alignment={message.alignment}
-                        message={message.message}
-                      >
+                      <ChattingMessage alignment={message.alignment}>
                         <Text children={message.message} $size="2rem" />
                       </ChattingMessage>
                     </Grid>
@@ -395,13 +414,6 @@ const ReportOpenViduPage = () => {
                 <button onClick={handleMessageSubmit}>
                   <SendIcon fontSize="large" />
                 </button>
-                {/* <Button
-              _onClick={handleMessageSubmit}
-              $width="39px"
-              $height="48px"
-              $bg={{ default: "transparent" }}
-              children={}
-              /> */}
               </ChatInputBox>
             </ChattingWrapper>
           ) : (
@@ -412,10 +424,11 @@ const ReportOpenViduPage = () => {
                 $height="55px"
                 $radius="50%"
                 $bg={{ default: chatBtnColor }}
-                children={<ForumIcon />}
+                children={<ForumIcon sx={{ fontSize: 24 }} />}
               />
             </ChatBtn>
           )}
+
           <MyVideo ref={localVideoRef} autoPlay />
         </>
       )}
@@ -428,7 +441,7 @@ const PeerVideo = styled.video`
   height: 100%;
   flex-shrink: 0;
   position: relative;
-  background-color: pink;
+  background-color: var(--black-color-200);
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg); /* Safari and Chrome */
   -moz-transform: rotateY(180deg); /* Firefox */
@@ -515,10 +528,10 @@ const ChattingMessage = styled.div`
   display: flex;
   margin: 5px 0;
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 15px;
   max-width: 100%;
-  justify-content: ${({ alignment }) =>
-    alignment === "right" ? "flex-end" : "flex-start"};
+  width: fit-content;
+
   background-color: ${({ alignment }) =>
     alignment === "right"
       ? "var(--main-yellow-color)"
