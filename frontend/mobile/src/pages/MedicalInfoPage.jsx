@@ -68,32 +68,27 @@ const MedicalInfoPage = () => {
     getMedicalInfo(
       (response) => {
         if (response.status === 200) {
-          const data = {
-            medicalInformationId: response.data.medicalInformationId,
-            bloodType1: response.data.bloodType1,
-            bloodType2: response.data.bloodType2,
-            otherInfo: response.data.otherInfo,
-            drugInfos: response.data.drugInfos.map((item) => ({
-              id: item.medicineId,
-              name: item.medicineName,
-            })),
-            medCdis: response.data.medCdis.map((item) => ({
-              id: item.cdInfoId,
-              name: item.cdName,
-            })),
-          };
-          setUserMedicalInfo(data);
+          if (response.data) {
+            const data = {
+              medicalInformationId: response.data.medicalInformationId,
+              bloodType1: response.data.bloodType1,
+              bloodType2: response.data.bloodType2,
+              otherInfo: response.data.otherInfo,
+              drugInfos: response.data.drugInfos.map((item) => ({
+                id: item.medicineId,
+                name: item.medicineName,
+              })),
+              medCdis: response.data.medCdis.map((item) => ({
+                id: item.cdInfoId,
+                name: item.cdName,
+              })),
+            };
+            setUserMedicalInfo(data);
+          }
         }
       },
       (error) => {
-        console.log(error.toJSON());
-
-        //TODO - 등록된 정보가 없을때
-        if (error.response.status === 404) {
-          setUserMedicalInfo(null);
-        } else {
-          errorAlert(error.response.data);
-        }
+        // errorAlert(error.response.data);
       }
     );
   }, []);

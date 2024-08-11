@@ -43,8 +43,8 @@ const GlobalStyles = createGlobalStyle`
 
 @font-face {
     font-family: 'PTBandocheB';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408@1.0/PTBandocheB.woff2') format('woff2');
-		// src:url("./assets/fonts/평택반도체.ttf) format('woff2")
+    // src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408@1.0/PTBandocheB.woff2') format('woff2');
+		// src:url("./assets/fonts/vudxor.ttf) format('woff2")
     font-weight: 700;
     font-style: normal;
 }
@@ -108,6 +108,7 @@ const GlobalStyles = createGlobalStyle`
 		overflow-x: hidden;
 		width: 100%;
  	 	height: 100%;
+		
 	}
 	img {
 		width: 100%;

@@ -1,14 +1,48 @@
-import { Axios } from "@/api/http-commons";
+import { Axios, ovAxios } from "@/api/http-commons";
+import axiosRetry from 'axios-retry';
 
 const http = Axios();
+const ovHttp = ovAxios();
 
-//TODO - 신고 요청, 로그인 되어 있으면 아이디 보내기
+// axiosRetry 설정
+axiosRetry(ovHttp, {
+  retries: 5, // 최대 5번 재시도
+  retryCondition: (error) => error.response && error.response.status === 404, // 404 에러에 대해서만 재시도
+  retryDelay: (retryCount) => 1000 // 1초 간격으로 재시도
+});
 
-//TODO - 태깅 후 신고 요청
-async function tagReport(data, success, fail) {
-  await http.post("/members/", data).then(success).catch(fail);
-}
+const getReportSessionId = async (success, fail) => {
+  try {
+    const response = await ovHttp.get("/sessions/rooms");
+    success(response);
+  } catch (error) {
+    fail(error);
+  }
+};
 
-//TODO - 몇번 방 들어갈까요?
+const getToken = async (sessionId) => {
+  try {
+    const sessionResponse = await ovHttp.post(`/sessions`, { customSessionId: sessionId });
+    console.log("sessionResponse : ", sessionResponse);
+    // console.log("sessionResponse : ", sessionResponse.data);
 
-export { tagReport }
+    let tokenResponse;
+
+    try {
+      tokenResponse = await ovHttp.post(`/sessions/${sessionResponse.data}/connections`, {});
+      console.log("tokenResponse : ", tokenResponse.data);
+    } catch (err) {
+
+
+    }
+    if (!tokenResponse) {
+      throw new Error("Failed to get token after multiple attempts");
+    }
+
+    return tokenResponse.data;
+  } catch (error) {
+    console.error('Error getting token:', error);
+  }
+};
+
+export { getReportSessionId, getToken }

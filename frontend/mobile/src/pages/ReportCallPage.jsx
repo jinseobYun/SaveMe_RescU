@@ -1,7 +1,10 @@
-import React, { useRef, useEffect, useState, forwardRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { OpenVidu } from "openvidu-browser";
 import styled from "styled-components";
-import { io } from "socket.io-client";
+
+import axios from "axios";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import UserVideoComponent from "@components/reportCall/UserVideoComponent";
+import { ovAxios } from "@/api/http-commons";
 
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import VideocamIcon from "@mui/icons-material/Videocam";
@@ -14,88 +17,250 @@ import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import SendIcon from "@mui/icons-material/Send";
 
 import { Button, Text, Grid } from "@components/elements";
-const socket = io(import.meta.env.VITE_SOCKET_SERVER_URL, {
-  // transports: ["websocket"],
-  autoConnect: false,
-  pingTimeout: 300000,
-  withCredentials: true,
-  extraHeaders: {
-    "Content-Type": "application/json",
-  },
-  cors: { origin: import.meta.env.VITE_SOCKET_SERVER_URL },
-});
+import useUserStore from "@/store/useUserStore";
+import { getReportSessionId } from "@api/reportApi";
 
-const configuration = {
-  iceServers: [
-    {
-      urls: import.meta.env.VITE_ICE_SERVERS,
-    },
-  ],
-};
-let localStream;
-let roomName;
-let myPeerConnection;
-let myDataChannel;
-let localVideoRef;
-let remoteVideoRef;
-function makeConnection() {
-  console.log("makeConnection");
-  myPeerConnection = new RTCPeerConnection(configuration);
-  myPeerConnection.addEventListener("icecandidate", (data) =>
-    socket.emit("ice", data.candidate, roomName)
-  );
-  myPeerConnection.addEventListener("addstream", (data) => {
-    console.log("pc.addStream", data);
-    remoteVideoRef.current.srcObject = data.stream;
-  });
-}
+const ovHttp = ovAxios();
 
-const ReportCallPage = () => {
+export default function ReportOpenViduPage() {
   //SECTION - user settings
-
+  const userId = useUserStore((state) => state.userId);
+  const currentLocation = useUserStore((state) => state.gps);
+  const [loading, setLoading] = useState(true);
   const [isChatting, setIsChatting] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showMenuAll, setShowMenuAll] = useState(false);
 
   const [muted, setMuted] = useState(true);
   const [cameraOff, setCameraOff] = useState(true);
-  const [isCameraFront, setIsCameraFront] = useState(false);
-  const [cameras, setCameras] = useState([]);
 
-  const navigate = useNavigate();
-  localVideoRef = useRef(null);
-  remoteVideoRef = useRef(null);
+  //!SECTION - openvidu settings
+  const [mySessionId, setMySessionId] = useState("SessionA");
+  const [myUserName, setMyUserName] = useState(
+    `Participant${Math.floor(Math.random() * 100)}`
+  );
+  const [session, setSession] = useState(undefined);
+  const [publisher, setPublisher] = useState(undefined);
+  const [subscriber, setSubscriber] = useState([]);
+  const [currentVideoDevice, setCurrentVideoDevice] = useState(null);
+  const [remoteStream, setRemoteStream] = useState(null);
 
+  const localVideoRef = useRef(null);
+  const remoteVideoRef = useRef(null);
+
+  const OV = useRef(new OpenVidu());
+
+  const handleChangeSessionId = useCallback((e) => {
+    setMySessionId(e.target.value);
+  }, []);
+
+  const handleChangeUserName = useCallback((e) => {
+    setMyUserName(e.target.value);
+  }, []);
+
+  const joinSession = useCallback(() => {
+    const mySession = OV.current.initSession();
+    console.log("11 조인 세션Join session");
+    mySession.on("streamCreated", (event) => {
+      const subscriber = mySession.subscribe(event.stream, undefined);
+      remoteVideoRef.current.srcObject = subscriber.stream.getMediaStream();
+      setSubscriber(subscriber);
+    });
+
+    mySession.on("streamDestroyed", (event) => {
+      deleteSubscriber(event.stream.streamManager);
+    });
+
+    mySession.on("exception", (exception) => {
+      console.warn(exception);
+    });
+
+    setSession(mySession);
+  }, []);
+  // useEffect(() => {
+  //   if (subscriber) {
+  //     console.log("remoteStream 설정됨:", subscriber);
+  //     if (remoteVideoRef.current) {
+  //       console.log("상대방 컴퓨터 정보:", remoteVideoRef.current);
+  //       remoteVideoRef.current.srcObject = subscriber.stream.getMediaStream();
+  //     }
+  //   }
+  // }, [subscriber]);
+  useEffect(() => {
+    if (session) {
+      // Get a token from the OpenVidu deployment
+      getToken().then(async (token) => {
+        try {
+          await session.connect(token, { clientData: myUserName });
+
+          let publisher = await OV.current.initPublisherAsync(undefined, {
+            audioSource: undefined,
+            videoSource: undefined,
+            publishAudio: true,
+            publishVideo: true,
+            resolution: "640x480",
+            frameRate: 30,
+            insertMode: "APPEND",
+            mirror: true,
+          });
+
+          session.publish(publisher);
+
+          const devices = await OV.current.getDevices();
+          const videoDevices = devices.filter(
+            (device) => device.kind === "videoinput"
+          );
+          const currentVideoDeviceId = publisher.stream
+            .getMediaStream()
+            .getVideoTracks()[0]
+            .getSettings().deviceId;
+          const currentVideoDevice = videoDevices.find(
+            (device) => device.deviceId === currentVideoDeviceId
+          );
+
+          setPublisher(publisher);
+          setCurrentVideoDevice(currentVideoDevice);
+          localVideoRef.current.srcObject = publisher.stream.getMediaStream();
+        } catch (error) {
+          console.log(
+            "There was an error connecting to the session:",
+            error.code,
+            error.message
+          );
+        }
+      });
+    }
+  }, [session]);
+
+  const leaveSession = useCallback(() => {
+    // Leave the session
+    if (session) {
+      session.disconnect();
+    }
+
+    // Reset all states and OpenVidu object
+    OV.current = new OpenVidu();
+    setSession(undefined);
+    setSubscriber(undefined);
+    setMySessionId("SessionA");
+    setMyUserName("Participant" + Math.floor(Math.random() * 100));
+    setPublisher(undefined);
+  }, [session]);
+
+  const handleCameraChange = useCallback(async () => {
+    try {
+      const devices = await OV.current.getDevices();
+      const videoDevices = devices.filter(
+        (device) => device.kind === "videoinput"
+      );
+
+      if (videoDevices && videoDevices.length > 1) {
+        const newVideoDevice = videoDevices.filter(
+          (device) => device.deviceId !== currentVideoDevice.deviceId
+        );
+
+        if (newVideoDevice.length > 0) {
+          const newPublisher = OV.current.initPublisher(undefined, {
+            videoSource: newVideoDevice[0].deviceId,
+            publishAudio: true,
+            publishVideo: true,
+            mirror: true,
+          });
+
+          if (session) {
+            await session.publish(newPublisher);
+            setCurrentVideoDevice(newVideoDevice[0]);
+            setPublisher(newPublisher);
+            localVideoRef.current.srcObject =
+              newPublisher.stream.getMediaStream();
+          }
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [currentVideoDevice, session]);
   const handleMuteClick = () => {
-    const enabled = !muted;
-    localStream.getAudioTracks()[0].enabled = enabled;
-    setMuted(enabled);
+    if (publisher) {
+      const enabled = !publisher.stream.audioActive;
+      publisher.publishAudio(enabled);
+      setMuted(enabled);
+    }
   };
 
   const handleCameraClick = () => {
-    const enabled = !cameraOff;
-    localStream.getVideoTracks()[0].enabled = enabled;
-    setCameraOff(enabled);
-  };
-
-  const handleCameraChange = async () => {
-    let index;
-    //전면 1 후면 0
-    if (isCameraFront) index = 0;
-    else index = 1;
-    setIsCameraFront(!isCameraFront);
-    9;
-    if (myPeerConnection) {
-      const videoTrack = localStream.getVideoTracks()[0];
-      const videoSender = myPeerConnection
-        .getSenders()
-        .find((sender) => sender.track.kind === "video");
-      videoSender.replaceTrack(videoTrack);
+    if (publisher) {
+      const enabled = !publisher.stream.videoActive;
+      publisher.publishVideo(enabled);
+      setCameraOff(enabled);
     }
   };
+
+  const deleteSubscriber = useCallback((streamManager) => {
+    setSubscriber(undefined);
+  }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      leaveSession();
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [leaveSession]);
+
+  const getToken = useCallback(async () => {
+    return createSession(mySessionId).then((sessionId) =>
+      createToken(sessionId)
+    );
+  }, [mySessionId]);
+
+  const createSession = async (sessionId) => {
+    const response = await ovHttp.post(
+      "/sessions",
+      { customSessionId: sessionId },
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    return response.data; // The sessionId
+  };
+
+  const createToken = async (sessionId) => {
+    const response = await ovHttp.post(
+      "/sessions/" + sessionId + "/connections",
+      {},
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    return response.data; // The token
+  };
+  //SECTION - 컴포넌트 마운트 될때
+  useEffect(() => {
+    //FIXME - 세션id 요청
+    // getReportSessionId(
+    //   (response) => {
+    //     console.log("getReportSessionId success: ", response);
+    //     setSessionId(response.data.sessionId);
+    //   },
+    //   (error) => {
+    //     console.log(error);
+    //   }
+    // );
+    // setMySessionId("ses_G4tWX7SMuX");
+    joinSession();
+    return () => {
+      leaveSession();
+    };
+  }, []);
   const onClickScreen = () => {
-    if (isChatting) {
+    if (isChatting && !showMenuAll) {
       setShowMenu(true);
+      setIsChatting(false);
+      localVideoRef.current.style.bottom = `10px`;
     } else {
       setShowMenuAll(true);
     }
@@ -137,7 +302,6 @@ const ReportCallPage = () => {
   //SECTION - chatting
   const [chatBtnColor, setChatBtnColor] = useState();
   const [chatlog, setChatlog] = useState([]);
-  const inputRef = useRef(null);
   const [input, setInput] = useState("");
 
   const onChangeMessage = (e) => {
@@ -147,218 +311,98 @@ const ReportCallPage = () => {
   const handleMessageSubmit = (event) => {
     event.preventDefault();
     if (input.trim() !== "") {
-      try {
-        console.log(input);
-        myDataChannel.send(input);
-        setChatlog([...chatlog, { alignment: "right", message: input }]);
-        setChatWrapperHeight(chatWrapperRef.current.offsetHeight); // 채팅 높이 업데이트
-      } catch (e) {
-        console.log(e);
-      }
-      inputRef.current.value = "";
+      const data = { message: input, sender: "app" };
+      session
+        .signal({
+          data: JSON.stringify(data),
+          to: [], // 비어있으면 브로드캐스트
+          type: "my-chat",
+        })
+        .then(() => {
+          setChatlog((prev) => [
+            ...prev,
+            { alignment: "right", message: input },
+          ]);
+          setInput("");
+          setChatlogWrapperHeight(chatWrapperRef.current.offsetHeight); // 채팅 높이 업데이트
+        })
+        .catch((error) => {
+          console.error("Message sending failed:", error);
+        });
     }
   };
-  const [chatWrapperHeight, setChatWrapperHeight] = useState(0); // 채팅 높이 상태 추가
+  const [chatWrapperHeight, setChatlogWrapperHeight] = useState(0); // 채팅 높이 상태 추가
   const chatWrapperRef = useRef(null);
-
   useEffect(() => {
     // 채팅 높이 변경에 따라 myVideo의 위치 조정
     if (chatWrapperRef.current && localVideoRef.current) {
       const chatHeight = chatWrapperRef.current.offsetHeight;
+      console.log("chatHeight: ", chatHeight);
       localVideoRef.current.style.bottom = `${chatHeight}px`;
     }
   }, [chatWrapperHeight]);
-
-  //SECTION - 신고방 접속
-
-  async function getCameras() {
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const cameras = devices.filter((device) => device.kind === "videoinput");
-
-      setCameras(cameras);
-    } catch (e) {
-      console.log(e);
-    }
-  }
-  async function getMedia(deviceId) {
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const cameras = devices
-      .filter((device) => device.kind === "videoinput")
-      .map((device) => device.deviceId);
-    const mikes = devices
-      .filter((device) => device.kind === "audioinput")
-      .map((device) => device.deviceId);
-    const initialConstrains = {
-      audio: true,
-      video: { facingMode: "user" },
-    };
-    const userConstrains = {
-      audio: mikes.includes(deviceId)
-        ? { deviceId: { exact: deviceId } }
-        : true,
-      video: cameras.includes(deviceId)
-        ? { deviceId: { exact: deviceId } }
-        : { facingMode: "user" },
-    };
-    try {
-      localStream = await navigator.mediaDevices.getUserMedia(
-        deviceId ? userConstrains : initialConstrains
-      );
-
-      if (localVideoRef.current) {
-        localVideoRef.current.srcObject = localStream;
-      }
-
-      // localStream.getAudioTracks()[0].enabled = !muted;
-      // localStream.getVideoTracks()[0].enabled = !cameraOff;
-      await myPeerConnection.addStream(localStream);
-      if (!deviceId) {
-        await getCameras();
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }
-  const [loading, setLoading] = useState(true);
-  async function initCall() {
-    makeConnection();
-    await getMedia();
-  }
   useEffect(() => {
-    socket.connect();
-    socket.on("already_in_room", () =>
-      alert(`You are already in the other room.\nYou can enter only one room.`)
-    );
-
-    socket.on("is_full", (roomName) => {
-      //TODO - 방 번호 재요청 api
-      alert(`${roomName} is full.`);
-    });
-
-    socket.on("is_available", async (roomName) => {
-      console.log(`${roomName} is available`);
-      await initCall();
-      socket.emit("join_room", roomName);
-    });
-
-    socket.on("start_chat", () => {
-      myDataChannel = myPeerConnection.createDataChannel("chat");
-      myDataChannel.addEventListener("message", (event) => {
-        console.log(event.data);
-        if (isChatting) {
-          setChatWrapperHeight.current &&
-            setChatWrapperHeight(chatWrapperRef.current.offsetHeight);
-          console.log(chatWrapperRef.current.offsetHeight);
-        } else {
-          setChatBtnColor("var(--main-yellow-color)");
-        }
-      });
-
-      socket.emit("join_chat", roomName);
-    });
-
-    socket.on("join_chat", () => {
-      myPeerConnection.addEventListener("datachannel", (event) => {
-        myDataChannel = event.channel;
-        myDataChannel.addEventListener("message", (event) => {
-          setChatlog([...chatlog, { message: event.data, alignment: "left" }]);
+    if (session) {
+      const handleChatMessage = (event) => {
+        // 수신된 메시지가 자신이 보낸 것이 아닌 경우에만 처리
+        const eventJson = JSON.parse(event.data);
+        console.log(eventJson);
+        if (eventJson.sender !== "app") {
+          console.log("상대방의 event data:", eventJson.message);
+          setChatlog((prev) => [
+            ...prev,
+            { message: eventJson.message, alignment: "left" },
+          ]);
           if (isChatting) {
-            setChatWrapperHeight.current &&
-              setChatWrapperHeight(chatWrapperRef.current.offsetHeight);
-            console.log(chatWrapperRef.current.offsetHeight);
+            setChatlogWrapperHeight.current &&
+              setChatlogWrapperHeight(chatWrapperRef.current.offsetHeight);
           } else {
             setChatBtnColor("var(--main-yellow-color)");
           }
+        }
+      };
+
+      session.on("signal:my-chat", handleChatMessage);
+
+      //TODO - 태깅정보
+      const tagId = "tagID";
+      const reportData = {
+        userId: userId,
+        location: currentLocation,
+      };
+      if (tagId) reportData.tagId = tagId;
+      console.log("reportData: ", reportData);
+
+      session
+        .signal({
+          data: JSON.stringify(reportData), // 객체를 문자열로 변환하여 전송
+          to: [], // 비어있으면 브로드캐스트
+          type: "report-info", // 신호의 타입을 지정하여 구분
+        })
+        .then(() => {
+          console.log("Report info successfully sent");
+        })
+        .catch((error) => {
+          console.error("Error sending report info:", error);
         });
-      });
-    });
 
-    socket.on("send_offer", async () => {
-      const offer = await myPeerConnection.createOffer({
-        offerToReceiveAudio: true,
-        offerToReceiveVideo: true,
-      });
-      console.log("sendging offer", offer);
-      myPeerConnection.setLocalDescription(offer);
-      console.log(roomName, offer);
-      socket.emit("offer", offer, roomName);
-    });
-    socket.on("message", async (message) => {
-      console.log("message", message);
-    });
-
-    socket.on("offer", async (offer) => {
-      console.log("offer받음", offer);
-      myPeerConnection.setRemoteDescription(offer);
-      const answer = await myPeerConnection.createAnswer();
-      myPeerConnection.setLocalDescription(answer);
-      socket.emit("answer", answer, roomName);
-    });
-
-    socket.on("answer", (answer) =>
-      myPeerConnection.setRemoteDescription(answer)
-    );
-
-    socket.on("ice", (ice) => {
-      myPeerConnection.addIceCandidate(ice);
-      console.log("ice 받음", ice);
-    });
-
-    //SECTION - 신고 요청 api
-    //만약 로그인 되잇다면 로그인id도 같이
-    //res로 받은 roodId넣어서 방에 들어갈 수 있는지 요청
-    // socket.emit('check_room',roomId);
-    roomName = "1";
-    socket.emit("check_room", roomName);
-    //TODO - 신고 전달 내용 채우기
-    const userId = "userID";
-    const data = {
-      userId: userId,
-      roomId: "1",
-      type: "report",
-      content: "신고할 내용",
-      reportReason: "신고 이유",
-      reportTarget: "신고 대상",
-    };
-    // socket.emit("message", { type: "send_report_info", data }, "1");
-
-    // window.addEventListener("chatMessage", (event) => {
-    //   setChatMessages((prevMessages) => [
-    //     ...prevMessages,
-    //     { message: event.detail.message, alignment: event.detail.alignment },
-    //   ]);
-    // });
-    return () => {
-      if (socket.readyState === 1) {
-        socket.disconnect();
-        socket.close();
-      }
-    };
-  }, []);
-
-  const onClickCallEnd = () => {
-    if (myPeerConnection) {
-      myPeerConnection.close();
-      myPeerConnection = null;
+      return () => {
+        // session.off("signal:my-chat", handleChatMessage);
+      };
     }
-    remoteVideoRef.current.srcObject.getVideoTracks().forEach((track) => {
-      track.stop();
-      remoteVideoRef.current.srcObject.removeTrack(track);
-    });
-    socket.disconnect();
+  }, [session]);
 
-    navigate("/");
-  };
   return (
     <>
       <PeerVideo
         onClick={onClickScreen}
         ref={remoteVideoRef}
-        muted
         autoPlay
         playsInline
       />
+
+      {/* <UserVideoComponent streamManager={subscriber} /> */}
+
       {showMenuAll && (
         <VideoBtn>
           <Button
@@ -386,7 +430,7 @@ const ReportCallPage = () => {
             children={<CameraswitchIcon />}
           />
           <Button
-            _onClick={onClickCallEnd}
+            _onClick={leaveSession}
             $width="55px"
             $height="55px"
             $radius="50%"
@@ -433,17 +477,17 @@ const ReportCallPage = () => {
             </ChattingContents>
           )}
           <ChatInputBox>
-            <input type="text" ref={inputRef} onChange={onChangeMessage} />
+            <input type="text" onChange={onChangeMessage} value={input} />
             <button onClick={handleMessageSubmit}>
               <SendIcon fontSize="large" />
             </button>
             {/* <Button
-              _onClick={handleMessageSubmit}
-              $width="39px"
-              $height="48px"
-              $bg={{ default: "transparent" }}
-              children={}
-            /> */}
+            _onClick={handleMessageSubmit}
+            $width="39px"
+            $height="48px"
+            $bg={{ default: "transparent" }}
+            children={}
+          /> */}
           </ChatInputBox>
         </ChattingWrapper>
       ) : (
@@ -462,9 +506,8 @@ const ReportCallPage = () => {
       <MyVideo ref={localVideoRef} autoPlay />
     </>
   );
-};
-
-const PeerVideo = styled.video`
+}
+const PeerVideo = styled.div`
   width: 100%;
   height: 100%;
   flex-shrink: 0;
@@ -556,14 +599,16 @@ const ChattingMessage = styled.div`
   display: flex;
   margin: 5px 0;
   padding: 10px;
-  align-items: ${({ alignment }) =>
+  border-radius: 10px;
+  max-width: 100%;
+  justify-content: ${({ alignment }) =>
     alignment === "right" ? "flex-end" : "flex-start"};
   background-color: ${({ alignment }) =>
     alignment === "right"
       ? "var(--main-yellow-color)"
       : "var(--chat-pink-color)"};
-  border-radius: 10px;
-  max-width: 50%;
+  margin-left: ${({ alignment }) => (alignment === "right" ? "50%" : "0px")};
+  margin-right: ${({ alignment }) => (alignment === "left" ? "50%" : "0px")};
 `;
 
 const ChatInputBox = styled.div`
@@ -580,5 +625,3 @@ const ChatInputBox = styled.div`
     margin-right: 10px;
   }
 `;
-
-export default ReportCallPage;

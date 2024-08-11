@@ -3,13 +3,23 @@ import styled from "styled-components";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 
 import { TabBar } from "@components/common";
-import { Button, Grid, Text, Toggle } from "@components/elements";
+import { Button, Grid, Text, Toggle, Image } from "@components/elements";
 import useFormInputStore from "@/store/useFormInputStore";
+import useUserStore from "@/store/useUserStore";
 import { yesorNoAlert, errorAlert } from "@/util/notificationAlert";
-import { tagReport } from "@/api/reportApi";
-import embulance from "@/assets/img/embulance.jpg";
+import logo from "@/assets/img/logo.png";
+import useCurrentLocation from "@/hooks/useCurrentLocation";
+
+const geolocationOptions = {
+  enableHighAccuracy: true,
+  timeout: 1000 * 60 * 1, // 1 min (1000 ms * 60 sec * 1 minute = 60 000ms)
+  maximumAge: 1000 * 3600 * 24, // 24 hour
+};
 const Home = () => {
   const navigate = useNavigate();
+  const { setGps, setTagId } = useUserStore();
+
+  const currentLocation = useCurrentLocation(geolocationOptions);
 
   const [searchParams] = useSearchParams();
   const tagId = searchParams.get("tagId");
@@ -18,25 +28,20 @@ const Home = () => {
   };
   const { clearAllInputs } = useFormInputStore();
   useEffect(() => {
+    console.log(currentLocation);
+    if (currentLocation) {
+      setGps(currentLocation);
+    }
+  }, [currentLocation]);
+  useEffect(() => {
     clearAllInputs();
     if (tagId) {
       yesorNoAlert("태깅이 감지되었습니다.", "취소", "신고하기", (result) => {
         if (result.isDismissed) {
+          setTagId(tagId);
           //TODO - 태깅 신고 로직
-          tagReport(
-            tagId,
-            (response) => {
-              if (response.status === 200) {
-                navigate("/report");
-              }
-            },
-            (error) => {
-              console.log(error);
-              errorAlert(error.response.data);
-              navigate("/home ");
-            }
-          );
-        } else navigate("/home ");
+          navigate("/report");
+        } else navigate("/ ");
       });
     }
   }, []);
@@ -45,16 +50,11 @@ const Home = () => {
       {/* 헤더 */}
       <StyledHeader>
         {/* //TODO - 헤더 만들기 */}
-        <Text>119 신고 서비스</Text>
-        <Text $size="4rem" $bold={true} $color="var(--white-color-200)">
-          SAVE ME
-        </Text>
+        <Image $src={logo} $width="20vw" $height="20vw" />
+        <Text $size="4rem" children="SAVE ME" $bold={true} />
+        <Text children="119 신고 서비스" />
       </StyledHeader>
-      <Grid
-        $display="flex"
-        $padding="15px 0px 110px 0px"
-        $flex_direction="column"
-      >
+      <Grid $display="flex" $padding="" $flex_direction="column">
         <Grid
           $display="flex"
           justify_content="center"
@@ -65,8 +65,8 @@ const Home = () => {
           <Button
             _onClick={onClickReportBtn}
             $radius="50%"
-            $width="150px"
-            $height="150px"
+            $width="40vw"
+            $height="40vw"
             $bg={{ default: "var(--main-red-color)" }}
             $border="none"
             $boxShadow=" 4px 3px 62px 0px rgba(0, 0, 0, 0.50);"
@@ -125,16 +125,17 @@ const Container = styled.div`
 `;
 const StyledHeader = styled.div`
   display: flex;
-  height: 20vh;
+  height: 30vh;
   padding: 0 0 0;
   flex-direction: column;
-  align-items: flex-start;
-  background: rgb(255, 110, 76);
-  background: linear-gradient(
-    180deg,
-    rgba(255, 110, 76, 0.86214987704066) 0%,
-    rgba(255, 194, 44, 0.5624299890854779) 50%,
-    rgba(255, 242, 77, 0) 100%
-  );
+  align-items: center;
+  justify-content: space-evenly;
+  // background: rgb(255, 110, 76);
+  // background: linear-gradient(
+  //   180deg,
+  //   rgba(255, 110, 76, 0.86214987704066) 0%,
+  //   rgba(255, 194, 44, 0.5624299890854779) 50%,
+  //   rgba(255, 242, 77, 0) 100%
+  // );
 `;
 const StyledImg = styled.img``;

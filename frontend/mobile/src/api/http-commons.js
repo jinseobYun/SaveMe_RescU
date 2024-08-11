@@ -1,4 +1,6 @@
 import axios from "axios";
+
+import { successAlert } from '@/util/notificationAlert';
 function Axios() {
   const instance = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -17,7 +19,6 @@ async function tokenRegeneration() {
   const response = await Axios().post("/members/refresh", {
     refreshToken: refreshToken,
   });
-  console.log(response);
   return response;
 }
 
@@ -53,9 +54,8 @@ function loginAxios() {
     async (error) => {
       const originalRequest = error.config;
       if (error.response.status === 401 || error.response.status === 403) {
-        const response = await tokenRegeneration();
-        //FIXME - 서버 500뜸
-        if (response.status === 200) {
+        try {
+          const response = await tokenRegeneration();
           const newAccessToken = response.data.accessToken;
           localStorage.setItem("accessToken", response.data.accessToken);
           localStorage.setItem("refreshToken", response.data.refreshToken);
@@ -63,19 +63,32 @@ function loginAxios() {
           //진행중이던 요청 이어서하기
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
           return axios(originalRequest);
-          //리프레시 토큰 요청이 실패할때(리프레시 토큰도 만료되었을때 = 재로그인 안내)
-        } else if (response.status === 401) {
-          notificationAlert("error", "다시 로그인 해주세요", () => {
-            window.location.replace("/login");
+        } catch (error) {
+          successAlert("다시 로그인 해주세요", () => {
+            window.location.replace("/app/login");
+            localStorage.removeItem("userStore");
+            return new Promise(() => { });
           });
-        } else {
-          notificationAlert("error", "실패하셨습니다", () => { console.log(error) });
+
         }
-        return new Promise(() => { });
+
       }
-      return Promise.reject(error);
     }
   );
   return instance;
 }
-export { Axios, loginAxios };
+
+function ovAxios() {
+
+  const instance = axios.create({
+    baseURL: import.meta.env.VITE_OV_API_BASE_URL,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Basic ' + btoa('OPENVIDUAPP:' + import.meta.env.VITE_OV_SERVER_SECRET),
+    },
+
+  });
+
+  return instance;
+}
+export { Axios, loginAxios, ovAxios };

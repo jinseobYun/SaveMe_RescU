@@ -11,8 +11,14 @@ const store = (set) => ({
   setUserName: (userData) => set({ userName: userData.userName }),
   clearUserName: () => set({ userName: null }),
 
-  userMedicalInfo: null,
+  gps: null,
+  setGps: (userData) => set({ gps: userData }),
+  clearGps: () => set({ gps: null }),
 
+  tagId: null,
+  setTagId: (userData) => set({ tagId: userData }),
+  clearTagId: () => set({ tagId: null }),
+  userMedicalInfo: null,
   setUserMedicalInfo: (userData) => {
     set({ userMedicalInfo: userData });
 
@@ -58,13 +64,13 @@ const store = (set) => ({
 const useUserStore = create(
   import.meta.env.NODE_ENV === "production"
     ? persist(store, {
+      name: "userStore",
+    })
+    : devtools(
+      persist(store, {
         name: "userStore",
       })
-    : devtools(
-        persist(store, {
-          name: "userStore",
-        })
-      )
+    )
 );
 
 export default useUserStore;
