@@ -190,8 +190,8 @@ const EmergencycontactsPage = () => {
         }
       },
       (error) => {
-        console.log(error.toJSON());
-        errorAlert(error.response.data);
+        // console.log(error.toJSON());
+        // errorAlert(error.response.data);
       }
     );
   }, []);

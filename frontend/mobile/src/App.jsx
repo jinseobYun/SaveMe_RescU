@@ -42,16 +42,14 @@ function App() {
           {/* <Route path="/" element={<Navigate to="/home" />} /> */}
           {/* <Route path="/home" element={<HomePage />} /> */}
           <Route path="/" element={<HomePage />} />
-          <Route path="/gps" element={<ReportOpenViduPage />} />
-
+          //TODO - 라우터 삭제
+          {/* <Route path="/report" element={<ReportCallPage />} /> */}
+          <Route path="/report" element={<ReportOpenViduPage />} />
           <Route path="/verification" element={<VerifyCodeForm />} />
-          <Route path="/report" element={<ReportCallPage />} />
-
           <Route path="/changepassword" element={<ChangePwPage />} />
           <Route path="/firstaid" element={<FirstAidPage />} />
           <Route path="/firstaid/detail" element={<DetailFirstAid />} />
           <Route path="/findpassword" element={<FindIdPwPage />} />
-
           {/* 인증을 해야만 */}
           <Route element={<PrivateRoute authentication={true} />}>
             <Route
@@ -75,7 +73,6 @@ function App() {
           element={<ProfileManagementPage />}
           /> */}
           </Route>
-
           {/* 인증을 하지않아야 */}
           <Route element={<PrivateRoute authentication={false} />}>
             <Route path="/login" element={<LoginPage />} />
@@ -99,7 +96,7 @@ const Container = styled.div`
   height: 100vh;
   width: 100vw;
   // min-height: 640px;
-  // // max-width: 360px;
+  // max-width: 480px;
   // max-height: 800px;
   // min-width: 360px;
   padding-bottom: 4px;

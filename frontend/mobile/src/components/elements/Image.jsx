@@ -13,7 +13,6 @@ const Image = ({
     $height: $height,
     $margin: $margin,
     $radius: $radius,
-    $height: $height,
   };
   return <ImageDefault {...styles} src={$src}></ImageDefault>;
 };
