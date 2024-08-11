@@ -21,6 +21,7 @@ const Chat = () => {
 
       const handleChatMessage = (event) => {
         // 수신된 메시지가 자신이 보낸 것이 아닌 경우에만 처리
+        console.log("매세지관리 event:,", event)
         if (event.from.connectionId !== userIdRef.current) {
           console.log("상대방의 event data:", event.data);
           setChat((prevChat) => [
@@ -40,6 +41,7 @@ const Chat = () => {
         session.off("signal:my-chat", handleChatMessage);
       };
     }
+
   }, [session]);
 
   const handleMessageSubmit = (event) => {
