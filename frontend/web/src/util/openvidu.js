@@ -41,6 +41,19 @@ export const initOpenVidu = async (sessionId, user) => {
       console.log("Received signal:", event.data);
     });
 
+    // 1차정보 전달받는 이벤트 등록
+    session.on('signal:report-info', (event) => {
+      try {
+        const reportData = JSON.parse(event.data); // 수신된 데이터를 객체로 변환
+        console.log('Received report data:', reportData);
+    
+        // 이제 이 reportData를 다른 곳에서 활용할 수 있습니다.
+        handleReceivedReportData(reportData);
+      } catch (error) {
+        console.error('Failed to parse report data:', error);
+      }
+    });
+
     const token = await getToken(sessionId);
     console.log("Token 획득 성공!!!");
     console.log("token은 : ", token);
@@ -149,6 +162,8 @@ export const initOpenVidu = async (sessionId, user) => {
 
     session.publish(publisher);
     mainStreamManager = publisher;
+
+    console.log("내 스트림 한번 볼까:",mainStreamManager)
   } catch (error) {
     console.error("Error initializing OpenVidu:", error);
   }
@@ -204,4 +219,13 @@ export const sendChatMessage = (message) => {
         console.error("Error sending message:", error);
       });
   }
+};
+
+const handleReceivedReportData = (data) => {
+  console.log('상대방이 전달한 1차정보 관련 데이타:', data);
+
+  // 예시: 다른 컴포넌트에 데이터 전달 또는 상태 업데이트
+  // updateStateWithReportData(data);
+  // sendDataToApi(data);
+  // 등등의 로직을 구현합니다.
 };

@@ -22,7 +22,9 @@ const Chat = () => {
       const handleChatMessage = (event) => {
         // 수신된 메시지가 자신이 보낸 것이 아닌 경우에만 처리
         console.log("매세지관리 event:,", event)
-        if (event.from.connectionId !== userIdRef.current) {
+
+        const eventJson = JSON.parse(event.data);
+        if (eventJson.sender !=="web" && event.from.connectionId !== userIdRef.current) {
           console.log("상대방의 event data:", event.data);
           setChat((prevChat) => [
             ...prevChat,
@@ -48,9 +50,11 @@ const Chat = () => {
     event.preventDefault();
     if (messageInput.trim() !== "") {
       // OpenVidu를 통한 메시지 전송
+      const data = { message: messageInput, sender: "web" };
       session
         .signal({
-          data: messageInput,
+          // data: messageInput,
+          data: JSON.stringify(data),
           to: [], // 비어있으면 브로드캐스트
           type: "my-chat",
         })
