@@ -66,6 +66,7 @@ const ReportOpenViduPage = () => {
       (response) => {
         console.log("getReportSessionId success: ", response);
         setSessionId(response.data.sessionId);
+        setLoading(false);
       },
       (error) => {
         setLoading(false);

@@ -9,8 +9,10 @@ const Toggle = ({
   $toggleRadius = "10%",
   $toggleColor = "var(--main-yellow-color)",
   $gridStyle = null,
+  _onToggleOff = null,
+  _onToggleOn = null,
 }) => {
-  const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(true);
   const styles = {
     $toggleOnText,
     $toggleOffText,
@@ -18,6 +20,12 @@ const Toggle = ({
     $toggleHeight,
     $toggleRadius,
     $toggleColor,
+  };
+  const toggleChange = () => {
+    if (isActive) {
+      _onToggleOff();
+    } else _onToggleOn();
+    setIsActive(!isActive);
   };
 
   return (
@@ -30,7 +38,7 @@ const Toggle = ({
             <CheckBox
               type="checkbox"
               checked={isActive}
-              onChange={() => setIsActive(!isActive)}
+              onChange={toggleChange}
             />
             <ToggleSlider />
           </ToggleSwitch>
