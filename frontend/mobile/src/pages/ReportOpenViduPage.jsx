@@ -103,24 +103,21 @@ const ReportOpenViduPage = () => {
           const videoStream = new MediaStream(
             mainStreamManager.stream.getMediaStream().getVideoTracks() // 비디오 트랙만 가져옴
           );
-
+          setCurrentVideoDevice(videoStream);
           localVideoRef.current.srcObject = videoStream;
         }
       });
     }
     const handleStreamCreated = (event) => {
       const subscriber = event.detail.subscriber;
-      console.log("subscriber이에요:", subscriber);
       if (subscriber) {
         setTimeout(() => {
           const stream = subscriber.stream.getMediaStream();
           if (stream) {
             setRemoteStream(stream);
-            console.log("상대방 비디오 연결 완료");
           }
         }, 1000);
       }
-      console.log("상대방 컴퓨터 연결 완료!");
     };
 
     window.addEventListener("streamCreated", handleStreamCreated);
@@ -137,9 +134,7 @@ const ReportOpenViduPage = () => {
 
   useEffect(() => {
     if (remoteStream) {
-      console.log("remoteStream 설정됨:", remoteStream);
       if (remoteVideoRef.current) {
-        console.log("상대방 컴퓨터 정보:", remoteVideoRef.current);
         remoteVideoRef.current.srcObject = remoteStream;
         setLoading(false);
       }
@@ -147,11 +142,7 @@ const ReportOpenViduPage = () => {
   }, [remoteStream]);
 
   const handleCameraChange = useCallback(async () => {
-    console.log(
-      "mainStreamManager.stream.getMediaStream().getVideoTracks() : ",
-      mainStreamManager.stream.getMediaStream().getVideoTracks()
-    );
-
+    console.log(currentVideoDevice);
     try {
       const devices = await OV.getDevices();
       const videoDevices = devices.filter(
