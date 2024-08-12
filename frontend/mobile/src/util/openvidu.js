@@ -1,10 +1,15 @@
-import { OpenVidu } from 'openvidu-browser';
-import { getToken } from '@api/reportApi';
+import { OpenVidu } from "openvidu-browser";
+import { getToken } from "@api/reportApi";
 
 export let OV;
 export let session;
-export let mainStreamManager;
-export let publisher;
+let mainStreamManager;
+export const getMainStreamManager = () => mainStreamManager;
+export const setMainStreamManager = (newValue) =>
+  (mainStreamManager = newValue);
+let publisher;
+export const getPublisher = () => publisher;
+export const setPublisher = (newValue) => (publisher = newValue);
 export let subscribers = [];
 
 export const initOpenVidu = async (sessionId) => {
@@ -45,15 +50,14 @@ export const initOpenVidu = async (sessionId) => {
     console.log("token은 : ", token);
     await session.connect(token);
 
-
-    // 마이크 성능설정 최대치 
+    // 마이크 성능설정 최대치
     const audioSource = await navigator.mediaDevices.getUserMedia({
       audio: {
         echoCancellation: true,
         noiseSuppression: true,
         autoGainControl: false,
         suppressLocalAudioPlaybackExperimental: true,
-        channelCount: 2, // 스테레오 
+        channelCount: 2, // 스테레오
         sampleRate: 48000, // 샘플링 속도 설정
         sampleSize: 24, // 샘플 크기 설정
         latency: 0.01, // 낮은 지연 시간 설정
@@ -133,7 +137,6 @@ export const initOpenVidu = async (sessionId) => {
 };
 
 export const leaveSession = () => {
-
   if (session) {
     session.disconnect();
     session.unpublish(publisher);
