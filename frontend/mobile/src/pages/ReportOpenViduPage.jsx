@@ -93,9 +93,13 @@ const ReportOpenViduPage = () => {
     if (sessionId) {
       initOpenVidu(sessionId).then(() => {
         console.log("OpenVidu Init 시작!");
+
         if (mainStreamManager) {
-          localVideoRef.current.srcObject =
-            mainStreamManager.stream.getMediaStream();
+          const videoStream = new MediaStream(
+            mainStreamManager.stream.getMediaStream().getVideoTracks() // 비디오 트랙만 가져옴
+          );
+          console.log("여기확인하세요!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+          localVideoRef.current.srcObject = videoStream;
         }
         console.log("OpenVidu Init 성공!");
       });
