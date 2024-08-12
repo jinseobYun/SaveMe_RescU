@@ -20,8 +20,6 @@ const averageGps = (gpsArr) => {
     const averageLatitude = totalLatitude / filteredGps.length;
     const averageLongitude = totalLongitude / filteredGps.length;
 
-    console.log("Average Latitude:", averageLatitude);
-    console.log("Average Longitude:", averageLongitude);
     return { latitude: averageLatitude, longitude: averageLongitude };
   } else {
     console.log("No GPS data within the last 3 minutes.");

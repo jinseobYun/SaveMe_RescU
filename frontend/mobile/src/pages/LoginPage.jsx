@@ -56,8 +56,9 @@ const Login = () => {
   });
   const [deviceToken, setDeviceToken] = useState();
   useEffect(() => {
-    //FIXME - 주석해체
-    const deviceToken = window.AndroidInterface.getDeviceToken();
+    console.log(window.AndroidInterface);
+    const deviceToken =
+      window.AndroidInterface && window.AndroidInterface.getDeviceToken();
     console.log("deviceToken: " + deviceToken);
     setDeviceToken(deviceToken);
   }, []);
