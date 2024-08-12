@@ -29,6 +29,7 @@ import {
   NfcInfoPage,
   ReportOpenViduPage,
   DetailFirstAid,
+  PushNotiPage,
 } from "@/pages";
 import GlobalStyle from "@/globalStyles.js";
 import useUserStore from "@/store/useUserStore";
@@ -71,8 +72,8 @@ function App() {
               element={<EditMedicalInfoPage />}
             />
             <Route path="/nfcinfo" element={<NfcInfoPage />} />
+            <Route path="/pushnotis " element={<PushNotiPage />} />
             {/* 
-          <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/privacy-agreement" element={<PrivacyAgreementPage />} />
           <Route
           path="/profile-management"

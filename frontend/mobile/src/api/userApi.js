@@ -55,11 +55,8 @@ async function updateUserPwd(type, data, success, fail) {
   }
 }
 
-async function getUserInfo(memberId, success, fail) {
+async function getPushNoti(memberId, success, fail) {
   await http.get(`/members/${memberId}`).then(success).catch(fail);
-}
-async function modifyUser(updateInfo, success, fail) {
-  http.put("/members", updateInfo).then(success).catch(fail);
 }
 
 // async function logout(loginId, success, fail) {
@@ -69,7 +66,7 @@ async function modifyUser(updateInfo, success, fail) {
 export {
   registerUser,
   loginApi,
-  getUserInfo,
+
   updateUserPwd,
   checkIdDuplication,
   reqVerifyCode,
