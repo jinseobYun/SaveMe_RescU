@@ -1,20 +1,27 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined";
 import PaperclipOutlinedIcon from "@mui/icons-material/AttachFileOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
+import PhoneAndroidOutlinedIcon from "@mui/icons-material/PhoneAndroidOutlined";
+import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import MedicalServicesOutlinedIcon from "@mui/icons-material/MedicalServicesOutlined";
+import LogoutIcon from "@mui/icons-material/Logout";
+import LockIcon from "@mui/icons-material/Lock";
 
 import { Header, TabBar } from "@components/common";
 import useFormInputStore from "@/store/useFormInputStore";
+import { yesorNoAlert } from "@/util/notificationAlert";
+import useUserStore from "@/store/useUserStore";
 const MenuPage = () => {
   const navigate = useNavigate();
-  const items = [
+  const { pathname } = useLocation();
+  const { logout } = useUserStore();
+  const menuItems = [
     {
       icon: <PaperclipOutlinedIcon />,
       label: "NFC 정보 등록",
@@ -26,7 +33,7 @@ const MenuPage = () => {
       path: "/medicalinfo",
     },
     {
-      icon: <PhoneOutlinedIcon />,
+      icon: <ContactsOutlinedIcon />,
       label: "비상 연락망 등록",
       path: "/emergencycontacts",
     },
@@ -43,29 +50,60 @@ const MenuPage = () => {
     {
       icon: <PersonOutlinedIcon />,
       label: "내 정보 관리",
-      path: "/profilemanagement",
+      path: "/menu/changeInfo",
     },
   ];
-
+  const myInfoMenuItems = [
+    {
+      icon: <LockIcon />,
+      label: "비밀번호 변경",
+      path: "/changepassword",
+    },
+    {
+      icon: <PhoneAndroidOutlinedIcon />,
+      label: "휴대폰 번호 변경",
+      path: "/medicalinfo",
+    },
+    {
+      icon: <LogoutIcon />,
+      label: "로그아웃",
+      path: "/logout",
+    },
+  ];
   const handleNavigation = (path) => {
-    navigate(path);
+    if (path === "/logout") {
+      console.log("logout");
+      yesorNoAlert("정말 로그아웃 하시겠습니까?", "네", "아니오", () => {
+        logout();
+        navigate("/");
+      });
+    } else navigate(path);
   };
   const { clearAllInputs } = useFormInputStore();
+
   useEffect(() => {
     clearAllInputs();
   }, []);
   return (
     <Container>
-      <Header navText={"내 정보"} />
+      <Header navText={"내 정보"} goTo="/" />
 
       <MenuList>
-        {items.map((item, index) => (
-          <MenuItem key={index} onClick={() => handleNavigation(item.path)}>
-            <IconWrapper>{item.icon}</IconWrapper>
-            <Label>{item.label}</Label>
-            <ChevronRightOutlinedIcon />
-          </MenuItem>
-        ))}
+        {pathname === "/menu/changeInfo"
+          ? myInfoMenuItems.map((item, index) => (
+              <MenuItem key={index} onClick={() => handleNavigation(item.path)}>
+                <IconWrapper>{item.icon}</IconWrapper>
+                <Label>{item.label}</Label>
+                <ChevronRightOutlinedIcon />
+              </MenuItem>
+            ))
+          : menuItems.map((item, index) => (
+              <MenuItem key={index} onClick={() => handleNavigation(item.path)}>
+                <IconWrapper>{item.icon}</IconWrapper>
+                <Label>{item.label}</Label>
+                <ChevronRightOutlinedIcon />
+              </MenuItem>
+            ))}
       </MenuList>
       <TabBar />
     </Container>
@@ -79,12 +117,10 @@ const Container = styled.div`
   flex-direction: column;
   height: 100vh;
   width: 100vw;
-  background-color: #fefefe;
 `;
 
 const MenuList = styled.div`
-  flex: 1;
-  padding: 1rem;
+  padding: 3rem 1rem;
   display: flex;
   gap: 1rem;
   align-items: center;
@@ -96,11 +132,13 @@ const MenuList = styled.div`
 const MenuItem = styled.div`
   display: flex;
   width: 65vw;
+
   align-items: center;
   padding: 1rem;
   margin: 0.5rem 0;
   background-color: var(--white-color-100);
-  border-radius: 0.5rem;
+  border-radius: 16px;
+  border: 1px solid var(--orange-color-100);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   &:hover {
@@ -111,11 +149,10 @@ const MenuItem = styled.div`
 `;
 
 const IconWrapper = styled.div`
-  font-size: 1.5rem;
   margin-right: 1rem;
 `;
 
 const Label = styled.div`
   flex: 1;
-  font-size: 1rem;
+  font-size: 1.5rem;
 `;

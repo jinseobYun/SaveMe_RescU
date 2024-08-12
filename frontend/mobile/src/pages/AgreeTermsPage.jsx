@@ -13,6 +13,8 @@ import {
   NextPageButton,
 } from "@components/elements";
 import useForm from "@/hooks/useForm";
+import { errorAlert, successAlert } from "@/util/notificationAlert";
+
 import { registerUser } from "@/api/userApi";
 const AgreeTermsPage = () => {
   const navigate = useNavigate();
@@ -20,32 +22,33 @@ const AgreeTermsPage = () => {
   const [isVerify, setIsVerify] = useState(false);
   const { updateInputs, inputs, clearInputs } = useFormInputStore();
   const onClickBtn = () => {
-    Swal.fire({
-      text: "가입이 완료되었습니다!",
-      confirmButtonColor: "var(--orange-color-100)",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        navigate("/", { replace: true });
+    const data = {
+      memberId: inputs.id,
+      password: inputs.password,
+      passwordConfirm: inputs.passwordConfirm,
+      memberName: inputs.name,
+      gender: inputs.gender - 0,
+      birth: inputs.birth,
+      phoneNumber: inputs.phoneNumber,
+    };
+    //FIXME - 인증번호 빼면 data를 inputs로
+    registerUser(
+      data,
+      (response) => {
+        if (response.status === 200) {
+          successAlert("가입이 완료되었습니다!", (result) => {
+            clearInputs();
+            if (result.isConfirmed) {
+              navigate("/", { replace: true });
+            }
+          });
+        }
+      },
+      (error) => {
+        console.log(error.toJSON());
+        errorAlert(error.response.data);
       }
-    });
-    //TODO - 회원가입 api 연결
-    // registerUser(
-    //   {inputs},
-    //   ({ data }) => {
-    // clearInputs();
-    //     if (data.status === "200") {
-    //       Swal.fire({
-    //         text: "가입이 완료되었습니다!",
-    //         confirmButtonColor: "var(--orange-color-100)"",
-    //       }).then((result) => {
-    //         if (result.isConfirmed) {
-    //           <Navigate to="/" replace={true} />;
-    //         }
-    //       });
-    //     }
-    //   },
-    //   (error) => {}
-    // );
+    );
   };
   const [allCheck, setAllCheck] = useState(false);
   const [gpsCheck, setGpsCheck] = useState(false);
@@ -102,7 +105,7 @@ const AgreeTermsPage = () => {
                 checked={allCheck}
                 onChange={allBtnEvent}
               />
-              <label for="all-check">전체동의</label>
+              <label>전체동의</label>
             </div>
             <div>
               <input
@@ -111,7 +114,7 @@ const AgreeTermsPage = () => {
                 checked={gpsCheck}
                 onChange={onClickGpsBtn}
               />
-              <label for="check1">
+              <label>
                 위치기반서비스 이용 <span>(필수)</span>
               </label>
             </div>
@@ -122,7 +125,7 @@ const AgreeTermsPage = () => {
                 checked={useCheck}
                 onChange={onClicInfoUseBtn}
               />
-              <label for="check2">
+              <label>
                 개인정보 수집 밎 이용 <span>(필수)</span>
               </label>
             </div>

@@ -9,8 +9,9 @@ const GlobalStyles = createGlobalStyle`
         --bg-baige-color:#FFFCE3;
         --label-gray-color:#7A7D84;
         --chat-pink-color:#FF9393;
-        
-				--orange-color-100:#FFCC70;
+        --confirm-blue-color:#96C9F4;
+
+				--orange-color-100:#FFCC70; //swal basic btn
 				--orange-color-200:#f39800;
 
         --red-color-100: #CD3D64;
@@ -37,14 +38,16 @@ const GlobalStyles = createGlobalStyle`
         --font-size-medium: 2.2rem;
         --font-size-small: 2rem;
         --font-size-primary: 1.6rem;
+				
     }
 
-	// @font-face {
-	// 	font-family: 'NotoSans';
-	// 	src: local('NotoSans'), local('NotoSans');
-	// 	font-style: normal;
-	// }
-
+@font-face {
+    font-family: 'PTBandocheB';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408@1.0/PTBandocheB.woff2') format('woff2');
+		// src:url("@/assets/fonts/vudxor.ttf) format('woff2")
+    font-weight: 700;
+    font-style: normal;
+}
     html, body, div, span, applet, object, iframe,
 	h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 	a, abbr, acronym, address, big, cite, code,
@@ -65,6 +68,7 @@ const GlobalStyles = createGlobalStyle`
 		font-size: 100%;
 		font: inherit;
 		vertical-align: baseline;
+		font-family: 'PTBandocheB';
 	}
 	/* HTML5 display-role reset for older browsers */
 	article, aside, details, figcaption, figure, 
@@ -77,7 +81,12 @@ const GlobalStyles = createGlobalStyle`
 		width: 100%;
   	height: 100%;
 		overflow: hidden;
+		
 	}
+// 		body.swal2-shown > [aria-hidden='true'] {
+//   transition: 0.1s filter;
+//   filter: blur(3px);
+// }
 	ol, ul {
 		list-style: none;
 	}
@@ -99,6 +108,7 @@ const GlobalStyles = createGlobalStyle`
 		overflow-x: hidden;
 		width: 100%;
  	 	height: 100%;
+		
 	}
 	img {
 		width: 100%;

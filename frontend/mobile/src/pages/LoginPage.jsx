@@ -1,43 +1,67 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-
+import base64 from "base-64";
+import utf8 from "utf8";
 import { Grid, Button, Text, Input } from "@components/elements";
 import { Header } from "@components/common";
 import useForm from "@/hooks/useForm";
 import { loginApi } from "@/api/userApi";
 import useUserStore from "@/store/useUserStore";
 import useFormInputStore from "@/store/useFormInputStore";
+import { errorAlert } from "@/util/notificationAlert";
+
 const Login = () => {
   const navigate = useNavigate();
-  const { setAccessToken, setReFreshToken, login, setUserId } = useUserStore();
+  const { setAccessToken, setReFreshToken, login, setUserId, setUserName } =
+    useUserStore();
   const { clearInputs } = useFormInputStore();
   const { values, errors, isLoading, handleChange, handleSubmit } = useForm({
     initialValues: { id: "", password: "" },
     onSubmit: (values) => {
-      //TODO - api test
       loginApi(
         values.id,
         values.password,
+        deviceToken,
         (response) => {
-          //TODO - 토큰 저장하기
           if (response.status === 200) {
             setAccessToken(response.data.accessToken);
             setReFreshToken(response.data.refreshToken);
             setUserId(values.id);
             login();
+            localStorage.setItem("accessToken", response.data.accessToken);
+            localStorage.setItem("refreshToken", response.data.refreshToken);
+            let payload = response.data.accessToken.substring(
+              response.data.accessToken.indexOf(".") + 1,
+              response.data.accessToken.lastIndexOf(".")
+            );
+            let dec = base64.decode(payload);
+            let decUtf8 = utf8.decode(dec);
+            let decJson = JSON.parse(decUtf8);
+            console.log("dec: " + dec);
+            console.log(decUtf8);
+            console.log(decJson);
+            setUserName(decJson.memberName);
             clearInputs();
             navigate("/");
           }
         },
         (error) => {
           console.log(error);
-          // errorAlert(error.response.status);
+          errorAlert(error.response.data);
         }
       );
     },
-    validate: () => {},
+    validate: null,
   });
+  const [deviceToken, setDeviceToken] = useState();
+  useEffect(() => {
+    console.log(window.AndroidInterface);
+    const deviceToken =
+      window.AndroidInterface && window.AndroidInterface.getDeviceToken();
+    console.log("deviceToken: " + deviceToken);
+    setDeviceToken(deviceToken);
+  }, []);
   return (
     <Container>
       <Header navText="로그인" />

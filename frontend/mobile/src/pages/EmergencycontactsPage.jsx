@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
-
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcCallIcon from "@mui/icons-material/AddIcCall";
 import Swal from "sweetalert2";
 
 import { Header, TabBar } from "@components/common";
@@ -19,17 +15,29 @@ import {
 import useUserStore from "@/store/useUserStore";
 import useFormInputStore from "@/store/useFormInputStore";
 import EmergencyContactInput from "@components/input/EmergencyContactInput";
+import {
+  successAlert,
+  yesorNoAlert,
+  errorAlert,
+} from "@/util/notificationAlert";
+
 const EmergencycontactsPage = () => {
-  const {
-    emergencyContactList,
-    setEmergencyContactList,
-    addEmergencyContact,
-    deleteEmergencyContact,
-  } = useUserStore();
+  const emergencyContactList = useUserStore(
+    (state) => state.emergencyContactList
+  );
+  const setEmergencyContactList = useUserStore(
+    (state) => state.setEmergencyContactList
+  );
+  const addEmergencyContact = useUserStore(
+    (state) => state.addEmergencyContact
+  );
+  const deleteEmergencyContact = useUserStore(
+    (state) => state.deleteEmergencyContact
+  );
   const { clearAllInputs } = useFormInputStore();
   const navigate = useNavigate();
 
-  const [showButton, setShowButton] = useState(true);
+  const [showButton, setShowButton] = useState(false);
 
   const onClickShowModal = (contactItem) => {
     Swal.fire({
@@ -46,19 +54,20 @@ const EmergencycontactsPage = () => {
         );
       },
       preConfirm: () => {
-        const relationnputValue = document.querySelector(
+        const relationInputValue = document.querySelector(
           "#swal-react-container input[name='relation']"
         ).value;
         const phoneNumberInputValue = document.querySelector(
           "#swal-react-container input[name='phoneNumber']"
         ).value;
-        if (emergencyContactList) {
-          const existsInInputs = emergencyContactList.some(
-            (item) =>
-              (item.emergency_contact_id !== contactItem.emergency_contact_id &&
-                item.relation === relationnputValue) ||
-              item.phoneNumber === phoneNumberInputValue
-          );
+        if (emergencyContactList && contactItem) {
+          const existsInInputs = emergencyContactList.some((item) => {
+            return (
+              item.emergencyContactId !== contactItem.emergencyContactId &&
+              (item.relation === relationInputValue ||
+                item.phoneNumber === phoneNumberInputValue)
+            );
+          });
           if (existsInInputs) {
             Swal.showValidationMessage("중복된 연락처가 있습니다.");
             return false;
@@ -67,31 +76,30 @@ const EmergencycontactsPage = () => {
 
         // 추가 처리 로직
         const newItem = {
-          relation: relationnputValue,
+          relation: relationInputValue,
           phoneNumber: phoneNumberInputValue,
         };
-        newItem.emergency_contact_id =
-          contactItem && contactItem.emergency_contact_id;
+        newItem.emergencyContactId =
+          contactItem && contactItem.emergencyContactId;
 
-        return relationnputValue && phoneNumberInputValue
+        return relationInputValue && phoneNumberInputValue
           ? Promise.resolve(newItem)
           : Promise.reject("입력해 주세요.");
       },
       width: "30em",
       confirmButtonText: "저장하기",
-      confirmButtonColor: "var(--main-orange-color)",
+      confirmButtonColor: "#FFCC70",
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log(result.value);
-        result.value.emergency_contact_id
+        result.value.emergencyContactId
           ? updateEmergencycontact(
-              result.value.emergency_contact_id,
+              result.value.emergencyContactId,
               result.value,
               (response) => {
                 if (response.status === 200) {
-                  Swal.fire("수정되었습니다");
+                  successAlert("수정되었습니다!");
 
-                  deleteEmergencyContact(result.value.emergency_contact_id);
+                  deleteEmergencyContact(result.value.emergencyContactId);
                   addEmergencyContact(result.value);
                   clearAllInputs();
                 }
@@ -103,14 +111,21 @@ const EmergencycontactsPage = () => {
           : registerEmergencycontact(
               result.value,
               (response) => {
-                if (response.status === 200) {
-                  Swal.fire("등록되었습니다");
-                  addEmergencyContact(result.value);
+                if (response.status === 201) {
+                  successAlert("등록되었습니다!");
+
+                  console.log(response.data);
+                  let newContact = result.value;
+                  newContact.emergencyContactId =
+                    response.data.emergencyContactId;
+                  addEmergencyContact(newContact);
+                  console.log(newContact);
                   clearAllInputs();
                 }
               },
               (error) => {
                 console.log(error);
+                // errorAlert(error.response.data);
               }
             );
         setShowButton(false);
@@ -119,29 +134,29 @@ const EmergencycontactsPage = () => {
   };
 
   const onClickDeleteBtn = (contact) => {
-    Swal.fire({
-      title: `${contact.relation} 연락처를 삭제하시겠습니까?`,
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#FF4C4C",
-      confirmButtonText: "취소",
-      cancelButtonText: "삭제하기",
-    }).then((result) => {
-      if (result.isDismissed) {
-        deleteEmergencycontact(
-          contact.emergency_contact_id,
-          (response) => {
-            if (response.status === 200) {
-              Swal.fire("삭제되었습니다");
-              deleteEmergencyContact(contact.emergency_contact_id);
+    yesorNoAlert(
+      `${contact.relation} 연락처를 삭제하시겠습니까?`,
+      "취소",
+      "삭제하기",
+      (result) => {
+        if (result.isDismissed) {
+          deleteEmergencycontact(
+            contact.emergencyContactId,
+            (response) => {
+              if (response.status === 200) {
+                successAlert("삭제되었습니다!");
+                deleteEmergencyContact(contact.emergencyContactId);
+                if (emergencyContactList.length === 0) setShowButton(true);
+              }
+            },
+            (error) => {
+              // console.log(error.toJSON());
+              // errorAlert(error.response.data);
             }
-          },
-          (error) => {
-            console.log(error);
-          }
-        );
+          );
+        }
       }
-    });
+    );
   };
   const btnStyles = {
     _onClick: onClickShowModal,
@@ -157,42 +172,32 @@ const EmergencycontactsPage = () => {
     $padding: "1rem 2rem",
     $size: "24px",
     $bold: true,
-    $padding: "14px 32px",
+    // $padding: "14px 32px",
     $width: "",
     $height: "10vh",
   };
   useEffect(() => {
-    //TODO - api 연결
-    // getEmergencycontacts(
-    //   (response) => {
-    //     if (response.status === 200) {
-    //       setEmergencyContactList(response.data.contactList);
-    //       response.data.contactList &&
-    //         response.data.contactList.length > 0 &&
-    //         setShowButton(false);
-    //     }
-    //   },
-    //   (error) => {
-    //     console.log(error);
-    //   }
-    // );
-    setShowButton(false);
-    setEmergencyContactList([
-      {
-        emergency_contact_id: 1,
-        phoneNumber: "010-1010-1010",
-        relation: "MOM",
+    getEmergencycontacts(
+      (response) => {
+        if (response.status === 200) {
+          if (typeof response.data != "string") {
+            setEmergencyContactList(response.data);
+            setShowButton(false);
+          } else {
+            setEmergencyContactList([]);
+            setShowButton(true);
+          }
+        }
       },
-      {
-        emergency_contact_id: 5,
-        phoneNumber: "010-1010-1010",
-        relation: "MOM",
-      },
-    ]);
+      (error) => {
+        // console.log(error.toJSON());
+        // errorAlert(error.response.data);
+      }
+    );
   }, []);
   return (
     <Container>
-      <Header navText="비상 연락망" />
+      <Header navText="비상 연락망" goTo="/menu" />
 
       <Content>
         {!showButton ? (
@@ -254,7 +259,7 @@ const Content = styled.div`
 `;
 
 const AddButton = styled.button`
-  background-color: var(--orange-color-200);
+  background-color: var(--orange-color-100);
   color: white;
   border: none;
   padding: 5px 10px;

@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectHospital, fetchRoute } from "../../slices/emergencySlice";
+import PhoneImage from '../../assets/phone-icon.png'
+import HospitalNameImage from '../../assets/hospital-name-icon.png'
+import HospitalMapImage from '../../assets/hospital-map-icon.png'
 
 import "./EmergencyListItem.css";
 
@@ -44,24 +47,24 @@ const EmergencyListItem = ({
   return (
     <div className="emergency-list-item">
       <div className="detail-left">
-        <h3>{dutyName}</h3>
-        <p>병원 가용 현황 | 응급실 {hvec >= 0 ? hvec : -hvec} 수술실 {hvoc >= 0 ? hvoc : -hvoc}</p>
-        <p>{dutyAddr}</p>
+        <h3><img src={HospitalNameImage} alt = "병원명 아이콘" className="phone-logo-image"/>{dutyName}</h3>
+        <div className="separator"></div>
+        <p><img src={HospitalMapImage} alt = "병원위치 아이콘" className="phone-logo-image"/>{dutyAddr}</p>
+        <div className="separator"></div>
         <p>{details}</p>
-        <p>{dutyTel1}</p>
+        <div className="separator"></div>
+          
+          <p><img src={PhoneImage} alt="전화 아이콘" className="phone-logo-image" />{dutyTel1}</p>
+      
       </div>
       <div className="detail-right">
         {selectedInfo && selectedHospital && selectedHospital.dutyName === dutyName && (
           <>
             <div>
-              거리 : {(selectedInfo.summary.distance / 1000).toFixed(2)} km
-            </div>
-            <div>
-            소요시간 :
+              {(selectedInfo.summary.distance / 1000).toFixed(2)} km
             </div>
             <div>
               {Math.floor(selectedInfo.summary.duration / 60)}분{" "}
-              {selectedInfo.summary.duration % 60}초
             </div>
           </>
         )}

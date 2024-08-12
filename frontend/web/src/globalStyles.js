@@ -14,7 +14,7 @@ const GlobalStyles = createGlobalStyle`
         
         --red-color-100: #CD3D64;
         --red-color-200: #A41C4E;
-		--button-red-color: #FF2929;
+				--button-red-color: #FF2929;
         
         --green-color-100: #09825D;
         --green-color-200: #0E6245;
@@ -26,7 +26,7 @@ const GlobalStyles = createGlobalStyle`
         --gray-color-100: #ddd;
         --gray-color-200: #C0C0C0;
         --gray-color-300: #b5b5b5;
-        --gray-color-400:##697386
+        --gray-color-400: #697386; 
         
         --black-color-100:#3D3D3D;
         --black-color-200:#2C2C2E;

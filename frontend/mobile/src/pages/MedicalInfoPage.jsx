@@ -2,19 +2,29 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Swal from "sweetalert2";
 
 import { Header, TabBar } from "@components/common";
-import { Grid, Button, Text } from "@components/elements";
+import { Button, Text } from "@components/elements";
 import useUserStore from "@/store/useUserStore";
-import { getMedicalInfo } from "@api/medicalInfoApi";
-
-//TODO - 의료정보 삭제
+import { getMedicalInfo, deleteMedicalInfo } from "@api/medicalInfoApi";
+import { errorAlert } from "@/util/notificationAlert";
+import useFormInputStore from "@/store/useFormInputStore";
+import { successAlert, yesorNoAlert } from "@/util/notificationAlert";
 const MedicalInfoPage = () => {
+  const { changeFormRegister, changeFormEdit, clearAllInputs } =
+    useFormInputStore();
+  const { clearUserMedicalInfo } = useUserStore();
+
   const userMedicalInfo = useUserStore((state) => state.userMedicalInfo);
   const setUserMedicalInfo = useUserStore((state) => state.setUserMedicalInfo);
   const navigate = useNavigate();
   const btnStyles = {
-    _onClick: () => navigate("/medicalinfo/edit?form=basic"),
+    _onClick: () => {
+      changeFormRegister();
+      navigate("/medicalinfo/edit?form=basic");
+    },
     children: "등록하기 >",
     $radius: "8px",
     $bg: {
@@ -28,73 +38,105 @@ const MedicalInfoPage = () => {
     $size: "24px",
     $bold: true,
     // $boxShadow: "0px 4px 0px 0px var(--main-orange-color);",
-    $padding: "14px 32px",
+    // $padding: "14px 32px",
     $width: "",
     $height: "10vh",
   };
+  const onClickDelteBtn = (contact) => {
+    yesorNoAlert(
+      `의료정보를 삭제하시겠습니까?`,
+      "취소",
+      "삭제하기",
+      (result) => {
+        if (result.isDismissed) {
+          deleteMedicalInfo(
+            (response) => {
+              if (response.status === 200) {
+                successAlert("삭제되었습니다");
+                clearUserMedicalInfo();
+              }
+            },
+            (error) => {
+              console.log(error);
+            }
+          );
+        }
+      }
+    );
+  };
   useEffect(() => {
-    //TODO - 의료 정보 조회하기
-    // getMedicalInfo(
-    //   (response) => {
-    //     if (response.status === 200) {
-    //       const data = {
-    //         medicalInformationId: response.data.medicalInformationId,
-    //         bloodType1: response.data.bloodType1,
-    //         bloodType2: response.data.bloodType2,
-    //         otherInfo: response.data.otherInfo,
-    //         drugInfos: response.data.drugInfos.map((item) => ({
-    //           id: item.medicineId,
-    //           name: item.medicineName,
-    //         })),
-    //         medCdis: response.data.medCdis.map((item) => ({
-    //           id: item.cdInfoId,
-    //           name: item.cdName,
-    //         })),
-    //       };
-    //       // setUserMedicalInfo(response.data);
-    //     }
-    //   },
-    //   (error) => {
-    //     console.log(error);
-    //   }
-    // );
-    // console.log(userMedicalInfo.bloodType1);
+    getMedicalInfo(
+      (response) => {
+        if (response.status === 200) {
+          if (response.data) {
+            const data = {
+              medicalInformationId: response.data.medicalInformationId,
+              bloodType1: response.data.bloodType1,
+              bloodType2: response.data.bloodType2,
+              otherInfo: response.data.otherInfo,
+              drugInfos: response.data.drugInfos.map((item) => ({
+                id: item.medicineId,
+                name: item.medicineName,
+              })),
+              medCdis: response.data.medCdis.map((item) => ({
+                id: item.cdInfoId,
+                name: item.cdName,
+              })),
+            };
+            setUserMedicalInfo(data);
+          }
+        }
+      },
+      (error) => {
+        // errorAlert(error.response.data);
+      }
+    );
   }, []);
 
-  //NOTE - 기타 특이사항이 길어질 때 style 처리
   const infoItemRef = useRef(null);
   const [isColumn, setIsColumn] = useState(false);
 
   useEffect(() => {
-    const labelElement = infoItemRef.current.querySelector("span:first-child");
-    const valueElement = infoItemRef.current.querySelector("span:last-child");
+    if (userMedicalInfo) {
+      const labelElement =
+        infoItemRef.current.querySelector("span:first-child");
+      const valueElement = infoItemRef.current.querySelector("span:last-child");
 
-    const labelRect = labelElement.getBoundingClientRect();
-    const valueRect = valueElement.getBoundingClientRect();
+      const labelRect = labelElement.getBoundingClientRect();
+      const valueRect = valueElement.getBoundingClientRect();
 
-    const horizontalDistance = valueRect.left - labelRect.right;
+      const horizontalDistance = valueRect.left - labelRect.right;
 
-    if (horizontalDistance < 10) {
-      setIsColumn(true);
+      if (horizontalDistance < 10) {
+        setIsColumn(true);
+      }
     }
-  }, []);
+  }, [userMedicalInfo]);
   return (
     <Container>
-      <Header navText="내 의료 정보" />
+      <Header navText="내 의료 정보" goTo="/menu" />
       <Content>
         {/* //TODO - 의료 정보 있으면 있는 상태 보여주기 */}
         {userMedicalInfo ? (
           <>
+            <StyledBtn
+              onClick={() => {
+                changeFormEdit();
+
+                navigate("/medicalinfo/edit?form=basic");
+              }}
+            >
+              <EditIcon />
+              수정
+            </StyledBtn>
+            <StyledBtn onClick={onClickDelteBtn}>
+              <DeleteIcon />
+              삭제
+            </StyledBtn>
             <InfoContainer>
               <Section>
                 <SectionHeader>
                   <SectionTitle>기본 정보</SectionTitle>
-                  <EditButton
-                    onClick={() => navigate("/medicalinfo/edit?form=basic")}
-                  >
-                    <EditIcon />
-                    수정
-                  </EditButton>
                 </SectionHeader>
                 <InfoList>
                   <InfoItem>
@@ -218,6 +260,8 @@ const Content = styled.div`
   align-items: center;
   overflow: auto;
   height: 83vh;
+  align-items: flex-end;
+  margin: auto;
 `;
 
 const InfoContainer = styled.div`
@@ -248,7 +292,7 @@ const SectionTitle = styled.h2`
   margin: 0;
 `;
 
-const EditButton = styled.button`
+const StyledBtn = styled.button`
   font-size: 14px;
   color: var(--dark-blue-color);
   background: none;

@@ -5,10 +5,11 @@ const http = Axios();
 async function registerUser(data, success, fail) {
   await http.post("/members/register", data).then(success).catch(fail);
 }
-async function loginApi(id, pw, success, fail) {
+async function loginApi(id, pw, deviceToken, success, fail) {
   const data = {
     memberId: id,
     password: pw,
+    deviceToken: deviceToken
   };
   await http.post("/members/login", data).then(success).catch(fail);
 }
@@ -21,15 +22,24 @@ async function checkIdDuplication(id, success, fail) {
 }
 
 async function reqVerifyCode(phoneNumber, success, fail) {
-  await http.get(`/members/phone-verify-code-req`).then(success).catch(fail);
+  await http
+    .post(`/members/phone-verify-code-req`, { phoneNumber: phoneNumber })
+    .then(success)
+    .catch(fail);
 }
 
-async function checkVerifyCode(data, success, fail) {
-  await http.get(`/members/phone-verify-code-check`).then(success).catch(fail);
+async function checkVerifyCode(type, data, success, fail) {
+  let typeurl = "";
+  if (type === "findid") {
+    typeurl = "-id";
+  } else if (type === "findpassword") {
+    typeurl = "-pw";
+  }
+  await http
+    .post(`/members/phone-verify-code${typeurl}-check`, data)
+    .then(success)
+    .catch(fail);
 }
-//TODO - 아이디 찾기
-//TODO - 비밀번호 찾기
-//TODO - 비밀번호 변경
 
 async function updateUserPwd(type, data, success, fail) {
   switch (type) {

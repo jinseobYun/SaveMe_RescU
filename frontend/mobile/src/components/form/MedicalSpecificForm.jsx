@@ -10,6 +10,7 @@ import useUserStore from "@/store/useUserStore";
 import useFormInputStore from "@/store/useFormInputStore";
 import useSearchStore from "@/store/useSearchStore";
 import { registerMedicalInfo, updateMedicalInfo } from "@api/medicalInfoApi";
+import { successAlert, errorAlert } from "@/util/notificationAlert";
 
 const MedicalSpecificForm = ({ form, btnSetting }) => {
   const {
@@ -19,12 +20,14 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
     addDrugInputs,
     isFormEdit,
     inputs,
-    clearAllInput,
+    clearAllInputs,
     deleteMedCdisInput,
     deleteDrugInput,
   } = useFormInputStore();
   const { setUserMedicalInfo } = useUserStore();
-  const { searchResults, setSearchResults } = useSearchStore();
+  const searchResults = useSearchStore((state) => state.searchResults);
+  const setSearchResults = useSearchStore((state) => state.setSearchResults);
+
   const navigate = useNavigate();
 
   const onClickNextBtn = (e) => {
@@ -39,38 +42,37 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
         medCdis,
         drugInfos,
       };
-      //TODO - 의료정보 저장 api
       if (isFormEdit) {
         updateMedicalInfo(
           data,
           (response) => {
             if (response.status === 200) {
-              Swal.fire("저장되었습니다");
-              clearAllInput();
-
+              clearAllInputs();
               setUserMedicalInfo(data);
-              navigate("/medicalinfo", { replace: true });
+              successAlert("저장되었습니다", () => {
+                navigate("/medicalinfo", { replace: true });
+              });
             }
           },
           (error) => {
-            console.log(error);
+            console.log(error.toJSON());
           }
         );
       } else {
         registerMedicalInfo(
           data,
           (response) => {
-            if (response.status === 200) {
-              Swal.fire("등록되었습니다");
-
+            if (response.status === 201) {
+              clearAllInputs();
               setUserMedicalInfo(data);
-              clearAllInput();
-
-              navigate("/medicalinfo", { replace: true });
+              successAlert("등록되었습니다", () => {
+                navigate("/medicalinfo", { replace: true });
+              });
             }
           },
           (error) => {
-            console.log(error);
+            console.log(error.toJSON());
+            errorAlert(error.response.data);
           }
         );
       }
@@ -79,22 +81,19 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
     }
   };
 
-  const handleSaveInput = (value) => {
+  const handleAddInput = (value) => {
     const data = {
-      id: value.id,
-      name: value.name,
+      id: value.medicineId,
+      name: value.medicineName,
     };
-
-    if (form === "disease") {
-      addMedCdisInputs(data);
-    } else {
-      addDrugInputs(data);
-    }
+    addDrugInputs(data);
   };
   const onClickAddBtn = (name) => {
+    let formType = "의약품";
+    if (form === "disease") formType = "지병";
     if (name == "[object Object]") name = "";
     Swal.fire({
-      // title: `<h5>의약품 명을 적어주세요</h5>`,
+      title: `${formType} 명을 입력해주세요`,
       html: '<div id="swal-react-container"></div>',
       didOpen: () => {
         const container = document.getElementById("swal-react-container");
@@ -103,6 +102,7 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
           <AutoCompleteInput
             $onChange={Swal.resetValidationMessage}
             $prev={name}
+            $formType={form}
           />
         );
       },
@@ -110,15 +110,21 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
         const inputValue = document.querySelector(
           "#swal-react-container input"
         ).value;
-        const existsInArray = searchResults.some(
-          (item) => item.name === inputValue
+        const searchResults = useSearchStore.getState().searchResults;
+        const existsInArray = searchResults.some((item) =>
+          form === "disease"
+            ? item.cdName === inputValue
+            : item.medicineName === inputValue
         );
-        const existsInInputs = (
-          form === "disease" ? medCdisInputs : drugInputs
-        ).some((item) => item.name === inputValue);
+        const existsInInputs =
+          form === "disease"
+            ? medCdisInputs.some((item) => item.name === inputValue)
+            : drugInputs.some((item) => item.name === inputValue);
 
         if (!existsInArray) {
-          Swal.showValidationMessage("해당하는 단어가 DB에 없습니다.");
+          Swal.showValidationMessage(
+            `해당하는 단어가 ${formType}정보에 없습니다.`
+          );
           return false;
         }
 
@@ -127,20 +133,28 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
           return false;
         } else {
           if (name && inputValue !== name) {
-            const prevIndex = (
-              form === "disease" ? medCdisInputs : drugInputs
-            ).findIndex((item) => item.name === name);
-            if (prevIndex !== -1) {
-              if (form === "disease") {
+            if (form === "disease") {
+              const prevIndex = medCdisInputs.findIndex(
+                (item) => item.name === name
+              );
+              if (prevIndex !== -1) {
                 deleteMedCdisInput(prevIndex);
-              } else {
-                deleteDrugInput(prevIndex);
               }
+            }
+            const prevIndex = drugInputs.findIndex(
+              (item) => item.name === name
+            );
+            if (prevIndex !== -1) {
+              deleteDrugInput(prevIndex);
             }
           }
         }
         // 추가 처리 로직
-        const newItem = searchResults.find((item) => item.name === inputValue);
+        const newItem = searchResults.find((item) =>
+          form === "disease"
+            ? item.cdName === inputValue
+            : item.medicineName === inputValue
+        );
 
         return inputValue
           ? Promise.resolve(newItem)
@@ -148,10 +162,10 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
       },
       width: "30em",
       confirmButtonText: "저장하기",
-      confirmButtonColor: "var(--main-orange-color)",
+      confirmButtonColor: "#FFCC70",
     }).then((result) => {
       if (result.isConfirmed) {
-        handleSaveInput(result.value);
+        handleAddInput(result.value);
       }
     });
   };
@@ -170,46 +184,10 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
     $size: "2rem",
     $bold: true,
     // $boxShadow: "0px 4px 0px 0px var(--main-orange-color);",
-    $padding: "1rem",
     $width: "",
     $height: "auto",
   };
-  useEffect(() => {
-    //STUB - 테스트 후 지우기
-    const data = medCdisInputs;
-    const stringifiedData = JSON.stringify(data);
-    const parsedData = JSON.parse(stringifiedData); // 정상 작동
-    if (form === "disease") {
-      setSearchResults([
-        {
-          id: 1,
-          name: "고혈압",
-        },
-        {
-          id: 2,
-          name: "당뇨병",
-        },
-        {
-          id: 3,
-          name: "천식",
-        },
-      ]);
-    } else
-      setSearchResults([
-        {
-          id: 24,
-          name: "러츠날캡슐(탐스로신염산염)",
-        },
-        {
-          id: 25,
-          name: "세린드연고",
-        },
-        {
-          id: 74,
-          name: "하트만용액",
-        },
-      ]);
-  }, []);
+
   return (
     <Container>
       <Grid

@@ -7,32 +7,36 @@ import useFormInputStore from "@/store/useFormInputStore";
 import useForm from "@/hooks/useForm";
 import { Header, TabBar } from "@components/common";
 import { reqVerifyCode } from "@api/userApi";
+import { errorAlert } from "@/util/notificationAlert";
 const FindIdPwPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isFindPassword = location.pathname === "/findpassword";
   const { inputs, updateInputs } = useFormInputStore();
 
   const { values, errors, isLoading, handleChange, handleSubmit } = useForm({
     initialValues: {
-      name: inputs.name || "",
+      memberName: inputs.memberName || "",
       phoneNumber: inputs.phoneNumber || "",
+      memberId: inputs.memberId || "",
     },
     onSubmit: (values) => {
-      console.log(values);
-
-      //TODO - api 연결
       updateInputs(values);
       reqVerifyCode(
         values.phoneNumber,
-        ({ data }) => {
-          if (data.status === "200") {
+        (response) => {
+          if (response.status === 200) {
+            //FIXME - 인증코드 저장 없애기
+            updateInputs({ temporyCode: response.data });
+
             isFindPassword
               ? navigate("/verification", { state: { type: "findpassword" } })
               : navigate("/verification", { state: { type: "findid" } });
           }
         },
         (error) => {
-          console.log(error);
+          console.log(error.toJSON());
+          errorAlert(error.response.data);
         }
       );
     },
@@ -46,9 +50,9 @@ const FindIdPwPage = () => {
         <Text>회원 가입 시 등록한 정보를 입력해 주세요.</Text>
         <StyledForm>
           <Input
-            $name="name"
+            $name="memberName"
             $placeholder="이름"
-            $value={values.name}
+            $value={values.memberName}
             _onChange={handleChange}
             $haveToCheckValid={false}
             $label="이름*"
@@ -66,18 +70,20 @@ const FindIdPwPage = () => {
           {isFindPassword && (
             <>
               <Input
-                $name="birth"
-                $value={values.birth}
+                $name="memberId"
+                $value={values.memberId}
                 _onChange={handleChange}
-                $label="생년월일*"
-                $type="date"
+                $label="아이디*"
+                $type="text"
                 $haveToCheckValid={false}
               />
             </>
           )}
         </StyledForm>
         <NextPageButton
-          isError={!(values.name.length > 0 && values.phoneNumber.length > 0)}
+          isError={
+            !(values.memberName.length > 0 && values.phoneNumber.length > 0)
+          }
           text="인증 번호 받기"
           handleClick={handleSubmit}
           $color={{ default: "var(--white-color-100)" }}
