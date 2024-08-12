@@ -1,15 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import {
-  initOpenVidu,
-  leaveSession,
-  mainStreamManager,
-  subscribers,
-  toggleAudio,
-  toggleVideo,
-  session,
-} from "@/util/openvidu";
 
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import VideocamIcon from "@mui/icons-material/Videocam";
@@ -26,11 +17,22 @@ import useUserStore from "@/store/useUserStore";
 import { getReportSessionId } from "@api/reportApi";
 import { LoadingScreen } from "@components/common";
 import { successAlert } from "@/util/notificationAlert";
+import { averageGps } from "@/util/dataProcessing";
+import {
+  initOpenVidu,
+  leaveSession,
+  mainStreamManager,
+  subscribers,
+  toggleAudio,
+  toggleVideo,
+  session,
+  OV,
+} from "@/util/openvidu";
 const ReportOpenViduPage = () => {
   //SECTION - user settings
   const userId = useUserStore((state) => state.userId);
   const tagId = useUserStore((state) => state.tagId);
-  const currentLocation = useUserStore((state) => state.gps);
+  const gpsList = useUserStore((state) => state.gps);
 
   const [loading, setLoading] = useState(true);
   const [isChatting, setIsChatting] = useState(false);
@@ -62,7 +64,10 @@ const ReportOpenViduPage = () => {
   };
 
   useEffect(() => {
+    const abortController = new AbortController();
+
     getReportSessionId(
+      abortController,
       (response) => {
         console.log("getReportSessionId success: ", response);
         setSessionId(response.data.sessionId);
@@ -72,30 +77,37 @@ const ReportOpenViduPage = () => {
         setLoading(false);
         successAlert(
           "현재 연결 가능한 119 대원이 없습니다.잠시후 시도해주세요",
-          () => navigate(-1)
+          () => navigate("/", { replace: true })
         );
+      },
+      (error) => {
+        setLoading(false);
+        successAlert("신고를 취소하셨습니다.", () =>
+          navigate("/", { replace: true })
+        );
+        navigate("/", { replace: true });
       }
     );
-
+    // setSessionId("ses_G4tWX7SMuX");
+    setLoading(false);
     return () => {
-      leaveSession();
+      abortController.abort();
+      if (session) leaveSession();
     };
   }, []);
 
   useEffect(() => {
-    const user = { username: "myname", userno: 1 }; // 실제 사용자 정보로 대체
     if (sessionId) {
-      initOpenVidu(sessionId, user).then(() => {
-        console.log("OpenVidu Init 시작!");
+      initOpenVidu(sessionId).then(() => {
         if (mainStreamManager) {
-          localVideoRef.current.srcObject =
-            mainStreamManager.stream.getMediaStream();
+          const videoStream = new MediaStream(
+            mainStreamManager.stream.getMediaStream().getVideoTracks() // 비디오 트랙만 가져옴
+          );
+          localVideoRef.current.srcObject = videoStream;
         }
-        console.log("OpenVidu Init 성공!");
       });
     }
     const handleStreamCreated = (event) => {
-      console.log("상대방 접속 시작!");
       const subscriber = event.detail.subscriber;
       console.log("subscriber이에요:", subscriber);
       if (subscriber) {
@@ -135,16 +147,16 @@ const ReportOpenViduPage = () => {
 
   const handleCameraChange = useCallback(async () => {
     try {
-      const devices = await OV.current.getDevices();
+      const devices = await OV.getDevices();
       const videoDevices = devices.filter(
         (device) => device.kind === "videoinput"
       );
-
+      console.log("videoDevices:", videoDevices);
       if (videoDevices && videoDevices.length > 1) {
         const newVideoDevice = videoDevices.filter(
           (device) => device.deviceId !== currentVideoDevice.deviceId
         );
-
+        console.log("newVideoDevice : ", newVideoDevice);
         if (newVideoDevice.length > 0) {
           const newPublisher = OV.current.initPublisher(undefined, {
             videoSource: newVideoDevice[0].deviceId,
@@ -154,11 +166,13 @@ const ReportOpenViduPage = () => {
           });
 
           if (session) {
+            console.log("퍼블리쉬 재설정!!");
             await session.unpublish(mainStreamManager);
             await session.publish(newPublisher);
             setCurrentVideoDevice(newVideoDevice[0]);
             localVideoRef.current.srcObject =
               newPublisher.stream.getMediaStream();
+            console.log(newPublisher.stream.getMediaStream());
           }
         }
       }
@@ -207,7 +221,7 @@ const ReportOpenViduPage = () => {
     setShowMenu(false);
     setShowMenuAll(false);
     setChatBtnColor("var(--white-color-200)");
-    localVideoRef.current.style.bottom = `70px`;
+    // localVideoRef.current.style.bottom = `70px`;
   };
 
   //SECTION - chatting
@@ -242,22 +256,29 @@ const ReportOpenViduPage = () => {
         });
     }
   };
-  const [chatWrapperHeight, setChatlogWrapperHeight] = useState(0); // 채팅 높이 상태 추가
+  const [chatlogWrapperHeight, setChatlogWrapperHeight] = useState(0); // 채팅 높이 상태 추가
   const chatWrapperRef = useRef(null);
   useEffect(() => {
     // 채팅 높이 변경에 따라 myVideo의 위치 조정
     if (chatWrapperRef.current && localVideoRef.current) {
       const chatHeight = chatWrapperRef.current.offsetHeight;
-      console.log("chatHeight: ", chatHeight);
+      setChatlogWrapperHeight(chatHeight);
+
       localVideoRef.current.style.bottom = `${chatHeight}px`;
     }
-  }, [chatWrapperHeight]);
+  }, [chatlog, isChatting]);
+  useEffect(() => {
+    // 채팅 높이에 따라 MyVideo의 위치 조정
+    if (localVideoRef.current) {
+      const chatHeight = chatWrapperRef.current.offsetHeight;
+      localVideoRef.current.style.bottom = `${chatlogWrapperHeight + 16}px`; // 1rem = 16px
+    }
+  }, [chatlogWrapperHeight]);
   useEffect(() => {
     if (session) {
       const handleChatMessage = (event) => {
         // 수신된 메시지가 자신이 보낸 것이 아닌 경우에만 처리
         const eventJson = JSON.parse(event.data);
-        console.log(eventJson);
         if (eventJson.sender !== "app") {
           console.log("상대방의 event data:", eventJson.message);
           setChatlog((prev) => [
@@ -275,12 +296,12 @@ const ReportOpenViduPage = () => {
 
       session.on("signal:my-chat", handleChatMessage);
 
-      //TODO - 태깅정보
+      //TODO - gps
       const reportData = {
         userId: userId,
-        location: currentLocation,
+        location: averageGps(gpsList),
+        tagId: null,
       };
-      console.log("tagId:", tagId);
       if (tagId) reportData.tagId = tagId;
       console.log("reportData: ", reportData);
 
@@ -323,7 +344,13 @@ const ReportOpenViduPage = () => {
                 $height="55px"
                 $radius="50%"
                 $bg={{ default: "var(--white-color-200)" }}
-                children={cameraOff ? <VideocamIcon /> : <VideocamOffIcon />}
+                children={
+                  cameraOff ? (
+                    <VideocamIcon sx={{ fontSize: 24 }} />
+                  ) : (
+                    <VideocamOffIcon sx={{ color: " #CD3D64", fontSize: 24 }} />
+                  )
+                }
               />
               <Button
                 _onClick={handleMuteClick}
@@ -331,15 +358,21 @@ const ReportOpenViduPage = () => {
                 $height="55px"
                 $radius="50%"
                 $bg={{ default: "var(--white-color-200)" }}
-                children={muted ? <MicNoneIcon /> : <MicOffIcon />}
+                children={
+                  muted ? (
+                    <MicNoneIcon sx={{ fontSize: 24 }} />
+                  ) : (
+                    <MicOffIcon sx={{ color: " #CD3D64", fontSize: 24 }} />
+                  )
+                }
               />
               <Button
-                onClick={handleCameraChange}
+                _onClick={handleCameraChange}
                 $width="55px"
                 $height="55px"
                 $radius="50%"
                 $bg={{ default: "var(--white-color-200)" }}
-                children={<CameraswitchIcon />}
+                children={<CameraswitchIcon sx={{ fontSize: 24 }} />}
               />
               <Button
                 _onClick={onClickCallEnd}
@@ -348,7 +381,9 @@ const ReportOpenViduPage = () => {
                 $radius="50%"
                 $margin="0 0 0 6rem"
                 $bg={{ default: "var(--main-red-color)" }}
-                children={<CallEndIcon sx={{ color: "#f4f4f4" }} />}
+                children={
+                  <CallEndIcon sx={{ color: "#f4f4f4", fontSize: 24 }} />
+                }
               />
             </VideoBtn>
           )}
@@ -360,11 +395,10 @@ const ReportOpenViduPage = () => {
                 $height="55px"
                 $radius="50%"
                 $bg={{ default: "var(--white-color-200)" }}
-                children={<MoreHorizOutlinedIcon />}
+                children={<MoreHorizOutlinedIcon sx={{ fontSize: 24 }} />}
               />
             </VideoBtn>
           )}
-
           {isChatting ? (
             <ChattingWrapper ref={chatWrapperRef}>
               {chatlog && (
@@ -373,17 +407,13 @@ const ReportOpenViduPage = () => {
                     <Grid
                       key={index}
                       $display="flex"
-                      $justify_content={
+                      $align_items={
                         message.alignment === "right"
                           ? "flex-end"
                           : "flex-start"
                       }
-                      $align_items=""
                     >
-                      <ChattingMessage
-                        alignment={message.alignment}
-                        message={message.message}
-                      >
+                      <ChattingMessage alignment={message.alignment}>
                         <Text children={message.message} $size="2rem" />
                       </ChattingMessage>
                     </Grid>
@@ -395,13 +425,6 @@ const ReportOpenViduPage = () => {
                 <button onClick={handleMessageSubmit}>
                   <SendIcon fontSize="large" />
                 </button>
-                {/* <Button
-              _onClick={handleMessageSubmit}
-              $width="39px"
-              $height="48px"
-              $bg={{ default: "transparent" }}
-              children={}
-              /> */}
               </ChatInputBox>
             </ChattingWrapper>
           ) : (
@@ -412,10 +435,11 @@ const ReportOpenViduPage = () => {
                 $height="55px"
                 $radius="50%"
                 $bg={{ default: chatBtnColor }}
-                children={<ForumIcon />}
+                children={<ForumIcon sx={{ fontSize: 24 }} />}
               />
             </ChatBtn>
           )}
+
           <MyVideo ref={localVideoRef} autoPlay />
         </>
       )}
@@ -428,7 +452,7 @@ const PeerVideo = styled.video`
   height: 100%;
   flex-shrink: 0;
   position: relative;
-  background-color: pink;
+  background-color: var(--black-color-200);
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg); /* Safari and Chrome */
   -moz-transform: rotateY(180deg); /* Firefox */
@@ -515,10 +539,10 @@ const ChattingMessage = styled.div`
   display: flex;
   margin: 5px 0;
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 15px;
   max-width: 100%;
-  justify-content: ${({ alignment }) =>
-    alignment === "right" ? "flex-end" : "flex-start"};
+  width: fit-content;
+
   background-color: ${({ alignment }) =>
     alignment === "right"
       ? "var(--main-yellow-color)"

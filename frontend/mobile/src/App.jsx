@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -17,7 +17,6 @@ import {
   HomePage,
   LoginPage,
   SignupPage,
-  ReportCallPage,
   AgreeTermsPage,
   MenuPage,
   MedicalInfoPage,
@@ -32,7 +31,15 @@ import {
   DetailFirstAid,
 } from "@/pages";
 import GlobalStyle from "@/globalStyles.js";
+import useUserStore from "@/store/useUserStore";
+
 function App() {
+  const { clearGps } = useUserStore();
+  useEffect(() => {
+    return () => {
+      clearGps();
+    };
+  }, []);
   return (
     <Container>
       <GlobalStyle />
@@ -42,8 +49,7 @@ function App() {
           {/* <Route path="/" element={<Navigate to="/home" />} /> */}
           {/* <Route path="/home" element={<HomePage />} /> */}
           <Route path="/" element={<HomePage />} />
-          //TODO - 라우터 삭제
-          {/* <Route path="/report" element={<ReportCallPage />} /> */}
+
           <Route path="/report" element={<ReportOpenViduPage />} />
           <Route path="/verification" element={<VerifyCodeForm />} />
           <Route path="/changepassword" element={<ChangePwPage />} />

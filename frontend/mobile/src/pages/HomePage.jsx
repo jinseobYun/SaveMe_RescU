@@ -8,7 +8,7 @@ import useFormInputStore from "@/store/useFormInputStore";
 import useUserStore from "@/store/useUserStore";
 import { yesorNoAlert, errorAlert } from "@/util/notificationAlert";
 import logo from "@/assets/img/logo.png";
-import useCurrentLocation from "@/hooks/useCurrentLocation";
+import useWatchLocation from "@/hooks/useWatchLocation";
 
 const geolocationOptions = {
   enableHighAccuracy: true,
@@ -17,23 +17,26 @@ const geolocationOptions = {
 };
 const Home = () => {
   const navigate = useNavigate();
-  const { setGps, setTagId } = useUserStore();
-  const [toggleOn, setToggleOn] = useState(true);
-  const currentLocation = useCurrentLocation(geolocationOptions);
-
+  const { gps, addGps, clearGps, setTagId, setGpsTermAgree, gpsTermAgree } =
+    useUserStore();
+  const { location, error, cancelLocationWatch } =
+    useWatchLocation(geolocationOptions);
   const [searchParams] = useSearchParams();
   const tagId = searchParams.get("tagId");
   const onClickReportBtn = () => {
-    if (!toggleOn) errorAlert("위치 정보 제공에 동의해주세요");
-    else navigate("/report");
+    if (!gpsTermAgree) errorAlert("위치 정보 제공에 동의해주세요");
+    else {
+      navigate("/report");
+      cancelLocationWatch();
+    }
   };
   const { clearAllInputs } = useFormInputStore();
   useEffect(() => {
-    console.log(currentLocation);
-    if (currentLocation) {
-      setGps(currentLocation);
+    if (gps === null) clearGps();
+    if (location) {
+      addGps({ time: new Date(), location: location });
     }
-  }, [currentLocation]);
+  }, [location]);
   useEffect(() => {
     clearAllInputs();
     if (tagId) {
@@ -42,16 +45,16 @@ const Home = () => {
           setTagId(tagId);
           //TODO - 태깅 신고 로직
           navigate("/report");
-        } else navigate("/ ");
+        } else navigate("/");
       });
     }
   }, []);
   const onToggleOff = () => {
-    setToggleOn(false);
+    setGpsTermAgree(false);
     errorAlert("위치 정보 제공에 동의해주세요");
   };
   const onToggleOn = () => {
-    setToggleOn(true);
+    setGpsTermAgree(true);
   };
   return (
     <Container>
@@ -70,7 +73,7 @@ const Home = () => {
           $margin="6vh"
         >
           {/* 신고 버튼 */}
-          <Button
+          {/* <Button
             _onClick={onClickReportBtn}
             $radius="50%"
             $width="40vw"
@@ -86,11 +89,29 @@ const Home = () => {
                 $bold="true"
               />
             }
-          />
+          /> */}
+          <NeumorphismButton onClick={onClickReportBtn}>
+            <ReportBtnText>
+              <Text
+                $color="var(--white-color-100)"
+                children="119"
+                $size="40px"
+                $bold="true"
+              />
+            </ReportBtnText>
+            <ReportBtnText>
+              <Text
+                $color="var(--white-color-100)"
+                children="신고하기"
+                $size="20px"
+                $bold="true"
+              />
+            </ReportBtnText>
+          </NeumorphismButton>
         </Grid>
-
         {/* gps  */}
         <Toggle
+          $default={gpsTermAgree}
           _onToggleOff={onToggleOff}
           _onToggleOn={onToggleOn}
           $toggleColor="var(--main-yellow-color)"
@@ -149,3 +170,30 @@ const StyledHeader = styled.div`
   // );
 `;
 const StyledImg = styled.img``;
+
+const NeumorphismButton = styled.button`
+  width: 30vw;
+  height: 30vw;
+  border-radius: 50px;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 2rem;
+  padding-top: 1.4rem;
+  backdrop-filter: blur(10px);
+  background-color: rgb(255, 76, 76, 1);
+  box-shadow:
+    5px 5px 10px rgba(255, 255, 255, 0.6),
+    /* 오른쪽 아래 그림자 */ -5px -5px 10px rgba(255, 255, 255, 0.6),
+    /* 왼쪽 위 하이라이트 */ inset 5px 5px 10px rgba(255, 255, 255, 0.6),
+    /* 오목하게 만드는 내부 그림자 */ inset -5px -5px 10px
+      rgba(255, 255, 255, 0.6); /* 오목하게 만드는 내부 하이라이트 */
+`;
+
+const ReportBtnText = styled.div`
+  width: fit-content;
+  height: fit-content;
+`;

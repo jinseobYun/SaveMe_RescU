@@ -19,12 +19,9 @@ const EmergencyListItem = ({
   details,
   hvec,
   hvoc,
-  distance,
-  time,
   dutyTel1,
   latitude,
   longitude,
-  origin,
 }) => {
   const dispatch = useDispatch();
   const selectedInfo = useSelector(
@@ -79,8 +76,6 @@ const EmergencyListItem = ({
             </div>
           </>
         )}
-        {/* <div>거리 : {distance}</div>
-        <div>소요시간 : {time}분</div> */}
         <button onClick={handleClick}>경로표시</button>
       </div>
     </div>

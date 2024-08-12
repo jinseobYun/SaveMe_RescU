@@ -1,7 +1,6 @@
 import HomePage from "./HomePage";
 import LoginPage from "./LoginPage";
 import SignupPage from "./SignupPage";
-import ReportCallPage from "./ReportCallPage";
 import AgreeTermsPage from "./AgreeTermsPage";
 import MenuPage from "./MenuPage";
 import MedicalInfoPage from "./MedicalInfoPage";
@@ -22,7 +21,6 @@ export {
   HomePage,
   LoginPage,
   SignupPage,
-  ReportCallPage,
   AgreeTermsPage,
   MenuPage,
   MedicalInfoPage,

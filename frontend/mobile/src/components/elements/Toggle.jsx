@@ -11,8 +11,9 @@ const Toggle = ({
   $gridStyle = null,
   _onToggleOff = null,
   _onToggleOn = null,
+  $default = false,
 }) => {
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState($default);
   const styles = {
     $toggleOnText,
     $toggleOffText,
