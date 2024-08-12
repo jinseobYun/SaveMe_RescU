@@ -150,24 +150,35 @@ const ReportOpenViduPage = () => {
       );
       // if (!videoDevices || videoDevices.length < 2) return;
 
+      // let newPublisher = await OV.initPublisherAsync(undefined, {
+      //   videoSource: isCameraFront
+      //     ? videoDevices[0].deviceId
+      //     : videoDevices[1].deviceId,
+      //   publishAudio: true, // 오디오 퍼블리싱 여부
+      //   publishVideo: true, // 비디오 퍼블리싱 여부
+      //   mirror: isCameraFront, // 전면 카메라일 경우 화면 반전 여부
+      // });
+      const audioDevices = devices.filter(
+        (device) => device.kind === "audioinput"
+      );
+      console.log("audioDevices: " + audioDevices);
+
       let newPublisher = await OV.initPublisherAsync(undefined, {
-        videoSource: isCameraFront
-          ? videoDevices[0].deviceId
-          : videoDevices[1].deviceId,
+        audioSource: audioDevices[1].deviceId,
         publishAudio: true, // 오디오 퍼블리싱 여부
         publishVideo: true, // 비디오 퍼블리싱 여부
         mirror: isCameraFront, // 전면 카메라일 경우 화면 반전 여부
       });
-
       console.log("새 퍼블리셔 초기화 완료:", newPublisher);
       console.log("스트림:", newPublisher.stream.getMediaStream());
       console.log(getMainStreamManager());
       // 기존의 스트림을 언퍼블리시합니다.
-      await session.unpublish(getMainStreamManager());
+      if (getMainStreamManager()) {
+        await session.unpublish(getMainStreamManager());
+      }
       console.log("기존 퍼블리셔 제거 완료");
 
       // 새로운 스트림을 퍼블리시합니다.
-      // mainStreamManager = newPublisher;
       setMainStreamManager(newPublisher);
       setPublisher(newPublisher);
       await session.publish(newPublisher);
@@ -175,8 +186,8 @@ const ReportOpenViduPage = () => {
 
       // 비디오 요소에 스트림을 설정합니다.
       localVideoRef.current.srcObject = newPublisher.stream.getMediaStream();
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error("퍼블리셔 초기화 실패:", error);
     }
   }, [currentVideoDevice, getMainStreamManager]);
 
