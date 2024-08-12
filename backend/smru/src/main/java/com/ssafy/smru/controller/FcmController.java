@@ -1,7 +1,7 @@
 package com.ssafy.smru.controller;
 
 import com.ssafy.smru.dto.FcmRequestDto;
-import com.ssafy.smru.util.FcmService;
+import com.ssafy.smru.service.FcmService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
