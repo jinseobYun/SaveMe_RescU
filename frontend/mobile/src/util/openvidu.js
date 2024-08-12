@@ -3,8 +3,13 @@ import { getToken } from "@api/reportApi";
 
 export let OV;
 export let session;
-export let mainStreamManager;
-export let publisher;
+let mainStreamManager;
+export const getMainStreamManager = () => mainStreamManager;
+export const setMainStreamManager = (newValue) =>
+  (mainStreamManager = newValue);
+let publisher;
+export const getPublisher = () => publisher;
+export const setPublisher = (newValue) => (publisher = newValue);
 export let subscribers = [];
 
 export const initOpenVidu = async (sessionId) => {

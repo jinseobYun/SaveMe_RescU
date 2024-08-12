@@ -21,12 +21,14 @@ import { averageGps } from "@/util/dataProcessing";
 import {
   initOpenVidu,
   leaveSession,
-  mainStreamManager,
+  setMainStreamManager,
+  getMainStreamManager,
   subscribers,
   toggleAudio,
   toggleVideo,
   session,
-  publisher,
+  getPublisher,
+  setPublisher,
   OV,
 } from "@/util/openvidu";
 const ReportOpenViduPage = () => {
@@ -98,9 +100,9 @@ const ReportOpenViduPage = () => {
   useEffect(() => {
     if (sessionId) {
       initOpenVidu(sessionId).then(() => {
-        if (mainStreamManager) {
+        if (getMainStreamManager()) {
           const videoStream = new MediaStream(
-            mainStreamManager.stream.getMediaStream().getVideoTracks() // 비디오 트랙만 가져옴
+            getMainStreamManager().stream.getMediaStream().getVideoTracks() // 비디오 트랙만 가져옴
           );
           setCurrentVideoDevice(videoStream);
           localVideoRef.current.srcObject = videoStream;
@@ -148,7 +150,7 @@ const ReportOpenViduPage = () => {
       );
       if (!videoDevices || videoDevices.length < 2) return;
 
-      const newPublisher = await OV.initPublisherAsync(undefined, {
+      let newPublisher = await OV.initPublisherAsync(undefined, {
         videoSource: isCameraFront
           ? videoDevices[1].deviceId
           : videoDevices[0].deviceId,
@@ -161,12 +163,12 @@ const ReportOpenViduPage = () => {
       console.log("스트림:", newPublisher.stream.getMediaStream());
 
       // 기존의 스트림을 언퍼블리시합니다.
-      await session.unpublish(mainStreamManager);
+      await session.unpublish(getMainStreamManager());
       console.log("기존 퍼블리셔 제거 완료");
 
       // 새로운 스트림을 퍼블리시합니다.
       // mainStreamManager = newPublisher;
-      // publisher = newPublisher;
+      setPublisher(newPublisher);
       await session.publish(newPublisher);
       console.log("퍼블리쉬 재설정 완료");
 
@@ -175,7 +177,7 @@ const ReportOpenViduPage = () => {
     } catch (e) {
       console.error(e);
     }
-  }, [currentVideoDevice, mainStreamManager]);
+  }, [currentVideoDevice, getMainStreamManager]);
 
   const onClickScreen = () => {
     if (isChatting && !showMenuAll) {
