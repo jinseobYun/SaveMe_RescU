@@ -48,7 +48,6 @@ const Login = () => {
         },
         (error) => {
           console.log(error);
-          //FIXME - 백에게 에러 메세지 요청하기
           errorAlert(error.response.data);
         }
       );
@@ -57,6 +56,7 @@ const Login = () => {
   });
   const [deviceToken, setDeviceToken] = useState();
   useEffect(() => {
+    //FIXME - 주석해체
     const deviceToken = window.AndroidInterface.getDeviceToken();
     console.log("deviceToken: " + deviceToken);
     setDeviceToken(deviceToken);
