@@ -69,7 +69,7 @@ public class FcmService {
                     .appMember(member)
                     .build();
             fcmRepository.save(pushNotification);
-            String message = makeMessage(appMember.getDeviceToken(), title, body);
+            String message = makeMessage(member.getDeviceToken(), title, body);
             log.info(message);
             OkHttpClient client = new OkHttpClient();
             RequestBody requestBody = RequestBody.create(message,
