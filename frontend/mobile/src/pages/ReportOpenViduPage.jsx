@@ -148,12 +148,12 @@ const ReportOpenViduPage = () => {
       const videoDevices = devices.filter(
         (device) => device.kind === "videoinput"
       );
-      if (!videoDevices || videoDevices.length < 2) return;
+      // if (!videoDevices || videoDevices.length < 2) return;
 
       let newPublisher = await OV.initPublisherAsync(undefined, {
         videoSource: isCameraFront
-          ? videoDevices[1].deviceId
-          : videoDevices[0].deviceId,
+          ? videoDevices[0].deviceId
+          : videoDevices[1].deviceId,
         publishAudio: true, // 오디오 퍼블리싱 여부
         publishVideo: true, // 비디오 퍼블리싱 여부
         mirror: isCameraFront, // 전면 카메라일 경우 화면 반전 여부
@@ -161,13 +161,14 @@ const ReportOpenViduPage = () => {
 
       console.log("새 퍼블리셔 초기화 완료:", newPublisher);
       console.log("스트림:", newPublisher.stream.getMediaStream());
-
+      console.log(getMainStreamManager());
       // 기존의 스트림을 언퍼블리시합니다.
       await session.unpublish(getMainStreamManager());
       console.log("기존 퍼블리셔 제거 완료");
 
       // 새로운 스트림을 퍼블리시합니다.
       // mainStreamManager = newPublisher;
+      setMainStreamManager(newPublisher);
       setPublisher(newPublisher);
       await session.publish(newPublisher);
       console.log("퍼블리쉬 재설정 완료");
