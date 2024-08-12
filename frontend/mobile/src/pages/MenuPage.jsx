@@ -40,7 +40,7 @@ const MenuPage = () => {
     {
       icon: <NotificationsOutlinedIcon />,
       label: "알림 관리",
-      path: "/notifications",
+      path: "/pushnotis",
     },
     {
       icon: <InfoOutlinedIcon />,
