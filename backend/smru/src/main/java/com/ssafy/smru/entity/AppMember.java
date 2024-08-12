@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -52,6 +53,8 @@ public class AppMember implements UserDetails {
     @Column
     private String deviceToken;
 
+    @Column
+    private String nfcToken;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -69,7 +72,7 @@ public class AppMember implements UserDetails {
     }
 
     @Builder
-    public AppMember(Long appMemberId, String memberId, String password, String memberName, LocalDate birth, boolean gender, String phoneNumber, boolean deleted, MedicalInformation medicalInformation, String deviceToken) {
+    public AppMember(Long appMemberId, String memberId, String password, String memberName, LocalDate birth, boolean gender, String phoneNumber, boolean deleted, MedicalInformation medicalInformation, String deviceToken, String nfcToken) {
         this.appMemberId = appMemberId;
         this.memberId = memberId;
         this.password = password;
@@ -80,7 +83,9 @@ public class AppMember implements UserDetails {
         this.deleted = deleted;
         this.medicalInformation = medicalInformation;
         this.deviceToken = deviceToken;
+        this.nfcToken = nfcToken;
     }
+
 
     public void changePassword(String password) {
         this.password = password;
@@ -94,5 +99,8 @@ public class AppMember implements UserDetails {
     }
     public void changeDeviceToken(String deviceToken) {
         this.deviceToken = deviceToken;
+    }
+    public void setRandomNfcToken() {
+        this.nfcToken = UUID.randomUUID().toString();
     }
 }

@@ -21,7 +21,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.webjars.NotFoundException;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -49,6 +51,7 @@ public class AppMemberServiceImpl implements AppMemberService {
         }
 
         AppMember appMember = dto.toEntity();
+        appMember.setRandomNfcToken();
         appMember.changePassword(passwordEncoder.encode(appMember.getPassword()));
         appMemberRepository.save(appMember);
 
@@ -164,6 +167,19 @@ public class AppMemberServiceImpl implements AppMemberService {
         TokenInfo tokenInfo = appJwtProvider.generateToken(appJwtProvider.getAuthentication(accessToken), appJwtProvider.getAppMemberIdFromToken(accessToken), appJwtProvider.getMemberNameFromToken(accessToken));
         // TODO: DB의 사용자 refreshToken을 교체
         return tokenInfo;
+    }
+
+    @Override
+    @Transactional
+    public Map<String, String> getNfcToken(String memberId) {
+        Map<String, String> result = new HashMap<>();
+        AppMember appMember = appMemberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
+
+        if (appMember.getNfcToken() == null) appMember.setRandomNfcToken();
+
+        result.put("nfcToken", appMember.getNfcToken());
+        return result;
     }
 
 }

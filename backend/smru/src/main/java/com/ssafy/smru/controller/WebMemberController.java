@@ -2,7 +2,6 @@ package com.ssafy.smru.controller;
 
 import com.ssafy.smru.dto.WebMemberDto;
 import com.ssafy.smru.dto.WebPasswordChangeDto;
-import com.ssafy.smru.repository.WebMemberRepository;
 import com.ssafy.smru.service.WebMemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -47,7 +46,11 @@ public class WebMemberController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody WebMemberDto.Request dto) {
         try {
-            return ResponseEntity.ok(webMemberService.register(dto));
+            int result =webMemberService.register(dto);
+            if(result==1){
+                return new ResponseEntity<>("중복된 ID 입니다.",HttpStatus.BAD_REQUEST);
+            }
+            return ResponseEntity.ok("회원가입에 성공했습니다!");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("서버에서 오류 발생");
         }
@@ -76,6 +79,7 @@ public class WebMemberController {
             return new ResponseEntity<>(webMemberService.getMembername(),HttpStatus.OK);
 
     }
+
 
     // 전체 Member 조회
     @GetMapping("/member-list")

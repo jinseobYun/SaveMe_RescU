@@ -5,12 +5,15 @@ import com.ssafy.smru.dto.AppMemberDto;
 import com.ssafy.smru.dto.GeoCoderResponseDto;
 import com.ssafy.smru.dto.ReportInfoDto;
 import com.ssafy.smru.dto.app.MedicalInformationDto;
+import com.ssafy.smru.entity.AppMember;
 import com.ssafy.smru.entity.RescueTeam;
+import com.ssafy.smru.repository.AppMemberRepository;
 import com.ssafy.smru.repository.RescueTeamRepository;
 import com.ssafy.smru.service.app.MedicalInformationService;
 import com.ssafy.smru.util.DistanceUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.math.BigDecimal;
 import java.time.ZoneId;
@@ -30,9 +33,10 @@ public class ReportInfoService {
     private final MedicalInformationService medicalInformationService;
     private final GeoCoderApiService geoCoderApiService;
     private final RescueTeamRepository rescueTeamRepository;
+    private final AppMemberRepository appMemberRepository;
 
 
-    public ReportInfoDto.Response getReportInfo(String patientId, String reporterID, String lat, String lon) {
+    public ReportInfoDto.Response getReportInfo(String nfcToken, String reporterID, String lat, String lon) {
 
         // 신고 시각
         // 서울 시간 기준 현재 시간 저장
@@ -75,9 +79,16 @@ public class ReportInfoService {
                 reportInfoDto.setRescueTeams(rescueTeams);
             }
         }
-        if(patientId != null && !patientId.isEmpty()) {
+
+        if(nfcToken != null && !nfcToken.isEmpty()) {
             //  받아온 아이디로 DB 에서 조회
-            AppMemberDto.Response patient = appMemberService.getMemberByMemberId(patientId);
+             //  받아온 NFC 토큰으로 DB 에서 조회
+        AppMemberDto.Response patient = AppMemberDto.Response
+                .fromEntity(
+                        appMemberRepository.findByNfcToken(nfcToken)
+                        .orElseThrow(() -> new NotFoundException("존재하지 않는 NFC 토큰입니다."))
+                );
+
             // 태깅된 정보는 null 로 초기화
             MedicalInformationDto.ReportInfoResponse taggingTotalInfo = new MedicalInformationDto.ReportInfoResponse();
             // 태깅된 아이디로 불러온 회원이 존재하면
@@ -86,7 +97,7 @@ public class ReportInfoService {
                 taggingTotalInfo.updateMember(patient);
 
                 // 태깅된 ID로 의료정보 불러오기
-                MedicalInformationDto.Response patientMedicalInformation = medicalInformationService.getMedicalInformationByMemberId(patientId);
+                MedicalInformationDto.Response patientMedicalInformation = medicalInformationService.getMedicalInformationByMemberId(patient.getMemberId());
                 // 환자 의료 정보가 비어있지 않으면 태깅 정보를 업데이트
                 if (patientMedicalInformation != null) {
                     taggingTotalInfo = MedicalInformationDto

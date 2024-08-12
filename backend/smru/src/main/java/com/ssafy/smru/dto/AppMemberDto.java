@@ -9,6 +9,7 @@ public class AppMemberDto {
     @Getter
     @NoArgsConstructor
     @ToString
+    @Builder
     public static class Request {
         private Long appMemberId;
         private String memberId;
@@ -21,7 +22,7 @@ public class AppMemberDto {
         private MedicalInfoDto medicalInfoDto;
         private String deviceToken;
 
-        @Builder
+
         public AppMember toEntity() {
             return AppMember.builder()
                     .appMemberId(appMemberId)
@@ -32,6 +33,7 @@ public class AppMemberDto {
                     .gender(gender)
                     .phoneNumber(phoneNumber)
                     .deleted(deleted)
+                    .deviceToken(deviceToken)
                     .medicalInformation(null)
                     .build();
         }
