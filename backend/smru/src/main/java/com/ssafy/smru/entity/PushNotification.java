@@ -25,7 +25,7 @@ public class PushNotification {
     private LocalDateTime notificationTime;
 
     @OneToOne
-    @JoinColumn(name = "app_member_id")
+    @JoinColumn(name = "target_member_id")
     private AppMember appMember;
 
     @Builder
