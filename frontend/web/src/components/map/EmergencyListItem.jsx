@@ -17,6 +17,8 @@ const EmergencyListItem = ({
   dutyName,
   dutyAddr,
   details,
+  hvec,
+  hvoc,
   distance,
   time,
   dutyTel1,
@@ -52,7 +54,15 @@ const EmergencyListItem = ({
         <div className="separator"></div>
         <p><img src={HospitalMapImage} alt = "병원위치 아이콘" className="phone-logo-image"/>{dutyAddr}</p>
         <div className="separator"></div>
-        <p>{details}</p>
+        <span style={{ color: hvoc === 0 ? 'red' : 'green' }}>
+  응급실 {hvoc >= 0 ? hvoc : -hvoc}
+</span>
+&nbsp;
+&nbsp;
+<span style={{ color: hvec === 0 ? 'red' : 'green' }}>
+  수술실 {hvec >= 0 ? hvec : -hvec}
+</span>
+
         <div className="separator"></div>
           
           <p><img src={PhoneImage} alt="전화 아이콘" className="phone-logo-image" />{dutyTel1}</p>
