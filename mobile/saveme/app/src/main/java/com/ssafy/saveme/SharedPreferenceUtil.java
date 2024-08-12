@@ -33,14 +33,14 @@ public class SharedPreferenceUtil {
                     @Override
                     public void onComplete(@NonNull Task<String> task) {
                         if (!task.isSuccessful()) {
-                            Toast.makeText(context, "FCM 토큰 가져오기 실패", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(context, "FCM 토큰 가져오기 실패", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
                         // 새 FCM 토큰을 가져왔습니다.
                         String token = task.getResult();
-                        Toast.makeText(context, "FCM 토큰을 성공적으로 가져왔습니다.", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(context, "FCM 토큰\n" + token, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "FCM 토큰을 성공적으로 가져왔습니다.", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "FCM 토큰\n" + token, Toast.LENGTH_SHORT).show();
                         // 토큰을 SharedPreferences에 저장
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString(AppConstants.KEY_FCM_TOKEN, token);

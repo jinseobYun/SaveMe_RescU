@@ -60,11 +60,6 @@ public class MainActivity extends AppCompatActivity {
             sharedPreferenceUtil.saveDeviceToken();
         }
 
-        // 위치정보제공에 동의하지 않았다면 동의하도록 유도
-        if (!sharedPreferenceUtil.checkLocationTerms()) {
-            toastUtil.showCustomToast("위치 정보 제공에 동의하셔야 앱을 사용하실 수 있습니다.");
-        }
-
         setContentView(R.layout.activity_main);
         // URI 스킴을 통해 전달된 데이터를 처리
         Intent intent = getIntent();
