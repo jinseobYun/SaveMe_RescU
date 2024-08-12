@@ -111,16 +111,14 @@ const ReportOpenViduPage = () => {
           const videoDevices = devices.filter(
             (device) => device.kind === "videoinput"
           );
-
           const currentVideoDeviceId = getMainStreamManager()
             .stream.getMediaStream()
             .getVideoTracks()[0]
             .getSettings().deviceId;
+
           const currentVideoDevice = videoDevices.find(
             (device) => device.deviceId === currentVideoDeviceId
           );
-          console.log("첫 디바이스 아이디: " + currentVideoDeviceId);
-          console.log("첫 디바이스 : " + currentVideoDevice);
           setCurrentVideoDevice(currentVideoDevice);
         }
       });
@@ -158,47 +156,112 @@ const ReportOpenViduPage = () => {
     }
   }, [remoteStream]);
 
-  const handleCameraChange = useCallback(async () => {
-    try {
-      const devices = await OV.getDevices();
-      const videoDevices = devices.filter(
-        (device) => device.kind === "videoinput"
-      );
-      if (!videoDevices || videoDevices.length < 2) return;
-      const newVideoDevice = videoDevices.filter(
-        (device) => device.deviceId !== currentVideoDevice.deviceId
-      );
+  // const handleCameraChange = useCallback(async () => {
+  //   try {
+  //     const devices = await OV.getDevices();
+  //     const videoDevices = devices.filter(
+  //       (device) => device.kind === "videoinput"
+  //     );
+  //     if (!videoDevices || videoDevices.length < 2) return;
+  //     const newVideoDevice = videoDevices.filter(
+  //       (device) => device.deviceId !== currentVideoDevice.deviceId
+  //     );
+  //     for (let index = 0; index < newVideoDevice.length; index++) {
+  //       console.log(newVideoDevice[index].deviceId);
+  //     }
+  //     console.log("새로운 디바이스 Id: " + newVideoDevice[0].deviceId);
+  //     if (newVideoDevice.length > 0) {
+  //       await session.unpublish(getPublisher());
+  //       console.log("기존 퍼블리셔 제거 완료");
 
-      console.log("새로운 디바이스 Id: " + newVideoDevice[0].deviceId);
-      if (newVideoDevice.length > 0) {
-        await session.unpublish(getPublisher());
-        console.log("기존 퍼블리셔 제거 완료");
+  //       let newPublisher = await OV.initPublisherAsync(undefined, {
+  //         audioSource: undefined,
+  //         // videoSource: isCameraFront
+  //         //   ? videoDevices[1].deviceId
+  //         //   : videoDevices[0].deviceId,
+  //         videoSource: newVideoDevice[0].deviceId,
+  //         publishAudio: true,
+  //         publishVideo: true,
+  //         mirror: isCameraFront,
+  //       });
 
-        let newPublisher = await OV.initPublisherAsync(undefined, {
-          audioSource: undefined,
-          // videoSource: isCameraFront
-          //   ? videoDevices[1].deviceId
-          //   : videoDevices[0].deviceId,
-          videoSource: newVideoDevice[0].deviceId,
-          publishAudio: true,
-          publishVideo: true,
-          mirror: isCameraFront,
-        });
+  //       setPublisher(newPublisher);
+  //       await session.publish(newPublisher);
 
-        await session.publish(newPublisher);
-        setIsCameraFront(!isCameraFront);
-        setPublisher(newPublisher);
-        setCurrentVideoDevice(newVideoDevice);
-        const videoStream = new MediaStream(
-          newPublisher.stream.getMediaStream().getVideoTracks()
+  //       setIsCameraFront(!isCameraFront);
+  //       setCurrentVideoDevice(newVideoDevice[0]);
+
+  //       const videoStream = new MediaStream(
+  //         newPublisher.stream.getMediaStream().getVideoTracks()
+  //       );
+  //       localVideoRef.current.srcObject = videoStream;
+
+  //       getPublisher().publishAudio(muted);
+  //     }
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  // }, [isCameraFront, getMainStreamManager, muted, currentVideoDevice]);
+
+  const handleCameraChange = useCallback(() => {
+    const execute = async () => {
+      try {
+        const devices = await OV.getDevices();
+        const videoDevices = devices.filter(
+          (device) => device.kind === "videoinput"
         );
-        localVideoRef.current.srcObject = videoStream;
+        if (!videoDevices || videoDevices.length < 2) return;
 
-        getPublisher().publishAudio(muted);
+        const newVideoDevice = videoDevices.filter(
+          (device) => device.deviceId !== currentVideoDevice.deviceId
+        );
+
+        for (let index = 0; index < newVideoDevice.length; index++) {
+          console.log(newVideoDevice[index].deviceId);
+        }
+
+        console.log("새로운 디바이스 Id: " + newVideoDevice[0].deviceId);
+
+        if (newVideoDevice.length > 0) {
+          // 기존 퍼블리셔 언퍼블리시
+          await session.unpublish(getPublisher());
+          console.log("기존 퍼블리셔 제거 완료");
+
+          // 새로운 퍼블리셔 생성
+          let newPublisher = await OV.initPublisherAsync(undefined, {
+            audioSource: undefined,
+            videoSource: newVideoDevice[0].deviceId,
+            publishAudio: true,
+            publishVideo: true,
+            mirror: isCameraFront,
+          });
+
+          // 새로운 퍼블리셔를 상태에 설정
+          setPublisher(newPublisher);
+
+          // 새로운 퍼블리셔 퍼블리시
+          await session.publish(newPublisher);
+
+          // 상태 업데이트
+          setIsCameraFront(!isCameraFront);
+          setCurrentVideoDevice(newVideoDevice[0]);
+
+          // 로컬 비디오 업데이트
+          const videoStream = new MediaStream(
+            newPublisher.stream.getMediaStream().getVideoTracks()
+          );
+          localVideoRef.current.srcObject = videoStream;
+
+          // 오디오 상태 유지
+          getPublisher().publishAudio(muted);
+        }
+      } catch (e) {
+        console.error(e);
       }
-    } catch (e) {
-      console.error(e);
-    }
+    };
+
+    // execute 함수를 호출하여 비동기적으로 동작하도록 함
+    execute();
   }, [isCameraFront, getMainStreamManager, muted, currentVideoDevice]);
 
   const onClickScreen = () => {
