@@ -85,7 +85,7 @@ const ReportOpenViduPage = () => {
     setLoading(false);
     return () => {
       abortController.abort();
-      leaveSession();
+      if (session) leaveSession();
     };
   }, []);
 
