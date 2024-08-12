@@ -56,7 +56,7 @@ async function updateUserPwd(type, data, success, fail) {
 }
 
 async function getNFCToken(loginId, success, fail) {
-  await http.get(`/members/nfc - token/${loginId}`).then(success).catch(fail);
+  await http.get(`/members/nfc-token/${loginId}`).then(success).catch(fail);
 }
 // async function logout(loginId, success, fail) {
 //   await http.get(`/members/logout/${loginId}`).then(success).catch(fail);

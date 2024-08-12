@@ -8,8 +8,10 @@ import { Grid, Button, Text, Input } from "@components/elements";
 import nfcimg from "@/assets/img/nfcimg.png";
 import { getNFCToken } from "@/api/userApi";
 import { yesorNoAlert, errorAlert } from "@/util/notificationAlert";
+import useUserStore from "@/store/useUserStore";
 
 const NfcInfoPage = () => {
+  const { userId } = useUserStore();
   const [userNfc, setUserNfc] = useState(null);
   const onClickShowModal = () => {};
   const btnStyles = {
@@ -31,13 +33,19 @@ const NfcInfoPage = () => {
     $height: "10vh",
   };
   const onClickTokenModal = () => {
-    getNFCToken().then((response) => {
-      if (response.status === 200) {
+    if (userNfc) return;
+    getNFCToken(
+      userId,
+      (response) => {
         setUserNfc(response.data.nfcToken);
         errorAlert(`NFC token은 ${response.data.nfcToken}입니다`);
+        //클립보드
+        //FIXME - navigator.clipboard.writeText(`saveme://open?tagId=${userNfc}`);
+      },
+      (error) => {
+        console.log(error);
       }
-      //FIXME - navigator.clipboard.writeText(`saveme://open?tagId=${userNfc}`);
-    });
+    );
   };
   return (
     <Container>
