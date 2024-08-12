@@ -24,13 +24,13 @@ const Chat = () => {
         console.log("매세지관리 event:,", event)
 
         const eventJson = JSON.parse(event.data);
-        if (eventJson.sender !=="web" && event.from.connectionId !== userIdRef.current) {
+        if (eventJson.sender !=="app" && event.from.connectionId !== userIdRef.current) {
           console.log("상대방의 event data:", event.data);
           setChat((prevChat) => [
             ...prevChat,
             {
               alignment: "left", // 상대방 메시지는 항상 왼쪽에 정렬
-              message: event.data,
+              message: eventJson.message,
             },
           ]);
         }
