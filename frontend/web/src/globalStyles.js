@@ -13,7 +13,7 @@ const GlobalStyles = createGlobalStyle`
         
         --red-color-100: #CD3D64;
         --red-color-200: #A41C4E;
-		--button-red-color: #FF2929;
+				--button-red-color: #FF2929;
         
         --green-color-100: #09825D;
         --green-color-200: #0E6245;

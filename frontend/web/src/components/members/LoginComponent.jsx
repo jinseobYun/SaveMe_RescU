@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useCustomLogin from "../../hooks/useCustomLogin";
-
+import logoImage from "../../assets/RescULogo.png"
 import Button from "../../components/elements/Button";
 import Input from "../../components/elements/Input";
-import logoImage from '../../assets/RescULogo.png'
+
 // import { loginPost } from "../../api/membersApi";
 import "./LoginComponent.css";
 
@@ -48,7 +48,7 @@ export default function LoginComponent() {
 return (
   <div className="logincontainer">
     <div className="login-info">
-      <img src={logoImage} alt="로고" className="logo-image" />
+      <img src={logoImage} alt="로고" className="login-logo-image" />
     </div>
     <div className="login-input">
       <div className="id">
