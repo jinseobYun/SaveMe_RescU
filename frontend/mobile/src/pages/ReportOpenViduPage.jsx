@@ -45,7 +45,7 @@ const ReportOpenViduPage = () => {
   const [muted, setMuted] = useState(true);
   const [cameraOff, setCameraOff] = useState(true);
   const [isCameraFront, setIsCameraFront] = useState(true);
-  const [cameras, setCameras] = useState([]);
+  const [currentVideoDevice, setCurrentVideoDevice] = useState(null);
 
   // 상대방 스트림 상태 관리
   const navigate = useNavigate();
@@ -101,12 +101,26 @@ const ReportOpenViduPage = () => {
 
   useEffect(() => {
     if (sessionId) {
-      initOpenVidu(sessionId).then(() => {
+      initOpenVidu(sessionId).then(async () => {
         if (getMainStreamManager()) {
           const videoStream = new MediaStream(
             getMainStreamManager().stream.getMediaStream().getVideoTracks() // 비디오 트랙만 가져옴
           );
           localVideoRef.current.srcObject = videoStream;
+          const devices = await OV.getDevices();
+          const videoDevices = devices.filter(
+            (device) => device.kind === "videoinput"
+          );
+
+          const currentVideoDeviceId = getMainStreamManager()
+            .stream.getMediaStream()
+            .getVideoTracks()[0]
+            .getSettings().deviceId;
+          const currentVideoDevice = videoDevices.find(
+            (device) => device.deviceId === currentVideoDeviceId
+          );
+
+          setCurrentVideoDevice(currentVideoDevice);
         }
       });
     }
@@ -151,39 +165,45 @@ const ReportOpenViduPage = () => {
       );
       console.log(isCameraFront);
       if (!videoDevices || videoDevices.length < 2) return;
-
-      let newPublisher = await OV.initPublisherAsync(undefined, {
-        audioSource: undefined,
-        videoSource: isCameraFront
-          ? videoDevices[1].deviceId
-          : videoDevices[0].deviceId,
-        publishAudio: true,
-        publishVideo: true,
-        mirror: isCameraFront,
-      });
-
-      setIsCameraFront(!isCameraFront);
-
-      await session.unpublish(getPublisher());
-      console.log("기존 퍼블리셔 제거 완료");
-
-      // 새로운 스트림을 퍼블리시합니다.
-      // mainStreamManager = newPublisher;
-      // setMainStreamManager(newPublisher);
-      // console.log("새 미디어 스트림: " + getMainStreamManager());
-      setPublisher(newPublisher);
-      await session.publish(newPublisher);
-
-      const videoStream = new MediaStream(
-        newPublisher.stream.getMediaStream().getVideoTracks()
+      const newVideoDevice = videoDevices.filter(
+        (device) => device.deviceId !== currentVideoDevice.deviceId
       );
-      localVideoRef.current.srcObject = videoStream;
+      console.log(newVideoDevice);
+      if (newVideoDevice.length > 0) {
+        let newPublisher = await OV.initPublisherAsync(undefined, {
+          audioSource: undefined,
+          // videoSource: isCameraFront
+          //   ? videoDevices[1].deviceId
+          //   : videoDevices[0].deviceId,
+          videoSource: newVideoDevice[0].deviceId,
+          publishAudio: true,
+          publishVideo: true,
+          mirror: isCameraFront,
+        });
 
-      getPublisher().publishAudio(muted);
+        setIsCameraFront(!isCameraFront);
+
+        await session.unpublish(getPublisher());
+        console.log("기존 퍼블리셔 제거 완료");
+
+        // 새로운 스트림을 퍼블리시합니다.
+        // mainStreamManager = newPublisher;
+        // setMainStreamManager(newPublisher);
+        // console.log("새 미디어 스트림: " + getMainStreamManager());
+        setPublisher(newPublisher);
+        await session.publish(newPublisher);
+
+        const videoStream = new MediaStream(
+          newPublisher.stream.getMediaStream().getVideoTracks()
+        );
+        localVideoRef.current.srcObject = videoStream;
+
+        getPublisher().publishAudio(muted);
+      }
     } catch (e) {
       console.error(e);
     }
-  }, [isCameraFront, getMainStreamManager, muted]);
+  }, [isCameraFront, getMainStreamManager, muted, currentVideoDevice]);
 
   const onClickScreen = () => {
     if (isChatting && !showMenuAll) {

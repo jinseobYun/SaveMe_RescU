@@ -38,9 +38,6 @@ const Login = () => {
             let dec = base64.decode(payload);
             let decUtf8 = utf8.decode(dec);
             let decJson = JSON.parse(decUtf8);
-            console.log("dec: " + dec);
-            console.log(decUtf8);
-            console.log(decJson);
             setUserName(decJson.memberName);
             clearInputs();
             navigate("/");
