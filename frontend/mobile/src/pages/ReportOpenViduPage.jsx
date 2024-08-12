@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { useNavigate } from "react-router-dom";
 
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
@@ -151,7 +151,6 @@ const ReportOpenViduPage = () => {
       const videoDevices = devices.filter(
         (device) => device.kind === "videoinput"
       );
-      console.log("videoDevices:", videoDevices);
       if (videoDevices && videoDevices.length > 1) {
         const newVideoDevice = videoDevices.filter(
           (device) => device.deviceId !== currentVideoDevice.deviceId
@@ -373,6 +372,17 @@ const ReportOpenViduPage = () => {
                 $radius="50%"
                 $bg={{ default: "var(--white-color-200)" }}
                 children={<CameraswitchIcon sx={{ fontSize: 24 }} />}
+                $animation={keyframes`
+                  0% {
+                    transform: scale(1);
+                  }
+                  50% {
+                    transform: scale(1.2);
+                  }
+                  100% {
+                    transform: scale(1);
+                  }
+                `}
               />
               <Button
                 _onClick={onClickCallEnd}

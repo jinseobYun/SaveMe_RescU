@@ -21,6 +21,7 @@ const Button = ({
   $boxShadow = false,
   $transition = "background-color 0.3s ease-in-out, color 0.3s ease-in-out",
   $zIndex = 1,
+  $animation,
 }) => {
   const styles = {
     $margin,
@@ -37,6 +38,7 @@ const Button = ({
     $transition,
     $zIndex,
     $disabled,
+    $animation,
   };
   return (
     <BasicButton {...styles} onClick={_onClick} disabled={$disabled}>
@@ -94,6 +96,7 @@ const BasicButton = styled.button`
         : css`
             background-color: ${props.$bg.active || props.$bg.default};
             color: ${props.$color.active || props.$color.default};
+            animation: ${props.$animation} 0.4s ease;
           `}
 }
     ${(props) =>
