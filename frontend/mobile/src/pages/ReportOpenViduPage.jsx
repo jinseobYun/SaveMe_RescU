@@ -142,7 +142,6 @@ const ReportOpenViduPage = () => {
   }, [remoteStream]);
 
   const handleCameraChange = useCallback(async () => {
-    console.log(currentVideoDevice);
     try {
       const devices = await OV.getDevices();
       const videoDevices = devices.filter(
@@ -157,7 +156,7 @@ const ReportOpenViduPage = () => {
         if (newVideoDevice.length > 0) {
           console.log("새 기기 첫번째꺼: ", newVideoDevice[0]);
           console.log("새 기기 id: ", newVideoDevice[0].deviceId);
-          const newPublisher = OV.current.initPublisher(undefined, {
+          const newPublisher = OV.initPublisher(undefined, {
             videoSource: newVideoDevice[0].deviceId,
             publishAudio: true,
             publishVideo: true,
