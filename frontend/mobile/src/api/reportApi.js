@@ -11,15 +11,21 @@ axiosRetry(ovHttp, {
   retryDelay: (retryCount) => 1000, // 1초 간격으로 재시도
 });
 
-const getReportSessionId = async (abortController, success, fail) => {
+const getReportSessionId = async (
+  abortController,
+  success,
+  fail,
+  abortFail
+) => {
   try {
     const response = await ovHttp.get("/sessions/rooms", {
       signal: abortController.signal, // AbortController의 signal을 axios 요청에 전달
     });
     success(response);
   } catch (error) {
-    if (error.name === "AbortError") {
-      console.log("요청이 취소되었습니다.");
+    console.log(error);
+    if (error.name === "CanceledError") {
+      abortFail(error);
     } else {
       fail(error);
     }

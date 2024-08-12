@@ -77,8 +77,15 @@ const ReportOpenViduPage = () => {
         setLoading(false);
         successAlert(
           "현재 연결 가능한 119 대원이 없습니다.잠시후 시도해주세요",
-          () => navigate(-1)
+          () => navigate("/", { replace: true })
         );
+      },
+      (error) => {
+        setLoading(false);
+        successAlert("신고를 취소하셨습니다.", () =>
+          navigate("/", { replace: true })
+        );
+        navigate("/", { replace: true });
       }
     );
     // setSessionId("ses_G4tWX7SMuX");
@@ -92,20 +99,15 @@ const ReportOpenViduPage = () => {
   useEffect(() => {
     if (sessionId) {
       initOpenVidu(sessionId).then(() => {
-        console.log("OpenVidu Init 시작!");
-
         if (mainStreamManager) {
           const videoStream = new MediaStream(
             mainStreamManager.stream.getMediaStream().getVideoTracks() // 비디오 트랙만 가져옴
           );
-          console.log("여기확인하세요!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
           localVideoRef.current.srcObject = videoStream;
         }
-        console.log("OpenVidu Init 성공!");
       });
     }
     const handleStreamCreated = (event) => {
-      console.log("상대방 접속 시작!");
       const subscriber = event.detail.subscriber;
       console.log("subscriber이에요:", subscriber);
       if (subscriber) {
@@ -149,6 +151,7 @@ const ReportOpenViduPage = () => {
       const videoDevices = devices.filter(
         (device) => device.kind === "videoinput"
       );
+      console.log("videoDevices:", videoDevices);
       if (videoDevices && videoDevices.length > 1) {
         const newVideoDevice = videoDevices.filter(
           (device) => device.deviceId !== currentVideoDevice.deviceId
