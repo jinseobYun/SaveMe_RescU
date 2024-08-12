@@ -174,7 +174,7 @@ const StyledImg = styled.img``;
 const NeumorphismButton = styled.button`
   width: 30vw;
   height: 30vw;
-  border-radius: 50px;
+  border-radius: 50%;
   border: none;
   outline: none;
   display: flex;
