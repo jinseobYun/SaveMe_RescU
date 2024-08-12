@@ -22,6 +22,8 @@ export const initOpenVidu = async (sessionId, user) => {
       const subscriber = session.subscribe(event.stream, undefined);
       subscribers.push(subscriber);
 
+      // mainStreamManager = subscriber;
+
       const streamEvent = new CustomEvent("streamCreated", {
         detail: { subscriber },
       });
@@ -159,20 +161,18 @@ export const initOpenVidu = async (sessionId, user) => {
       }
     }, 5000); // 5초마다 실행
 
-    // OpenVidu 퍼블리셔 설정 (분리된 오디오 스트림 사용)
     publisher = await OV.initPublisherAsync(undefined, {
       audioSource: filteredStream.stream,
       videoSource: undefined,
       publishAudio: true,
       publishVideo: true,
       frameRate: 30,
-      mirror: true,
+      mirror: false,
     });
 
     session.publish(publisher);
     mainStreamManager = publisher;
 
-    console.log("내 스트림 한번 볼까:", mainStreamManager);
   } catch (error) {
     console.error("Error initializing OpenVidu:", error);
   }
@@ -228,11 +228,4 @@ export const sendChatMessage = (message) => {
         console.error("Error sending message:", error);
       });
   }
-};
-
-const handleReceivedReportData = (mappedData) => {
-  dispatch(setMappedData(mappedData));
-  console.log("상대방이 전달한 1차정보 관련 데이터 API호출:", mappedData);
-  dispatch(getReportAsync(mappedData));
-
 };

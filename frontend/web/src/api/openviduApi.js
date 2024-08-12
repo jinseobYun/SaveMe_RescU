@@ -6,10 +6,10 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 export const getToken = async (sessionId) => {
   try {
     // 세션아이디를 생성하며 요청
-    const sessionResponse = await http.post(`/api/sessions`);
+    // const sessionResponse = await http.post(`/api/sessions`);
     
     // 세션아이디를 지정해서 요청
-    // const sessionResponse = await http.post(`/api/sessions`, { customSessionId: sessionId });
+    const sessionResponse = await http.post(`/api/sessions`, { customSessionId: sessionId });
 
     // 반환되는 세션아이디
     console.log("sessionResponse : ", sessionResponse.data);
