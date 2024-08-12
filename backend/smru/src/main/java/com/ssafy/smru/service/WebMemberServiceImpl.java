@@ -11,7 +11,6 @@ import com.ssafy.smru.security.WebJwtProvider;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -22,8 +21,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -35,20 +36,34 @@ public class WebMemberServiceImpl implements WebMemberService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional
     public int register(WebMemberDto.Request dto) {
         try {
+            // DTO를 엔티티로 변환
             WebMember webMember = dto.toEntity();
+
+            // 역할 조회
             WebMemberRole role = webMemberRoleRepository.findById(1)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid role ID"));
+
+            // 역할 설정
             webMember.changeRole(role);
+
+            // 중복 ID 체크
+            Optional<WebMember> existingMember = webMemberRepository.findByMemberId(dto.getMemberId());
+            if (existingMember.isPresent()) {
+                return 1; // 중복 ID가 존재하는 경우
+            }
+
+            // 비밀번호 암호화
             webMember.changePassword(passwordEncoder.encode(webMember.getPassword()));
+
+            // 회원 정보 저장
             webMemberRepository.save(webMember);
-            return 0;
-        } catch (DataIntegrityViolationException e) {
-            return 1;
+            return 0; // 성공적으로 등록된 경우
         } catch (Exception e) {
-            e.printStackTrace();
-            return 2;
+
+            return 2; // 예기치 않은 오류 발생
         }
     }
     // 로그인
