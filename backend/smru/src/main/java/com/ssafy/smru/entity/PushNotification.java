@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class PushNotification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer pushNotificationId;
 
     @Column
     private String title;
@@ -29,8 +29,8 @@ public class PushNotification {
     private AppMember appMember;
 
     @Builder
-    public PushNotification(Integer id, String title, String body, LocalDateTime notificationTime, AppMember appMember) {
-        this.id = id;
+    public PushNotification(Integer pushNotificationId, String title, String body, LocalDateTime notificationTime, AppMember appMember) {
+        this.pushNotificationId = pushNotificationId;
         this.title = title;
         this.body = body;
         this.notificationTime = notificationTime;
