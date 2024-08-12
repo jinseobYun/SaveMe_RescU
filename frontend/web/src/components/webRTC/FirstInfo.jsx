@@ -11,9 +11,9 @@ import {
   getReportAsync,
   postFirstInfoAsync,
   setDispatchOrderId,
+  setMappedData
 } from "../../slices/reportSlice";
-
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const FirstInfo = () => {
   const [formData, setFormData] = useState({
@@ -32,27 +32,33 @@ const FirstInfo = () => {
   const reportData = useSelector((state) => state.reportSlice.reportData);
   const navigate = useNavigate();
 
-  // Context로 데이터 전달하기.
-  // const { setDispatchOrderId } = useOutletContext();
-
   const [rescueTeamNameOptions, setRescueTeamNameOptions] = useState([]);
 
-  // Api 호출 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
-  // Mock Data 에대해서 추가적인 처리 필요!!
+  // 이벤트 받아서 처리 
   useEffect(() => {
-    const params = {
-      patientId: "ssafy", // mock 값
-      reporterId: "ssafy2", // mock 값
-      latitude: "37.5665", // mock 값
-      longitude: "126.9780", // mock 값
+    const handleReportInfoReceived = (event) => {
+      const mappedData = event.detail;
+
+      // Redux 상태 업데이트
+      dispatch(setMappedData(mappedData));
+      dispatch(getReportAsync(mappedData));
     };
-    dispatch(getReportAsync(params));
+
+    // 이벤트 리스너 등록
+    window.addEventListener("reportInfoReceived", handleReportInfoReceived);
+
+    // Clean up 이벤트 리스너
+    return () => {
+      window.removeEventListener(
+        "reportInfoReceived",
+        handleReportInfoReceived
+      );
+    };
   }, [dispatch]);
-  // Api 호출 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
 
   useEffect(() => {
     if (reportData && reportData.rescueTeams.length > 0) {
-      console.log("이거확인!!",reportData)
+      console.log("이거확인!!", reportData);
       setRescueTeamNameOptions(
         reportData.rescueTeams.map((team) => team.teamName)
       );
@@ -76,7 +82,6 @@ const FirstInfo = () => {
         e.target.name === "emergencyType"
           ? parseInt(e.target.value, 10)
           : e.target.value,
-      // [e.target.name]: e.target.value,
     }));
   };
   // 반환 필요
@@ -85,11 +90,6 @@ const FirstInfo = () => {
     if (result.payload && result.payload.dispatchOrderId) {
       dispatch(setDispatchOrderId(result.payload.dispatchOrderId));
       navigate("/webrtc/second-info");
-
-      // 페이지네비게이션 수정필요※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
-      // navigate("/second-info", {
-      //   state: { dispatchOrderId: result.payload.dispatchOrderId },
-      // });
     }
     console.log(result.payload);
   };

@@ -16,7 +16,6 @@ import MicOffIcon from "@mui/icons-material/MicOff";
 import CallEndIcon from "@mui/icons-material/CallEnd";
 import Button from "../elements/Button";
 import "./WebRTC.css";
-import UserVideoComponent from "./UserVideoComponent";
 
 const WebRTC = () => {
   const [muted, setMuted] = useState(true);
@@ -47,10 +46,14 @@ const WebRTC = () => {
 
     initOpenVidu(sessionId, user).then(() => {
       console.log("OpenVidu Init 시작!");
+
       if (mainStreamManager) {
+        const videoStream = new MediaStream(
+          // 비디오 트랙만 가지고 오기
+          mainStreamManager.stream.getMediaStream().getVideoTracks()
+        );
         console.log("여기확인하세요!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        localVideoRef.current.srcObject =
-          mainStreamManager.stream.getMediaStream();
+        localVideoRef.current.srcObject = videoStream;
       }
       console.log("OpenVidu Init 성공!");
     });
