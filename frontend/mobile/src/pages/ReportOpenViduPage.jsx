@@ -119,7 +119,8 @@ const ReportOpenViduPage = () => {
           const currentVideoDevice = videoDevices.find(
             (device) => device.deviceId === currentVideoDeviceId
           );
-
+          console.log("첫 디바이스 아이디: " + currentVideoDeviceId);
+          console.log("첫 디바이스 : " + currentVideoDevice);
           setCurrentVideoDevice(currentVideoDevice);
         }
       });
@@ -167,6 +168,7 @@ const ReportOpenViduPage = () => {
       const newVideoDevice = videoDevices.filter(
         (device) => device.deviceId !== currentVideoDevice.deviceId
       );
+
       console.log("새로운 디바이스 Id: " + newVideoDevice[0].deviceId);
       if (newVideoDevice.length > 0) {
         await session.unpublish(getPublisher());
@@ -186,7 +188,7 @@ const ReportOpenViduPage = () => {
         await session.publish(newPublisher);
         setIsCameraFront(!isCameraFront);
         setPublisher(newPublisher);
-
+        setCurrentVideoDevice(newVideoDevice);
         const videoStream = new MediaStream(
           newPublisher.stream.getMediaStream().getVideoTracks()
         );
