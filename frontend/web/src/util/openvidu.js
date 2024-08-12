@@ -150,8 +150,12 @@ export const initOpenVidu = async (sessionId, user) => {
           const transcription = result.results
             .map((res) => res.alternatives[0].transcript)
             .join("\n");
+
+          
+          // STT 데이터를, Chat과 동일하게 JSON으로
+          const data = { message: transcription, sender: "stt"}
           session.signal({
-            data: transcription,
+            data: JSON.stringify(data),
             to: [], // 모든 사용자에게 전송
             type: "my-chat",
           });

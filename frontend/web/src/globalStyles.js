@@ -10,6 +10,7 @@ const GlobalStyles = createGlobalStyle`
         --bg-baige-color:#FFFCE3;
         --label-gray-color:#7A7D84;
         --chat-pink-color:#FF9393;
+		--chat-stt-color:rgba(114,208,56,0.35);
         
         --red-color-100: #CD3D64;
         --red-color-200: #A41C4E;

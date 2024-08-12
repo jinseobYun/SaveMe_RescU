@@ -1,3 +1,5 @@
+// src/components/webRTC/Chat.jsx
+
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { session } from "../../util/openvidu"; // OpenVidu 세션 객체 가져오기
@@ -9,28 +11,37 @@ const Chat = () => {
   const [chat, setChat] = useState([]);
   const [messageInput, setMessageInput] = useState("");
   const chatWrapperRef = useRef(null);
-  const userIdRef = useRef(null); // 현재 사용자의 ID 저장
+  const userIdRef = useRef(null);
 
-  // OpenVidu 채팅 메시지 수신
   useEffect(() => {
     if (session) {
-      // 세션 연결 후 현재 사용자의 Connection ID 저장
       if (!userIdRef.current) {
         userIdRef.current = Date.now().toString();
       }
 
       const handleChatMessage = (event) => {
-        // 수신된 메시지가 자신이 보낸 것이 아닌 경우에만 처리
-        console.log("매세지관리 event:,", event)
-
         const eventJson = JSON.parse(event.data);
-        if (eventJson.sender !=="app" && event.from.connectionId !== userIdRef.current) {
+        const alignment = eventJson.sender === "web" ? "right" : "left";
+
+        const isSTTMessage = eventJson.sender === "stt";
+
+        if (eventJson.sender !== "web" && event.from.connectionId !== userIdRef.current) {
           console.log("상대방의 event data:", event.data);
           setChat((prevChat) => [
             ...prevChat,
             {
-              alignment: "left", // 상대방 메시지는 항상 왼쪽에 정렬
+              alignment: alignment,
               message: eventJson.message,
+              isSTTMessage: isSTTMessage,
+            },
+          ]);
+        } else if (eventJson.sender === "web") {
+          setChat((prevChat) => [
+            ...prevChat,
+            {
+              alignment: "right",
+              message: eventJson.message,
+              isSTTMessage: isSTTMessage,
             },
           ]);
         }
@@ -38,28 +49,24 @@ const Chat = () => {
 
       session.on("signal:my-chat", handleChatMessage);
 
-      // Clean up the event listener on component unmount or when session changes
       return () => {
         session.off("signal:my-chat", handleChatMessage);
       };
     }
-
   }, [session]);
 
   const handleMessageSubmit = (event) => {
     event.preventDefault();
     if (messageInput.trim() !== "") {
-      // OpenVidu를 통한 메시지 전송
       const data = { message: messageInput, sender: "web" };
       session
         .signal({
-          // data: messageInput,
           data: JSON.stringify(data),
           to: [], // 비어있으면 브로드캐스트
           type: "my-chat",
         })
         .then(() => {
-          setChat([...chat, { alignment: "right", message: messageInput }]); // 내 메시지라면 오른쪽 정렬
+          setChat([...chat, { alignment: "right", message: messageInput, isSTTMessage: false }]);
           setMessageInput("");
         })
         .catch((error) => {
@@ -72,7 +79,11 @@ const Chat = () => {
     <ChatContainer>
       <ChatMessages ref={chatWrapperRef}>
         {chat.map((message, index) => (
-          <ChatMessage key={index} alignment={message.alignment}>
+          <ChatMessage
+            key={index}
+            alignment={message.alignment}
+            isSTTMessage={message.isSTTMessage}
+          >
             <Text children={message.message} $size="2rem" />
           </ChatMessage>
         ))}
@@ -111,12 +122,15 @@ const ChatMessage = styled.div`
   max-width: 100%;
   justify-content: ${({ alignment }) =>
     alignment === "right" ? "flex-end" : "flex-start"};
-  background-color: ${({ alignment }) =>
-    alignment === "right"
+  background-color: ${({ alignment, isSTTMessage }) =>
+    isSTTMessage
+      ? "var(--chat-stt-color)"
+      : alignment === "right"
       ? "var(--main-yellow-color)"
       : "var(--chat-pink-color)"};
-  margin-left: ${({ alignment }) => (alignment === "right" ? "50%" : "0px")};
-  margin-right: ${({ alignment }) => (alignment === "left" ? "50%" : "0px")};
+  margin-left: ${({ alignment, isSTTMessage }) => (isSTTMessage ? "0" : alignment === "right" ? "50%" : "0px")};
+  margin-right: ${({ alignment, isSTTMessage }) => (isSTTMessage ? "0" : alignment === "left" ? "50%" : "0px")};
+  font-weight: ${({ isSTTMessage }) => (isSTTMessage ? "bold" : "normal")};
 `;
 
 const ChatInputBox = styled.form`
