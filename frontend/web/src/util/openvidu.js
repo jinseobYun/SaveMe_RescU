@@ -42,15 +42,25 @@ export const initOpenVidu = async (sessionId, user) => {
     });
 
     // 1차정보 전달받는 이벤트 등록
-    session.on('signal:report-info', (event) => {
+    session.on("signal:report-info", (event) => {
       try {
         const reportData = JSON.parse(event.data); // 수신된 데이터를 객체로 변환
-        console.log('Received report data:', reportData);
-    
-        // 이제 이 reportData를 다른 곳에서 활용할 수 있습니다.
-        handleReceivedReportData(reportData);
+        console.log("Received report data:", reportData);
+
+        const mappedData = {
+          patientId: reportData.tagId,
+          reporterId: reportData.userId,
+          latitude: reportData.location.latitude,
+          longitude: reportData.location.longitude,
+        };
+
+        const reportEvent = new CustomEvent('reportInfoReceived', {
+          detail: mappedData,
+        });
+        window.dispatchEvent(reportEvent);
+
       } catch (error) {
-        console.error('Failed to parse report data:', error);
+        console.error("Failed to parse report data:", error);
       }
     });
 
@@ -59,15 +69,14 @@ export const initOpenVidu = async (sessionId, user) => {
     console.log("token은 : ", token);
     await session.connect(token, { clientData: user });
 
-    
-    // 마이크 성능설정 최대치 
+    // 마이크 성능설정 최대치
     const audioSource = await navigator.mediaDevices.getUserMedia({
       audio: {
         echoCancellation: true,
         noiseSuppression: true,
         autoGainControl: false,
         suppressLocalAudioPlaybackExperimental: true,
-        channelCount: 2, // 스테레오 
+        channelCount: 2, // 스테레오
         sampleRate: 48000, // 샘플링 속도 설정
         sampleSize: 24, // 샘플 크기 설정
         latency: 0.01, // 낮은 지연 시간 설정
@@ -79,25 +88,25 @@ export const initOpenVidu = async (sessionId, user) => {
 
     // 게인 노드 (볼륨 조절)
     const gainNode = audioContext.createGain();
-    gainNode.gain.value = 1.0; 
+    gainNode.gain.value = 1.0;
 
     // 고역 필터 (저주파 제거)
     const highPassFilter = audioContext.createBiquadFilter();
     highPassFilter.type = "highpass";
-    highPassFilter.frequency.setValueAtTime(100, audioContext.currentTime); 
+    highPassFilter.frequency.setValueAtTime(100, audioContext.currentTime);
 
     // 저역 필터 (고주파 제거)
     const lowPassFilter = audioContext.createBiquadFilter();
     lowPassFilter.type = "lowpass";
-    lowPassFilter.frequency.setValueAtTime(10000, audioContext.currentTime); 
+    lowPassFilter.frequency.setValueAtTime(10000, audioContext.currentTime);
 
     // 다이나믹 컴프레서 (동적 범위 압축)
     const compressor = audioContext.createDynamicsCompressor();
-    compressor.threshold.setValueAtTime(-50, audioContext.currentTime); 
-    compressor.knee.setValueAtTime(40, audioContext.currentTime); 
+    compressor.threshold.setValueAtTime(-50, audioContext.currentTime);
+    compressor.knee.setValueAtTime(40, audioContext.currentTime);
     compressor.ratio.setValueAtTime(12, audioContext.currentTime);
-    compressor.attack.setValueAtTime(0, audioContext.currentTime); 
-    compressor.release.setValueAtTime(0.25, audioContext.currentTime); 
+    compressor.attack.setValueAtTime(0, audioContext.currentTime);
+    compressor.release.setValueAtTime(0.25, audioContext.currentTime);
 
     // 노드를 연결
     sourceNode.connect(gainNode);
@@ -127,7 +136,7 @@ export const initOpenVidu = async (sessionId, user) => {
       collectedAudioData.push(...dataArray);
     };
 
-    const processInterval = setInterval(processAudioData, 100); 
+    const processInterval = setInterval(processAudioData, 100);
 
     // 일정 간격으로 STT API 호출
     setInterval(async () => {
@@ -152,7 +161,7 @@ export const initOpenVidu = async (sessionId, user) => {
 
     // OpenVidu 퍼블리셔 설정 (분리된 오디오 스트림 사용)
     publisher = await OV.initPublisherAsync(undefined, {
-      audioSource: filteredStream.stream, 
+      audioSource: filteredStream.stream,
       videoSource: undefined,
       publishAudio: true,
       publishVideo: true,
@@ -163,7 +172,7 @@ export const initOpenVidu = async (sessionId, user) => {
     session.publish(publisher);
     mainStreamManager = publisher;
 
-    console.log("내 스트림 한번 볼까:",mainStreamManager)
+    console.log("내 스트림 한번 볼까:", mainStreamManager);
   } catch (error) {
     console.error("Error initializing OpenVidu:", error);
   }
@@ -221,11 +230,9 @@ export const sendChatMessage = (message) => {
   }
 };
 
-const handleReceivedReportData = (data) => {
-  console.log('상대방이 전달한 1차정보 관련 데이타:', data);
+const handleReceivedReportData = (mappedData) => {
+  dispatch(setMappedData(mappedData));
+  console.log("상대방이 전달한 1차정보 관련 데이터 API호출:", mappedData);
+  dispatch(getReportAsync(mappedData));
 
-  // 예시: 다른 컴포넌트에 데이터 전달 또는 상태 업데이트
-  // updateStateWithReportData(data);
-  // sendDataToApi(data);
-  // 등등의 로직을 구현합니다.
 };
