@@ -14,12 +14,11 @@ const EmergencyListItem = ({
   dutyName,
   dutyAddr,
   details,
-  distance,
-  time,
+  hvec,
+  hvoc,
   dutyTel1,
   latitude,
   longitude,
-  origin,
 }) => {
   const dispatch = useDispatch();
   const selectedInfo = useSelector(
@@ -46,6 +45,7 @@ const EmergencyListItem = ({
     <div className="emergency-list-item">
       <div className="detail-left">
         <h3>{dutyName}</h3>
+        <p>병원 가용 현황 | 응급실 {hvec >= 0 ? hvec : -hvec} 수술실 {hvoc >= 0 ? hvoc : -hvoc}</p>
         <p>{dutyAddr}</p>
         <p>{details}</p>
         <p>{dutyTel1}</p>
@@ -65,8 +65,6 @@ const EmergencyListItem = ({
             </div>
           </>
         )}
-        {/* <div>거리 : {distance}</div>
-        <div>소요시간 : {time}분</div> */}
         <button onClick={handleClick}>경로표시</button>
       </div>
     </div>
