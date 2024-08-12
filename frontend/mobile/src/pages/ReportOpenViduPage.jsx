@@ -103,6 +103,7 @@ const ReportOpenViduPage = () => {
           const videoStream = new MediaStream(
             mainStreamManager.stream.getMediaStream().getVideoTracks() // 비디오 트랙만 가져옴
           );
+
           localVideoRef.current.srcObject = videoStream;
         }
       });
@@ -146,28 +147,37 @@ const ReportOpenViduPage = () => {
   }, [remoteStream]);
 
   const handleCameraChange = useCallback(async () => {
+    console.log(
+      "mainStreamManager.stream.getMediaStream().getVideoTracks() : ",
+      mainStreamManager.stream.getMediaStream().getVideoTracks()
+    );
+
     try {
       const devices = await OV.getDevices();
       const videoDevices = devices.filter(
         (device) => device.kind === "videoinput"
       );
+
       if (videoDevices && videoDevices.length > 1) {
         const newVideoDevice = videoDevices.filter(
           (device) => device.deviceId !== currentVideoDevice.deviceId
         );
         console.log("newVideoDevice : ", newVideoDevice);
         if (newVideoDevice.length > 0) {
+          console.log("새 기기 첫번째꺼: ", newVideoDevice[0]);
+          console.log("새 기기 id: ", newVideoDevice[0].deviceId);
           const newPublisher = OV.current.initPublisher(undefined, {
             videoSource: newVideoDevice[0].deviceId,
             publishAudio: true,
             publishVideo: true,
             mirror: true,
           });
-
+          console.log("newPublisher : ", newPublisher);
           if (session) {
             console.log("퍼블리쉬 재설정!!");
             await session.unpublish(mainStreamManager);
             await session.publish(newPublisher);
+
             setCurrentVideoDevice(newVideoDevice[0]);
             localVideoRef.current.srcObject =
               newPublisher.stream.getMediaStream();
