@@ -163,13 +163,15 @@ const ReportOpenViduPage = () => {
       const videoDevices = devices.filter(
         (device) => device.kind === "videoinput"
       );
-      console.log(isCameraFront);
       if (!videoDevices || videoDevices.length < 2) return;
       const newVideoDevice = videoDevices.filter(
         (device) => device.deviceId !== currentVideoDevice.deviceId
       );
-      console.log(newVideoDevice);
+      console.log("새로운 디바이스 Id: " + newVideoDevice[0].deviceId);
       if (newVideoDevice.length > 0) {
+        await session.unpublish(getPublisher());
+        console.log("기존 퍼블리셔 제거 완료");
+
         let newPublisher = await OV.initPublisherAsync(undefined, {
           audioSource: undefined,
           // videoSource: isCameraFront
@@ -181,17 +183,9 @@ const ReportOpenViduPage = () => {
           mirror: isCameraFront,
         });
 
-        setIsCameraFront(!isCameraFront);
-
-        await session.unpublish(getPublisher());
-        console.log("기존 퍼블리셔 제거 완료");
-
-        // 새로운 스트림을 퍼블리시합니다.
-        // mainStreamManager = newPublisher;
-        // setMainStreamManager(newPublisher);
-        // console.log("새 미디어 스트림: " + getMainStreamManager());
-        setPublisher(newPublisher);
         await session.publish(newPublisher);
+        setIsCameraFront(!isCameraFront);
+        setPublisher(newPublisher);
 
         const videoStream = new MediaStream(
           newPublisher.stream.getMediaStream().getVideoTracks()

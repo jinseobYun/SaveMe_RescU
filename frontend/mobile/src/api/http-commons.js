@@ -91,4 +91,29 @@ function ovAxios() {
 
   return instance;
 }
-export { Axios, loginAxios, ovAxios };
+
+function fcmAxios() {
+
+  const instance = axios.create({
+    baseURL: import.meta.env.VITE_FCM_API_BASE_URL,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+
+  });
+  instance.interceptors.request.use(
+    (config) => {
+      const accessToken = localStorage.getItem("accessToken");
+      config.headers["Content-Type"] = "application/json";
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
+
+      return config;
+    },
+    (error) => {
+      console.log(error.toJSON());
+      return Promise.reject(error);
+    }
+  );
+  return instance;
+}
+export { Axios, loginAxios, ovAxios, fcmAxios };
