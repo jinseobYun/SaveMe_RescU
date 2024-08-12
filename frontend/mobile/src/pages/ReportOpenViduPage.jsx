@@ -151,6 +151,7 @@ const ReportOpenViduPage = () => {
       const videoDevices = devices.filter(
         (device) => device.kind === "videoinput"
       );
+      console.log("videoDevices:", videoDevices);
       if (videoDevices && videoDevices.length > 1) {
         const newVideoDevice = videoDevices.filter(
           (device) => device.deviceId !== currentVideoDevice.deviceId

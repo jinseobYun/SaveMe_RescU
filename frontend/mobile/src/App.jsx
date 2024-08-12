@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -31,7 +31,15 @@ import {
   DetailFirstAid,
 } from "@/pages";
 import GlobalStyle from "@/globalStyles.js";
+import useUserStore from "@/store/useUserStore";
+
 function App() {
+  const { clearGps } = useUserStore();
+  useEffect(() => {
+    return () => {
+      clearGps();
+    };
+  }, []);
   return (
     <Container>
       <GlobalStyle />
