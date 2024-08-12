@@ -52,7 +52,9 @@ public class FcmService {
                 .stream()
                 .map(EmergencyContact::getPhoneNumber)
                 .collect(Collectors.toList());
+        log.info("phoneNumberList: {}", phoneNumberList);
         List<AppMember> appMemberList = appMemberRepository.findAllByPhoneNumberIn(phoneNumberList);
+        log.info("appMemberList: {}", appMemberList);
         String title = "긴급 구조 알림";
         String body = appMember.getMemberName() + " 님이 " + dto.getHospitalName() + "(" + dto.getHospitalAddress() + ") (으)로 이송될 예정입니다.";
 
