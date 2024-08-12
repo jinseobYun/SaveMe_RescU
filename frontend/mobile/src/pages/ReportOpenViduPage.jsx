@@ -44,9 +44,8 @@ const ReportOpenViduPage = () => {
 
   const [muted, setMuted] = useState(true);
   const [cameraOff, setCameraOff] = useState(true);
-  const [isCameraFront, setIsCameraFront] = useState(false);
+  const [isCameraFront, setIsCameraFront] = useState(true);
   const [cameras, setCameras] = useState([]);
-  const [currentVideoDevice, setCurrentVideoDevice] = useState(null);
 
   // 상대방 스트림 상태 관리
   const navigate = useNavigate();
@@ -58,9 +57,12 @@ const ReportOpenViduPage = () => {
 
   const handleMuteClick = () => {
     const enabled = toggleAudio();
+    console.log("handleMuteClick");
     setMuted(enabled);
   };
-
+  useEffect(() => {
+    console.log("Muted", muted);
+  }, [muted]);
   const handleCameraClick = () => {
     const enabled = toggleVideo();
     setCameraOff(enabled);
@@ -104,7 +106,6 @@ const ReportOpenViduPage = () => {
           const videoStream = new MediaStream(
             getMainStreamManager().stream.getMediaStream().getVideoTracks() // 비디오 트랙만 가져옴
           );
-          setCurrentVideoDevice(videoStream);
           localVideoRef.current.srcObject = videoStream;
         }
       });
@@ -148,48 +149,41 @@ const ReportOpenViduPage = () => {
       const videoDevices = devices.filter(
         (device) => device.kind === "videoinput"
       );
-      // if (!videoDevices || videoDevices.length < 2) return;
-
-      // let newPublisher = await OV.initPublisherAsync(undefined, {
-      //   videoSource: isCameraFront
-      //     ? videoDevices[0].deviceId
-      //     : videoDevices[1].deviceId,
-      //   publishAudio: true, // 오디오 퍼블리싱 여부
-      //   publishVideo: true, // 비디오 퍼블리싱 여부
-      //   mirror: isCameraFront, // 전면 카메라일 경우 화면 반전 여부
-      // });
-      const audioDevices = devices.filter(
-        (device) => device.kind === "audioinput"
-      );
-      console.log("audioDevices: " + audioDevices);
+      console.log(isCameraFront);
+      if (!videoDevices || videoDevices.length < 2) return;
 
       let newPublisher = await OV.initPublisherAsync(undefined, {
-        audioSource: audioDevices[1].deviceId,
-        publishAudio: true, // 오디오 퍼블리싱 여부
-        publishVideo: true, // 비디오 퍼블리싱 여부
-        mirror: isCameraFront, // 전면 카메라일 경우 화면 반전 여부
+        audioSource: undefined,
+        videoSource: isCameraFront
+          ? videoDevices[1].deviceId
+          : videoDevices[0].deviceId,
+        publishAudio: true,
+        publishVideo: true,
+        mirror: isCameraFront,
       });
-      console.log("새 퍼블리셔 초기화 완료:", newPublisher);
-      console.log("스트림:", newPublisher.stream.getMediaStream());
-      console.log(getMainStreamManager());
-      // 기존의 스트림을 언퍼블리시합니다.
-      if (getMainStreamManager()) {
-        await session.unpublish(getMainStreamManager());
-      }
+
+      setIsCameraFront(!isCameraFront);
+
+      await session.unpublish(getPublisher());
       console.log("기존 퍼블리셔 제거 완료");
 
       // 새로운 스트림을 퍼블리시합니다.
-      setMainStreamManager(newPublisher);
+      // mainStreamManager = newPublisher;
+      // setMainStreamManager(newPublisher);
+      // console.log("새 미디어 스트림: " + getMainStreamManager());
       setPublisher(newPublisher);
       await session.publish(newPublisher);
-      console.log("퍼블리쉬 재설정 완료");
 
-      // 비디오 요소에 스트림을 설정합니다.
-      localVideoRef.current.srcObject = newPublisher.stream.getMediaStream();
-    } catch (error) {
-      console.error("퍼블리셔 초기화 실패:", error);
+      const videoStream = new MediaStream(
+        newPublisher.stream.getMediaStream().getVideoTracks()
+      );
+      localVideoRef.current.srcObject = videoStream;
+
+      getPublisher().publishAudio(muted);
+    } catch (e) {
+      console.error(e);
     }
-  }, [currentVideoDevice, getMainStreamManager]);
+  }, [isCameraFront, getMainStreamManager, muted]);
 
   const onClickScreen = () => {
     if (isChatting && !showMenuAll) {
@@ -269,7 +263,6 @@ const ReportOpenViduPage = () => {
   const [chatlogWrapperHeight, setChatlogWrapperHeight] = useState(0); // 채팅 높이 상태 추가
   const chatWrapperRef = useRef(null);
   useEffect(() => {
-    // 채팅 높이 변경에 따라 myVideo의 위치 조정
     if (chatWrapperRef.current && localVideoRef.current) {
       const chatHeight = chatWrapperRef.current.offsetHeight;
       setChatlogWrapperHeight(chatHeight);
@@ -278,7 +271,6 @@ const ReportOpenViduPage = () => {
     }
   }, [chatlog, isChatting]);
   useEffect(() => {
-    // 채팅 높이에 따라 MyVideo의 위치 조정
     if (localVideoRef.current) {
       const chatHeight = chatWrapperRef.current.offsetHeight;
       localVideoRef.current.style.bottom = `${chatlogWrapperHeight + 16}px`; // 1rem = 16px
@@ -287,7 +279,6 @@ const ReportOpenViduPage = () => {
   useEffect(() => {
     if (session) {
       const handleChatMessage = (event) => {
-        // 수신된 메시지가 자신이 보낸 것이 아닌 경우에만 처리
         const eventJson = JSON.parse(event.data);
         if (eventJson.sender !== "app") {
           console.log("상대방의 event data:", eventJson.message);
@@ -550,7 +541,8 @@ const ChattingWrapper = styled.div`
 const ChattingContents = styled.div`
   flex: 1;
   overflow-y: auto;
-  // padding: 10px;&:after {
+  padding: 10px;
+  &:after {
     content: "";
     display: block;
     clear: both;
