@@ -33,7 +33,6 @@ public class GeoCoderApiService {
                 .queryParam("x", longitude)
                 .queryParam("y", latitude)
                 .toUriString();
-        System.out.println(uriString);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "KakaoAK " + apiKey);
         headers.setContentType(MediaType.APPLICATION_JSON);
