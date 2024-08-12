@@ -64,15 +64,20 @@ public class MainActivity extends AppCompatActivity {
         // URI 스킴을 통해 전달된 데이터를 처리
         Intent intent = getIntent();
         Uri uri = intent.getData();
+        String url = intent.getStringExtra("url"); // 푸시 알림에서 전달된 URL
+        Log.d("[Testing]", "url : " + url);
         if (uri != null) {
             String scheme = uri.getScheme();
             String host = uri.getHost();
             // URI를 통해 전달된 데이터를 처리
             // 예: saveme://open?tagId=123456
             String tagId = uri.getQueryParameter("tagId");
-            toastUtil.showCustomToast("NFC 태깅 감지됨.\ntagId = " + tagId);
             initializeWebView(URL_NFC_REPORT + tagId);
+        } else if (url != null) {
+            // 푸시 알림에서 전달된 URL이 있으면 해당 URL을 로드
+            initializeWebView(url);
         } else {
+            // 기본 URL 로드
             initializeWebView(URL_MAIN);
         }
     }
@@ -109,6 +114,13 @@ public class MainActivity extends AppCompatActivity {
                 callback.invoke(origin, true, true);
             }
 
+            @Override
+            public boolean onConsoleMessage(android.webkit.ConsoleMessage consoleMessage) {
+                Log.d("[Testing]", consoleMessage.message() + " -- From line "
+                        + consoleMessage.lineNumber() + " of "
+                        + consoleMessage.sourceId());
+                return true;
+            }
         });
         webView.loadUrl(url);
 

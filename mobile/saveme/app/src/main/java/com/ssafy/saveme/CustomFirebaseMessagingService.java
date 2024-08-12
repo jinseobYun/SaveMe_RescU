@@ -4,8 +4,11 @@ import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -27,6 +30,16 @@ public class CustomFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
+
+        // 전달된 URL을 가져옴 (data 페이로드 사용)
+        String url = remoteMessage.getData().get("url");
+
+        // 알림 클릭 시 열릴 액티비티와 URL 전달 설정
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("url", url);  // URL을 인텐트에 추가
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
 
         // 알림 권한 확인 (API 33 이상)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -59,10 +72,12 @@ public class CustomFirebaseMessagingService extends FirebaseMessagingService {
                 .setContentText(body)
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setPriority(NotificationCompat.PRIORITY_HIGH) // 알림 우선순위를 높여 상단에 표시되도록 설정
-                .setAutoCancel(true); // 알림 클릭 시 자동 제거
+                .setAutoCancel(true) // 알림 클릭 시 자동 제거
+                .setContentIntent(pendingIntent); // 알림 클릭 시 실행될 인텐트 설정
 
         // 알림 생성 및 표시
         Notification notification = builder.build();
         notificationManager.notify(1, notification);
+        Log.d("[Testing]", "푸시 알림 수신");
     }
 }
