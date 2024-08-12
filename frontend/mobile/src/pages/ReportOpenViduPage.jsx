@@ -1,16 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import {
-  initOpenVidu,
-  leaveSession,
-  mainStreamManager,
-  subscribers,
-  toggleAudio,
-  toggleVideo,
-  session,
-  OV,
-} from "@/util/openvidu";
 
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import VideocamIcon from "@mui/icons-material/Videocam";
@@ -27,12 +17,22 @@ import useUserStore from "@/store/useUserStore";
 import { getReportSessionId } from "@api/reportApi";
 import { LoadingScreen } from "@components/common";
 import { successAlert } from "@/util/notificationAlert";
-
+import { averageGps } from "@/util/dataProcessing";
+import {
+  initOpenVidu,
+  leaveSession,
+  mainStreamManager,
+  subscribers,
+  toggleAudio,
+  toggleVideo,
+  session,
+  OV,
+} from "@/util/openvidu";
 const ReportOpenViduPage = () => {
   //SECTION - user settings
   const userId = useUserStore((state) => state.userId);
   const tagId = useUserStore((state) => state.tagId);
-  const currentLocation = useUserStore((state) => state.gps);
+  const gpsList = useUserStore((state) => state.gps);
 
   const [loading, setLoading] = useState(true);
   const [isChatting, setIsChatting] = useState(false);
@@ -64,7 +64,10 @@ const ReportOpenViduPage = () => {
   };
 
   useEffect(() => {
+    const abortController = new AbortController();
+
     getReportSessionId(
+      abortController,
       (response) => {
         console.log("getReportSessionId success: ", response);
         setSessionId(response.data.sessionId);
@@ -78,9 +81,10 @@ const ReportOpenViduPage = () => {
         );
       }
     );
-    setSessionId("testSession");
+    // setSessionId("ses_G4tWX7SMuX");
     setLoading(false);
     return () => {
+      abortController.abort();
       leaveSession();
     };
   }, []);
@@ -285,12 +289,12 @@ const ReportOpenViduPage = () => {
 
       session.on("signal:my-chat", handleChatMessage);
 
-      //TODO - 태깅정보
+      //TODO - gps
       const reportData = {
         userId: userId,
-        location: currentLocation,
+        location: averageGps(gpsList),
+        tagId: null,
       };
-      console.log("tagId:", tagId);
       if (tagId) reportData.tagId = tagId;
       console.log("reportData: ", reportData);
 

@@ -11,9 +11,13 @@ const store = (set) => ({
   setUserName: (userData) => set({ userName: userData }),
   clearUserName: () => set({ userName: null }),
 
-  gps: null,
-  setGps: (userData) => set({ gps: userData }),
-  clearGps: () => set({ gps: null }),
+  gps: [],
+  addGps: (location) => {
+    set((state) => ({
+      gps: [...state.gps, location],
+    }));
+  },
+  clearGps: () => set({ gps: [] }),
   gpsTermAgree: true,
   setGpsTermAgree: (agree) => set({ gpsTermAgree: agree }),
   clearGpsTermAgree: () => set({ gpsTermAgree: false }),
@@ -54,9 +58,19 @@ const store = (set) => ({
   isLogined: false,
   login: () => set({ isLogined: true }),
   logout: () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    set({ isLogined: false, userId: null, userMedicalInfo: null, userName: null, gpsTermAgree: false, accessToken: null, refreshToken: null, emergencyContactList: [] });
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    set({
+      isLogined: false,
+      userId: null,
+      userMedicalInfo: null,
+      userName: null,
+      gpsTermAgree: false,
+      accessToken: null,
+      refreshToken: null,
+      emergencyContactList: [],
+      gps: [],
+    });
   },
 
   accessToken: null,
@@ -71,13 +85,13 @@ const store = (set) => ({
 const useUserStore = create(
   import.meta.env.NODE_ENV === "production"
     ? persist(store, {
-      name: "userStore",
-    })
-    : devtools(
-      persist(store, {
         name: "userStore",
       })
-    )
+    : devtools(
+        persist(store, {
+          name: "userStore",
+        })
+      )
 );
 
 export default useUserStore;
