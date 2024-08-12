@@ -44,7 +44,7 @@ const Home = () => {
           setTagId(tagId);
           //TODO - 태깅 신고 로직
           navigate("/report");
-        } else navigate("/ ");
+        } else navigate("/");
       });
     }
   }, []);
