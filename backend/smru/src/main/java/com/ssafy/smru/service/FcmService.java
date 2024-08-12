@@ -45,7 +45,7 @@ public class FcmService {
 
     @Transactional
     public void sendEmergencyPush(FcmRequestDto dto) throws IOException {
-        AppMember appMember = appMemberRepository.findByMemberId(dto.getTagId())
+        AppMember appMember = appMemberRepository.findByNfcToken(dto.getTagId())
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
         // 비상 연락망에 푸시알림 전송
         List<String> phoneNumberList = emergencyContactRepository.findByAppMember_MemberId(dto.getTagId())
