@@ -20,13 +20,12 @@ public class ReportInfoController {
     private final ReportInfoService reportInfoService;
 
     @GetMapping("/report-info")
-    private ResponseEntity<?> getGeo(@RequestParam("patientId") String patientId, @RequestParam("reporterId") String reporterId, @RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude){
+    private ResponseEntity<?> getGeo(@RequestParam("patientId") String nfcToken, @RequestParam("reporterId") String reporterId, @RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude){
         try {
-            ReportInfoDto.Response response = reportInfoService.getReportInfo(patientId, reporterId, latitude, longitude);
+            ReportInfoDto.Response response = reportInfoService.getReportInfo(nfcToken, reporterId, latitude, longitude);
             return ResponseEntity.ok(response);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 }

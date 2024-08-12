@@ -16,4 +16,5 @@ public interface AppMemberRepository extends JpaRepository<AppMember, Long> {
     Optional<AppMember> findByPhoneNumberAndMemberName(String phoneNumber, String memberName);
 
     List<AppMember> findAllByPhoneNumberIn(List<String> phoneNumberList);
+    Optional<AppMember> findByNfcToken(String nfcToken);
 }

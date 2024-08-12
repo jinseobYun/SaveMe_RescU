@@ -22,4 +22,5 @@ public interface AppMemberService {
     void updatePhoneNumber(String currentUserName, String phone);
 
     TokenInfo regenerateToken(Map<String, String> req) throws BadRequestException, UnauthorizedException;
+    Map<String, String> getNfcToken(String memberId);
 }

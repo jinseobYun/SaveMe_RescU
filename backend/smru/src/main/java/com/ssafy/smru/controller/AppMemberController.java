@@ -22,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.webjars.NotFoundException;
 
 import java.util.Map;
 
@@ -59,7 +60,7 @@ public class AppMemberController {
         try {
             return ResponseEntity.ok(appMemberService.login(dto));
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 일치하지 않습니다.");
         }catch (ResponseStatusException e) {
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
@@ -333,6 +334,17 @@ public class AppMemberController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("서버에서 예상치 못한 오류가 발생했습니다.");
+        }
+    }
+
+    @GetMapping("/nfc-token/{memberId}")
+    public ResponseEntity<?> getNfcToken(@PathVariable("memberId") String memberId) {
+        try {
+            return ResponseEntity.ok(appMemberService.getNfcToken(memberId));
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("서버에서 에상치 못한 오류가 발생했습니다.");
         }
     }
 }
