@@ -72,8 +72,7 @@ function App() {
               element={<EditMedicalInfoPage />}
             />
             <Route path="/nfcinfo" element={<NfcInfoPage />} />
-            <Route path="/notifications" element={<PushNotiPage />} />
-            {/* <Route path="notifications " element={<PushNotiPage />} /> */}
+            <Route path="/pushnotis" element={<PushNotiPage />} />
           </Route>
           {/* 인증을 하지않아야 */}
           <Route element={<PrivateRoute authentication={false} />}>

@@ -48,8 +48,10 @@ const NfcInfoPage = () => {
           사용법'을 참고하여 NFC 스티커에 앱을 연동해주세요!
         </Description>
         <StyledButton>NFC 사용법</StyledButton>
+        {/* //FIXME - nfc 토큰 알려주고 클립보드 되게 하기
+        token: saveme://open?tagId=${nfcToken}
+        */}
       </Content>
-      <Link to="https://pioapp.tistory.com/51" />
       <TabBar />
     </Container>
   );
