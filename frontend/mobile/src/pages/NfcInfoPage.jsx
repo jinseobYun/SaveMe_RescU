@@ -6,7 +6,12 @@ import Swal from "sweetalert2";
 import { Header, TabBar } from "@components/common";
 import { Grid, Button, Text, Input } from "@components/elements";
 import nfcimg from "@/assets/img/nfcimg.png";
+import { getNFCToken } from "@/api/userApi";
+import { yesorNoAlert, errorAlert } from "@/util/notificationAlert";
+import useUserStore from "@/store/useUserStore";
+
 const NfcInfoPage = () => {
+  const { userId } = useUserStore();
   const [userNfc, setUserNfc] = useState(null);
   const onClickShowModal = () => {};
   const btnStyles = {
@@ -26,6 +31,21 @@ const NfcInfoPage = () => {
     // $padding: "14px 32px",
     $width: "",
     $height: "10vh",
+  };
+  const onClickTokenModal = () => {
+    if (userNfc) return;
+    getNFCToken(
+      userId,
+      (response) => {
+        setUserNfc(response.data.nfcToken);
+        errorAlert(`NFC token은 ${response.data.nfcToken}입니다`);
+        //클립보드
+        //FIXME - navigator.clipboard.writeText(`saveme://open?tagId=${userNfc}`);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   };
   return (
     <Container>
@@ -47,10 +67,9 @@ const NfcInfoPage = () => {
           상황에서 더욱 신속하고 적절한 신고를 할 수 있습니다. 아래 'NFC 툴즈
           사용법'을 참고하여 NFC 스티커에 앱을 연동해주세요!
         </Description>
-        <StyledButton>NFC 사용법</StyledButton>
-        {/* //FIXME - nfc 토큰 알려주고 클립보드 되게 하기
-        token: saveme://open?tagId=${nfcToken}
-        */}
+        <StyledButton onClick={onClickTokenModal}>
+          NFC 토큰 발급받기
+        </StyledButton>
       </Content>
       <TabBar />
     </Container>
