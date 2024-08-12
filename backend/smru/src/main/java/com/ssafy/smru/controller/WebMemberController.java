@@ -63,7 +63,6 @@ public class WebMemberController {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String memberId = authentication.getName();
-            System.out.println(memberId);
 
             webMemberService.changePassword(memberId, dto);
             return new ResponseEntity<>("Password changed successfully", HttpStatus.OK);

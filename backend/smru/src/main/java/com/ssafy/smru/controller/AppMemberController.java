@@ -311,7 +311,6 @@ public class AppMemberController {
         if (!regularExpression.isPhone(phone)){
             return new ResponseEntity<>("올바르지 않은 형식의 데이터입니다.",HttpStatus.BAD_REQUEST);
         }
-        System.out.println(phone);
 
         try {
             appMemberService.updatePhoneNumber(currentUserName, phone);
