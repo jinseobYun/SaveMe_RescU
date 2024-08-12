@@ -5,7 +5,6 @@ import com.ssafy.smru.dto.AppMemberDto;
 import com.ssafy.smru.dto.GeoCoderResponseDto;
 import com.ssafy.smru.dto.ReportInfoDto;
 import com.ssafy.smru.dto.app.MedicalInformationDto;
-import com.ssafy.smru.entity.AppMember;
 import com.ssafy.smru.entity.RescueTeam;
 import com.ssafy.smru.repository.AppMemberRepository;
 import com.ssafy.smru.repository.RescueTeamRepository;
@@ -56,7 +55,7 @@ public class ReportInfoService {
                 .reporterMedicalInformation(null)
                 .build();
         // 신고자 위치 기준 도로명, 지번 주소 요청 API 처리
-        if(!lat.isEmpty() && !lon.isEmpty()) {
+        if (!lat.isEmpty() && !lon.isEmpty()) {
 
             reportInfoDto.setLatitude(lat);
             reportInfoDto.setLongitude(lon);
@@ -66,8 +65,15 @@ public class ReportInfoService {
             String lotNumberAddress = "주소를 찾을 수 없습니다.";
             // 주소가 있는 경우 업데이트
             if (callGeoCoderApi != null && !callGeoCoderApi.getDocuments().isEmpty()) {
-                roadNameAddress = callGeoCoderApi.getDocuments().get(0).getRoadAddress().getAddressName();
-                lotNumberAddress = callGeoCoderApi.getDocuments().get(0).getAddress().getAddressName();
+                if (callGeoCoderApi.getDocuments().get(0).getAddress() != null &&
+                        callGeoCoderApi.getDocuments().get(0).getAddress().getAddressName() != null) {
+                    lotNumberAddress = callGeoCoderApi.getDocuments().get(0).getAddress().getAddressName();
+                }
+                if (callGeoCoderApi.getDocuments().get(0).getRoadAddress() != null
+                        && callGeoCoderApi.getDocuments().get(0).getRoadAddress().getAddressName() != null) {
+
+                    roadNameAddress = callGeoCoderApi.getDocuments().get(0).getRoadAddress().getAddressName();
+                }
             }
 
             reportInfoDto.setRoadNameAddress(roadNameAddress);
@@ -75,19 +81,19 @@ public class ReportInfoService {
 
             // 신고자 위치 기준 주변 119 관할센터 정보
             List<RescueTeam> rescueTeams = findNearestResqueTeams(lat, lon);
-            if(!rescueTeams.isEmpty()) {
+            if (!rescueTeams.isEmpty()) {
                 reportInfoDto.setRescueTeams(rescueTeams);
             }
         }
 
-        if(nfcToken != null && !nfcToken.isEmpty()) {
+        if (nfcToken != null && !nfcToken.isEmpty()) {
             //  받아온 아이디로 DB 에서 조회
-             //  받아온 NFC 토큰으로 DB 에서 조회
-        AppMemberDto.Response patient = AppMemberDto.Response
-                .fromEntity(
-                        appMemberRepository.findByNfcToken(nfcToken)
-                        .orElseThrow(() -> new NotFoundException("존재하지 않는 NFC 토큰입니다."))
-                );
+            //  받아온 NFC 토큰으로 DB 에서 조회
+            AppMemberDto.Response patient = AppMemberDto.Response
+                    .fromEntity(
+                            appMemberRepository.findByNfcToken(nfcToken)
+                                    .orElseThrow(() -> new NotFoundException("존재하지 않는 NFC 토큰입니다."))
+                    );
 
             // 태깅된 정보는 null 로 초기화
             MedicalInformationDto.ReportInfoResponse taggingTotalInfo = new MedicalInformationDto.ReportInfoResponse();
@@ -110,7 +116,7 @@ public class ReportInfoService {
             }
         }
 
-        if(reporterID != null && !reporterID.isEmpty()) {
+        if (reporterID != null && !reporterID.isEmpty()) {
 
             // 신고자 회원 정보
             AppMemberDto.Response reporter = appMemberService.getMemberByMemberId(reporterID);

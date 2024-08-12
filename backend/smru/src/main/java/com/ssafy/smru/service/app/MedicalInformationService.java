@@ -126,10 +126,7 @@ public class MedicalInformationService {
 
         List<DrugInfo> drugInfos = medicalInformation.getDrugInfos();
         List<MedCdi> medCdis = medicalInformation.getMedCdis();
-        for (MedCdi medCdi : medCdis) {
-            System.out.println(medCdi.getCdInfo().getCdInfoId());
-            System.out.println(medCdi.getCdInfo().getCdName());
-        }
+
         MedicalInformationDto.Response response = MedicalInformationDto.Response.fromEntity(medicalInformation);
         response.setDrugInfos(drugInfos.stream().map(DrugInfoDto.Response::fromEntity).collect(Collectors.toList()));
         response.setMedCdis(medCdis.stream().map(MedCdiDto.Response::fromEntity).collect(Collectors.toList()));
@@ -173,10 +170,6 @@ public class MedicalInformationService {
         if (member.getMedicalInformation() == null) {
             throw new ResourceNotFoundException("등록된 의료 정보가 없습니다.");
         }
-//        Optional<Long> medicalInformationId = appMemberRepository.findMedicalInformationIdByMemberId(memberId);
-//        if (medicalInformationId.isPresent()) {
-//            System.out.println(medicalInformationId.get());
-//        }
         // 기존 의료 정보 삭제
         removeMedicalInformation(member.getMedicalInformation().getMedicalInformationId());
 
