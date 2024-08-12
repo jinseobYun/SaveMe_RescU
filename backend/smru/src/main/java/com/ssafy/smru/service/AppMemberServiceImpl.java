@@ -170,6 +170,7 @@ public class AppMemberServiceImpl implements AppMemberService {
     }
 
     @Override
+    @Transactional
     public Map<String, String> getNfcToken(String memberId) {
         Map<String, String> result = new HashMap<>();
         AppMember appMember = appMemberRepository.findByMemberId(memberId)
