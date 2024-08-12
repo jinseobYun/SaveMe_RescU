@@ -54,7 +54,7 @@ const KakaoMap = ({ markerPositions = [], route=null, size = [70, 100] }) => {
     // 환자용마커 
     const patientMarkerPosition = new kakao.maps.LatLng(latlon.lat, latlon.lon);
     const patientMarkerImage = new kakao.maps.MarkerImage(
-      'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png  ', // 예시 마커 이미지
+      'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png  ',
       new kakao.maps.Size(44, 44),
       { offset: new kakao.maps.Point(27, 69) }
     );

@@ -58,6 +58,7 @@ const initState = {
     gender:"",
   },
   dispatchOrderId: null,
+  mappedData: null,
 };
 
 const reportSlice = createSlice({
@@ -66,6 +67,9 @@ const reportSlice = createSlice({
   reducers: {
     setDispatchOrderId: (state, action) => {
       state.dispatchOrderId = action.payload;
+    },
+    setMappedData: (state, action) => {
+      state.mappedData = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -91,5 +95,5 @@ const reportSlice = createSlice({
   },
 });
 
-export const { setDispatchOrderId } = reportSlice.actions;
+export const { setDispatchOrderId, setMappedData  } = reportSlice.actions;
 export default reportSlice.reducer;
