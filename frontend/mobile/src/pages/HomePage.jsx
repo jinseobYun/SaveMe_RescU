@@ -8,7 +8,7 @@ import useFormInputStore from "@/store/useFormInputStore";
 import useUserStore from "@/store/useUserStore";
 import { yesorNoAlert, errorAlert } from "@/util/notificationAlert";
 import logo from "@/assets/img/logo.png";
-import useCurrentLocation from "@/hooks/useCurrentLocation";
+import useWatchLocation from "@/hooks/useWatchLocation";
 
 const geolocationOptions = {
   enableHighAccuracy: true,
@@ -17,25 +17,26 @@ const geolocationOptions = {
 };
 const Home = () => {
   const navigate = useNavigate();
-  const { setGps, setTagId, setGpsTermAgree, gpsTermAgree } = useUserStore();
-  const currentLocation = useCurrentLocation(geolocationOptions);
-
+  const { gps, addGps, setTagId, setGpsTermAgree, gpsTermAgree } =
+    useUserStore();
+  const { location, error, cancelLocationWatch } =
+    useWatchLocation(geolocationOptions);
   const [searchParams] = useSearchParams();
   const tagId = searchParams.get("tagId");
   const onClickReportBtn = () => {
     if (!gpsTermAgree) errorAlert("위치 정보 제공에 동의해주세요");
-    else navigate("/report");
+    else {
+      navigate("/report");
+      cancelLocationWatch();
+    }
   };
   const { clearAllInputs } = useFormInputStore();
   useEffect(() => {
-    if (currentLocation) {
-      console.log(
-        "lng: " + currentLocation.longitude,
-        "lat: " + currentLocation.latitude
-      );
-      setGps(currentLocation);
+    if (location) {
+      console.log("lng: " + location.longitude, "lat: " + location.latitude);
+      addGps({ time: new Date(), location: location });
     }
-  }, [currentLocation]);
+  }, [location]);
   useEffect(() => {
     clearAllInputs();
     if (tagId) {
@@ -184,7 +185,8 @@ const NeumorphismButton = styled.button`
   padding-top: 1.4rem;
   backdrop-filter: blur(10px);
   background-color: rgb(255, 76, 76, 1);
-  box-shadow: 5px 5px 10px rgba(255, 255, 255, 0.6),
+  box-shadow:
+    5px 5px 10px rgba(255, 255, 255, 0.6),
     /* 오른쪽 아래 그림자 */ -5px -5px 10px rgba(255, 255, 255, 0.6),
     /* 왼쪽 위 하이라이트 */ inset 5px 5px 10px rgba(255, 255, 255, 0.6),
     /* 오목하게 만드는 내부 그림자 */ inset -5px -5px 10px
