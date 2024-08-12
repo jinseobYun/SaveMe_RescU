@@ -121,7 +121,12 @@ public class FcmService {
                                 .body(body)
                                 .image(null)
                                 .build()
-                        ).build()).validateOnly(false).build();
+
+                        )
+                        .data(FcmMessageDto.Data.builder()
+                                .url("https://i11b305.p.ssafy.io/app/pushnotis/")
+                                .build())
+                        .build()).validateOnly(false).build();
 
         return objectMapper.writeValueAsString(fcmMessage);
     }
