@@ -85,14 +85,6 @@
 
 
         // 가장 가까운 병동 리스트에 실시간 병상 현황 추가하는 매서드
-        public List<HospitalDTO> getHospitalListWithEmergencyRoom(List<HospitalDTO> hospitals) {
-
-            List<HospitalDTO> result = addEmergencyRoomInfoToHospitals(hospitals);
-
-            return result;
-        }
-
-
         // 필터링된 EmergencyRoom 리스트를 사용하여 HospitalDTO에 추가
         public List<HospitalDTO> addEmergencyRoomInfoToHospitals(List<HospitalDTO> hospitals) {
 

@@ -46,7 +46,8 @@ public class DirectionsService {
         String uriString = UriComponentsBuilder.fromHttpUrl(baseURL + onePath)
                 .queryParam("origin", longitudeA + "," + latitudeA)
                 .queryParam("destination", longitudeB + "," + latitudeB)
-                .queryParam("priority", "TIME")
+                .queryParam("priority", "DISTANCE")
+                .queryParam("avoid","ferries")
                 .toUriString();
 
         // webClient 로 지정된 Uri에 get 요청

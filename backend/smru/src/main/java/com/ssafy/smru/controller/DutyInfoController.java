@@ -26,7 +26,7 @@ public class DutyInfoController {
         try {
             List<HospitalDTO> hospitals = dutyInfoService.findNearestHospitals(lat, lon);
             if(hospitals!= null && !hospitals.isEmpty()){
-                hospitals = dutyInfoService.getHospitalListWithEmergencyRoom(hospitals);
+                hospitals = dutyInfoService.addEmergencyRoomInfoToHospitals(hospitals);
             }
             return ResponseEntity.ok(hospitals);
         } catch (NumberFormatException ex) {

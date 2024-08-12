@@ -24,9 +24,9 @@ public class HospitalDTO {
     private BigDecimal longitude;
     private String distance;
     // 가용 병상
-    private int hvec;
+    private int hvec=0;
     // 가용 수술실
-    private int hvoc;
+    private int hvoc=0;
 
     public void addEmergencyRoomInfo(EmergencyRoom emergencyRoom){
         if(emergencyRoom.getHvec() != null){
