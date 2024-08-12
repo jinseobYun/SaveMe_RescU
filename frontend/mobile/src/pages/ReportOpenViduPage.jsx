@@ -26,6 +26,7 @@ import {
   toggleAudio,
   toggleVideo,
   session,
+  publisher,
   OV,
 } from "@/util/openvidu";
 const ReportOpenViduPage = () => {
@@ -82,14 +83,12 @@ const ReportOpenViduPage = () => {
       },
       (error) => {
         setLoading(false);
-        successAlert("신고를 취소하셨습니다.", () =>
+        successAlert("신고를 종료하셨습니다.", () =>
           navigate("/", { replace: true })
         );
         navigate("/", { replace: true });
       }
     );
-    // setSessionId("ses_G4tWX7SMuX");
-    setLoading(false);
     return () => {
       abortController.abort();
       if (session) leaveSession();
@@ -147,34 +146,32 @@ const ReportOpenViduPage = () => {
       const videoDevices = devices.filter(
         (device) => device.kind === "videoinput"
       );
+      if (!videoDevices || videoDevices.length < 2) return;
 
-      if (videoDevices && videoDevices.length > 1) {
-        const newVideoDevice = videoDevices.filter(
-          (device) => device.deviceId !== currentVideoDevice.deviceId
-        );
-        console.log("newVideoDevice : ", newVideoDevice);
-        if (newVideoDevice.length > 0) {
-          console.log("새 기기 첫번째꺼: ", newVideoDevice[0]);
-          console.log("새 기기 id: ", newVideoDevice[0].deviceId);
-          const newPublisher = OV.initPublisher(undefined, {
-            videoSource: newVideoDevice[0].deviceId,
-            publishAudio: true,
-            publishVideo: true,
-            mirror: true,
-          });
-          console.log("newPublisher : ", newPublisher);
-          if (session) {
-            console.log("퍼블리쉬 재설정!!");
-            await session.unpublish(mainStreamManager);
-            await session.publish(newPublisher);
+      const newPublisher = await OV.initPublisherAsync(undefined, {
+        videoSource: isCameraFront
+          ? videoDevices[1].deviceId
+          : videoDevices[0].deviceId,
+        publishAudio: true, // 오디오 퍼블리싱 여부
+        publishVideo: true, // 비디오 퍼블리싱 여부
+        mirror: isCameraFront, // 전면 카메라일 경우 화면 반전 여부
+      });
 
-            setCurrentVideoDevice(newVideoDevice[0]);
-            localVideoRef.current.srcObject =
-              newPublisher.stream.getMediaStream();
-            console.log(newPublisher.stream.getMediaStream());
-          }
-        }
-      }
+      console.log("새 퍼블리셔 초기화 완료:", newPublisher);
+      console.log("스트림:", newPublisher.stream.getMediaStream());
+
+      // 기존의 스트림을 언퍼블리시합니다.
+      await session.unpublish(mainStreamManager);
+      console.log("기존 퍼블리셔 제거 완료");
+
+      // 새로운 스트림을 퍼블리시합니다.
+      // mainStreamManager = newPublisher;
+      // publisher = newPublisher;
+      await session.publish(newPublisher);
+      console.log("퍼블리쉬 재설정 완료");
+
+      // 비디오 요소에 스트림을 설정합니다.
+      localVideoRef.current.srcObject = newPublisher.stream.getMediaStream();
     } catch (e) {
       console.error(e);
     }
@@ -456,6 +453,7 @@ const ReportOpenViduPage = () => {
     </>
   );
 };
+export default ReportOpenViduPage;
 
 const PeerVideo = styled.video`
   width: 100%;
@@ -575,5 +573,3 @@ const ChatInputBox = styled.div`
     margin-right: 10px;
   }
 `;
-
-export default ReportOpenViduPage;
