@@ -48,7 +48,7 @@ public class FcmService {
         AppMember appMember = appMemberRepository.findByNfcToken(dto.getTagId())
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
         // 비상 연락망에 푸시알림 전송
-        List<String> phoneNumberList = emergencyContactRepository.findByAppMember_MemberId(dto.getTagId())
+        List<String> phoneNumberList = emergencyContactRepository.findByAppMember_MemberId(appMember.getMemberId())
                 .stream()
                 .map(EmergencyContact::getPhoneNumber)
                 .collect(Collectors.toList());
