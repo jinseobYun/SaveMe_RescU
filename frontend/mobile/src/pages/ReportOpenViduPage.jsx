@@ -202,7 +202,7 @@ const ReportOpenViduPage = () => {
   //     console.error(e);
   //   }
   // }, [isCameraFront, getMainStreamManager, muted, currentVideoDevice]);
-
+  const [index, setIndex] = useState(0);
   const handleCameraChange = useCallback(() => {
     const execute = async () => {
       try {
@@ -216,9 +216,9 @@ const ReportOpenViduPage = () => {
           (device) => device.deviceId !== currentVideoDevice.deviceId
         );
 
-        for (let index = 0; index < newVideoDevice.length; index++) {
-          console.log(newVideoDevice[index].deviceId);
-        }
+        // for (let index = 0; index < newVideoDevice.length; index++) {
+        //   console.log(newVideoDevice[index].deviceId);
+        // }
 
         console.log("새로운 디바이스 Id: " + newVideoDevice[0].deviceId);
 
@@ -230,7 +230,8 @@ const ReportOpenViduPage = () => {
           // 새로운 퍼블리셔 생성
           let newPublisher = await OV.initPublisherAsync(undefined, {
             audioSource: undefined,
-            videoSource: newVideoDevice[0].deviceId,
+            // videoSource: newVideoDevice[0].deviceId,
+            videoSource: videoDevices[index].deviceId,
             publishAudio: true,
             publishVideo: true,
             mirror: isCameraFront,
@@ -244,8 +245,9 @@ const ReportOpenViduPage = () => {
 
           // 상태 업데이트
           setIsCameraFront(!isCameraFront);
-          setCurrentVideoDevice(newVideoDevice[0]);
-
+          // setCurrentVideoDevice(newVideoDevice[0]);
+          setCurrentVideoDevice(videoDevices[index]);
+          setIndex(index++);
           // 로컬 비디오 업데이트
           const videoStream = new MediaStream(
             newPublisher.stream.getMediaStream().getVideoTracks()
