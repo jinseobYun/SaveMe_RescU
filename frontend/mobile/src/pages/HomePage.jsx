@@ -17,7 +17,7 @@ const geolocationOptions = {
 };
 const Home = () => {
   const navigate = useNavigate();
-  const { gps, addGps, setTagId, setGpsTermAgree, gpsTermAgree } =
+  const { gps, addGps, clearGps, setTagId, setGpsTermAgree, gpsTermAgree } =
     useUserStore();
   const { location, error, cancelLocationWatch } =
     useWatchLocation(geolocationOptions);
@@ -32,6 +32,7 @@ const Home = () => {
   };
   const { clearAllInputs } = useFormInputStore();
   useEffect(() => {
+    if (gps === null) clearGps();
     if (location) {
       addGps({ time: new Date(), location: location });
     }
@@ -44,7 +45,7 @@ const Home = () => {
           setTagId(tagId);
           //TODO - 태깅 신고 로직
           navigate("/report");
-        } else navigate("/ ");
+        } else navigate("/");
       });
     }
   }, []);
