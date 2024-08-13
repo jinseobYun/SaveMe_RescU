@@ -53,7 +53,6 @@ const Login = () => {
   });
   const [deviceToken, setDeviceToken] = useState();
   useEffect(() => {
-    console.log(window.AndroidInterface);
     const deviceToken =
       window.AndroidInterface && window.AndroidInterface.getDeviceToken();
     console.log("deviceToken: " + deviceToken);

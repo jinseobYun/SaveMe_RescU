@@ -9,7 +9,7 @@ async function loginApi(id, pw, deviceToken, success, fail) {
   const data = {
     memberId: id,
     password: pw,
-    deviceToken: deviceToken
+    deviceToken: deviceToken,
   };
   await http.post("/members/login", data).then(success).catch(fail);
 }
@@ -69,5 +69,5 @@ export {
   checkIdDuplication,
   reqVerifyCode,
   checkVerifyCode,
-  getNFCToken
+  getNFCToken,
 };

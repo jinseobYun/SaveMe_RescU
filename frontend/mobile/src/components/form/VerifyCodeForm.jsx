@@ -178,7 +178,7 @@ const VerifyCodeForm = () => {
               });
               break;
             case "findpassword":
-              navigate("/changepassword");
+              navigate("/changepassword?form=find");
               break;
           }
         }

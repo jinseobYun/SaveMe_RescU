@@ -4,10 +4,9 @@ import withReactContent from "sweetalert2-react-content";
 const MySwal = withReactContent(Swal);
 
 export const errorAlert = (errorMsg, title) => {
-  const message = errorMsg.split(".");
   Swal.fire({
     title: title || "Error!",
-    text: message[0],
+    text: errorMsg,
     confirmButtonText: "확인",
     confirmButtonColor: "#FFCC70",
   });
