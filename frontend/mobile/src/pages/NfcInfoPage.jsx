@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate, Link } from "react-router-dom";
+
 import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 import { Header, TabBar } from "@components/common";
-import { Grid, Button, Text, Input } from "@components/elements";
 import nfcimg from "@/assets/img/nfcimg.png";
 import { getNFCToken } from "@/api/userApi";
-import { yesorNoAlert, errorAlert } from "@/util/notificationAlert";
+import { toastAlert, confirmAlert } from "@/util/notificationAlert";
 import useUserStore from "@/store/useUserStore";
+const MySwal = withReactContent(Swal);
 
 const NfcInfoPage = () => {
   const { userId } = useUserStore();
@@ -32,21 +34,33 @@ const NfcInfoPage = () => {
     $width: "",
     $height: "10vh",
   };
+
   const onClickTokenModal = () => {
-    if (userNfc) return;
-    getNFCToken(
-      userId,
-      (response) => {
-        setUserNfc(response.data.nfcToken);
-        errorAlert(`NFC token은 ${response.data.nfcToken}입니다`);
-        //클립보드
-        //FIXME - navigator.clipboard.writeText(`saveme://open?tagId=${userNfc}`);
-      },
-      (error) => {
-        console.log(error);
+    let token = userNfc;
+    if (!userNfc) {
+      getNFCToken(
+        userId,
+        (response) => {
+          setUserNfc(response.data.nfcToken);
+          token = response.data.nfcToken;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }
+
+    confirmAlert("NFC 토큰", "복사하기", (result) => {
+      if (result.isDismissed) {
+        navigator.clipboard
+          .writeText(`saveme://open?tagId=${token}`)
+          .then(() => {
+            toastAlert(true, "NFC 토큰이 복사되었습니다");
+          });
       }
-    );
+    });
   };
+  //FIXME - navigator.clipboard.writeText(`saveme://open?tagId=${userNfc}`);
   return (
     <Container>
       <Header navText="NFC 정보 등록" goTo="/menu" />
