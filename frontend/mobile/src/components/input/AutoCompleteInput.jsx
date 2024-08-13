@@ -62,7 +62,6 @@ const AutoCompleteInput = ({ $prev, $onChange, $formType }) => {
           {$formType !== "disease"
             ? searchResults.map(
                 ({ medicineId, medicineName }, dropDownIndex) => {
-                  console.log(medicineName);
                   return (
                     <DropDownItem
                       key={dropDownIndex}
