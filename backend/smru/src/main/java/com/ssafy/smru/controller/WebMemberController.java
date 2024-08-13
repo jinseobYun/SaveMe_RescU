@@ -14,12 +14,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/web/members")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin(allowCredentials = "true", originPatterns = {"*"})
 public class WebMemberController {
     private final WebMemberService webMemberService;
     // 로그인
@@ -59,11 +62,13 @@ public class WebMemberController {
     // 현재 비밀번호가 DB에 등록된 정보와  맞는지 확인
     // 새비밀번호와 비밀번호 확인 번호가 일치하는지 확인
     @PostMapping("/change-password")
-    public ResponseEntity<?> changePassword(@RequestBody WebPasswordChangeDto.Request dto) {
+    public ResponseEntity<?> changePassword(@RequestBody WebPasswordChangeDto.Request dto, HttpServletRequest request) {
         try {
+            log.info("Headers: {}", Collections.list(request.getHeaderNames()).stream()
+                    .collect(Collectors.toMap(h -> h, request::getHeader)));
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String memberId = authentication.getName();
-
+            log.info("memberId : {}", memberId);
             webMemberService.changePassword(memberId, dto);
             return new ResponseEntity<>("Password changed successfully", HttpStatus.OK);
         } catch (IllegalArgumentException e) {
