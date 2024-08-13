@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { successAlert } from '@/util/notificationAlert';
+import { successAlert } from "@/util/notificationAlert";
 function Axios() {
   const instance = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -67,11 +67,9 @@ function loginAxios() {
           successAlert("다시 로그인 해주세요", () => {
             window.location.replace("/app/login");
             localStorage.removeItem("userStore");
-            return new Promise(() => { });
+            return new Promise(() => {});
           });
-
         }
-
       }
     }
   );
@@ -79,27 +77,24 @@ function loginAxios() {
 }
 
 function ovAxios() {
-
   const instance = axios.create({
     baseURL: import.meta.env.VITE_OV_API_BASE_URL,
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Basic ' + btoa('OPENVIDUAPP:' + import.meta.env.VITE_OV_SERVER_SECRET),
+      "Content-Type": "application/json",
+      Authorization:
+        "Basic " + btoa("OPENVIDUAPP:" + import.meta.env.VITE_OV_SERVER_SECRET),
     },
-
   });
 
   return instance;
 }
 
 function fcmAxios() {
-
   const instance = axios.create({
     baseURL: import.meta.env.VITE_FCM_API_BASE_URL,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-
   });
   instance.interceptors.request.use(
     (config) => {

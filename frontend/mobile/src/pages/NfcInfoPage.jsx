@@ -10,7 +10,6 @@ import nfcimg from "@/assets/img/nfcimg.png";
 import { getNFCToken } from "@/api/userApi";
 import { toastAlert, confirmAlert } from "@/util/notificationAlert";
 import useUserStore from "@/store/useUserStore";
-const MySwal = withReactContent(Swal);
 
 const NfcInfoPage = () => {
   const { userId } = useUserStore();

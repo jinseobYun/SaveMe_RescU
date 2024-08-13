@@ -82,11 +82,19 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
   };
 
   const handleAddInput = (value) => {
-    const data = {
-      id: value.medicineId,
-      name: value.medicineName,
-    };
-    addDrugInputs(data);
+    if (form === "disease") {
+      const data = {
+        id: value.cdId,
+        name: value.cdName,
+      };
+      addMedCdisInputs(data);
+    } else {
+      const data = {
+        id: value.medicineId,
+        name: value.medicineName,
+      };
+      addDrugInputs(data);
+    }
   };
   const onClickAddBtn = (name) => {
     let formType = "의약품";
