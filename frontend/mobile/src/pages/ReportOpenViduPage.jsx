@@ -111,19 +111,10 @@ const ReportOpenViduPage = () => {
           const videoDevices = devices.filter(
             (device) => device.kind === "videoinput"
           );
-          const currentVideoDeviceId = await getMainStreamManager()
-            .stream.getMediaStream()
-            .getVideoTracks()[0]
-            .getSettings().deviceId;
 
-          const currentVideoDevice = videoDevices.find(
-            (device) => device.deviceId === currentVideoDeviceId
-          );
-          console.log(
-            "첫 연결후 비디오 디바이스 " + currentVideoDevice.deviceId
-          );
-
-          setCurrentVideoDevice(currentVideoDeviceId);
+          const currentVideoDevice = videoDevices[0].deviceId;
+          console.log("첫 디바이스 아이디: ", currentVideoDevice);
+          setCurrentVideoDevice(currentVideoDevice);
         }
       });
     }
@@ -160,117 +151,47 @@ const ReportOpenViduPage = () => {
     }
   }, [remoteStream]);
 
-  // const handleCameraChange = () => {
-  //   const execute = async () => {
-  //     try {
-  //       const devices = await OV.getDevices();
-  //       const videoDevices = devices.filter(
-  //         (device) => device.kind === "videoinput"
-  //       );
-  //       // if (!videoDevices || videoDevices.length < 2) return;
-  //       console.log("현재 비디오 " + currentVideoDevice.deviceId);
-  //       const newVideoDevice = videoDevices.filter(
-  //         (device) => device.deviceId !== currentVideoDevice.deviceId
-  //       );
-
-  //       for (let index = 0; index < newVideoDevice.length; index++) {
-  //         console.log(
-  //           "카메라 다른 디바이스 id : " + newVideoDevice[index].deviceId
-  //         );
-  //       }
-
-  //       // console.log("새로운 디바이스 Id: " + newVideoDevice[0].deviceId);
-
-  //       if (newVideoDevice.length > 0) {
-  //         // 기존 퍼블리셔 언퍼블리시
-  //         await session.unpublish(getPublisher());
-  //         console.log("기존 퍼블리셔 제거 완료");
-
-  //         // 새로운 퍼블리셔 생성
-  //         let newPublisher = await OV.initPublisherAsync(undefined, {
-  //           audioSource: undefined,
-  //           // videoSource: isCameraFront ? newVideoDevice[0] : newVideoDevice[1],
-  //           videoDevices: newVideoDevice[2],
-  //           publishAudio: true,
-  //           publishVideo: true,
-  //           mirror: isCameraFront,
-  //         });
-
-  //         // 새로운 퍼블리셔를 상태에 설정
-  //         setPublisher(newPublisher);
-
-  //         // 새로운 퍼블리셔 퍼블리시
-  //         await session.publish(newPublisher);
-
-  //         // 상태 업데이트
-  //         setIsCameraFront(!isCameraFront);
-  //         setCurrentVideoDevice(newVideoDevice);
-  //         // 로컬 비디오 업데이트
-  //         const videoStream = new MediaStream(
-  //           newPublisher.stream.getMediaStream().getVideoTracks()
-  //         );
-  //         localVideoRef.current.srcObject = videoStream;
-
-  //         // 오디오 상태 유지
-  //         getPublisher().publishAudio(muted);
-  //       }
-  //     } catch (e) {
-  //       console.error(e);
-  //     }
-  //   };
-
-  //   // execute 함수를 호출하여 비동기적으로 동작하도록 함
-  //   execute();
-  // };
   const handleCameraChange = useCallback(async () => {
     try {
       const devices = await OV.getDevices();
       const videoDevices = devices.filter(
         (device) => device.kind === "videoinput"
       );
-      // if (!videoDevices || videoDevices.length < 2) return;
-      console.log("바꾸기 전 아이디: " + currentVideoDevice);
+      console.log("바꾸기 전 디바이스아이디: ", currentVideoDevice);
+      if (!videoDevices || videoDevices.length < 2) return;
+
       let newPublisher = await OV.initPublisherAsync(undefined, {
         audioSource: undefined,
         videoSource: isCameraFront
-          ? videoDevices[2].deviceId
+          ? videoDevices[1].deviceId
           : videoDevices[0].deviceId,
-        publishAudio: true, // 오디오 퍼블리싱 여부
-        publishVideo: true, // 비디오 퍼블리싱 여부
-        mirror: isCameraFront, // 전면 카메라일 경우 화면 반전 여부
+        publishAudio: true,
+        publishVideo: true,
+        mirror: isCameraFront,
       });
       console.log(
-        "바꿀 아이디 : " + isCameraFront
-          ? videoDevices[2].deviceId
-          : videoDevices[0].deviceId
+        "바꾼 후 디바이스아이디 : ",
+        isCameraFront ? videoDevices[1].deviceId : videoDevices[0].deviceId
       );
       setIsCameraFront(!isCameraFront);
-      setCurrentVideoDevice(
-        isCameraFront ? videoDevices[2].deviceId : videoDevices[0].deviceId
-      );
+
       await session.unpublish(getPublisher());
       console.log("기존 퍼블리셔 제거 완료");
 
-      // 새로운 스트림을 퍼블리시합니다.
-      // mainStreamManager = newPublisher;
-      // setMainStreamManager(newPublisher);
-      // console.log("새 미디어 스트림: " + getMainStreamManager());
       setPublisher(newPublisher);
       await session.publish(newPublisher);
-      console.log("퍼블리쉬 재설정 완료");
-      console.log("새 퍼블리쉬 " + getPublisher());
-      // 비디오 요소에 스트림을 설정합니다.
+
       const videoStream = new MediaStream(
         newPublisher.stream.getMediaStream().getVideoTracks()
       );
       localVideoRef.current.srcObject = videoStream;
 
-      // 오디오 상태 유지
       getPublisher().publishAudio(muted);
     } catch (e) {
       console.error(e);
     }
-  }, [isCameraFront, getMainStreamManager, muted]);
+  }, [isCameraFront, getMainStreamManager, muted, currentVideoDevice]);
+
   const onClickScreen = () => {
     if (isChatting && !showMenuAll) {
       setShowMenu(true);
