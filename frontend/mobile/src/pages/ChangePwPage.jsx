@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 
 import { Grid, Text, Input, NextPageButton } from "@components/elements";
@@ -12,29 +12,44 @@ import axios from "axios";
 
 const ChangePwPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const formType = searchParams.get("form");
   const { clearInputs, inputs, updateInputs } = useFormInputStore();
   const { values, errors, isLoading, handleChange, handleSubmit } = useForm({
-    initialValues: { newPassword: "", newPasswordConfirm: "" },
+    initialValues: {
+      newPassword: "",
+      newPasswordConfirm: "",
+      currentPassword: "",
+    },
     onSubmit: (values) => {
       //FIXME - 인증번호 저장 삭제 후 밑의 data로 변경
-      const data = {
-        phoneNumber: inputs.phoneNumber,
+      let data = {
         newPassword: values.newPassword,
         newPasswordConfirm: values.newPasswordConfirm,
-        memberId: inputs.memberId,
-        memberName: inputs.memberName,
-        verifyCode: inputs.temporyCode,
       };
       // const data = {
       //   ...inputs,
       //   newPassword: values.newPassword,
       //   newPasswordConfirm: values.newPasswordConfirm,
       // };
+      if (formType === "update") {
+        data.currentPassword = values.currentPassword;
+        console.log(values.currentPassword);
+      } else {
+        data = {
+          ...data,
+          phoneNumber: inputs.phoneNumber,
+          memberId: inputs.memberId,
+          memberName: inputs.memberName,
+          verifyCode: inputs.temporyCode,
+        };
+      }
       console.log(data);
       updateUserPwd(
-        "find",
+        formType,
         data,
         (response) => {
+          console.log(response);
           if (response.status === 200) {
             clearInputs();
             navigate("/", { replace: true });
@@ -42,7 +57,7 @@ const ChangePwPage = () => {
         },
         (error) => {
           console.log(error);
-          errorAlert(error.response.data);
+          errorAlert(error);
         }
       );
     },
@@ -70,6 +85,16 @@ const ChangePwPage = () => {
           />
         </TextBox>
         <StyledForm onSubmit={handleSubmit} noValidate>
+          {formType === "update" && (
+            <Input
+              $name="currentPassword"
+              $value={values.currentPassword}
+              _onChange={handleChange}
+              $label="기존 비밀번호*"
+              $haveToCheckValid={false}
+              $type="password"
+            />
+          )}
           <Input
             $name="newPassword"
             $placeholder="영대소문, 숫자를 포함한 8~20자"

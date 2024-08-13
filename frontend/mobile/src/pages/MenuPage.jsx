@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
+import Swal from "sweetalert2";
 
 import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined";
 import PaperclipOutlinedIcon from "@mui/icons-material/AttachFileOutlined";
@@ -15,7 +16,7 @@ import LockIcon from "@mui/icons-material/Lock";
 
 import { Header, TabBar } from "@components/common";
 import useFormInputStore from "@/store/useFormInputStore";
-import { yesorNoAlert } from "@/util/notificationAlert";
+import { toastAlert, confirmAlert } from "@/util/notificationAlert";
 import useUserStore from "@/store/useUserStore";
 const MenuPage = () => {
   const navigate = useNavigate();
@@ -57,13 +58,13 @@ const MenuPage = () => {
     {
       icon: <LockIcon />,
       label: "비밀번호 변경",
-      path: "/changepassword",
+      path: "/changepassword?form=update",
     },
-    {
-      icon: <PhoneAndroidOutlinedIcon />,
-      label: "휴대폰 번호 변경",
-      path: "/medicalinfo",
-    },
+    // {
+    //   icon: <PhoneAndroidOutlinedIcon />,
+    //   label: "휴대폰 번호 변경",
+    //   path: "/medicalinfo",
+    // },
     {
       icon: <LogoutIcon />,
       label: "로그아웃",
@@ -72,10 +73,13 @@ const MenuPage = () => {
   ];
   const handleNavigation = (path) => {
     if (path === "/logout") {
-      console.log("logout");
-      yesorNoAlert("정말 로그아웃 하시겠습니까?", "네", "아니오", () => {
-        logout();
-        navigate("/");
+      confirmAlert("정말 로그아웃 하시겠습니까?", "네", (result) => {
+        if (result.dismiss === Swal.DismissReason.cancel) {
+          logout();
+          toastAlert(true, "로그아웃 완료");
+
+          navigate("/");
+        }
       });
     } else navigate(path);
   };
