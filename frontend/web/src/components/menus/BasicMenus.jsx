@@ -1,8 +1,21 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./BasicMenus.css";
 
 export default function BasicMenus() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // localStorage 초기화
+    localStorage.clear();
+
+    // member 쿠키 삭제
+    document.cookie = "member=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+    // 로그아웃 후 메인 페이지로 이동
+    navigate("/");
+  };
+
   return (
     <nav id="navbar">
       <div className="menu-left">
@@ -23,7 +36,7 @@ export default function BasicMenus() {
           <Link to={"/mypage"}>비밀번호 수정</Link>
         </div>
         <div className="logout">
-          <Link to={"/"}>로그아웃</Link>
+          <button className="logout-btn" onClick={handleLogout}>로그아웃</button>
         </div>
       </div>
     </nav>
