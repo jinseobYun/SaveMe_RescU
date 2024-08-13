@@ -8,7 +8,7 @@ const Text = ({
   $size = "16px",
   $margin = false,
   $title = false,
-  $lineHeight = "16px",
+  $lineHeight = "1.2",
   _onClick = () => {},
 }) => {
   const styles = {
