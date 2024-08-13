@@ -12,7 +12,7 @@ const getInitialLatLon = () => {
   const storedData = JSON.parse(localStorage.getItem("reportData"));
   return storedData
     ? { lat: storedData.latitude, lon: storedData.longitude }
-    : { lat: 37.50802, lon: 127.062835 }; // 기본값
+    : { lat: 36.3553193257957, lon: 127.29820111515 }; // 기본값
 };
 
 const EmergencyListItem = ({
