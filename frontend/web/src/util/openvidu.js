@@ -44,23 +44,25 @@ export const initOpenVidu = async (sessionId, user) => {
     });
 
     // 1차정보 전달받는 이벤트 등록
-    // session.on("signal:report-info", (event) => {
-    session.on("signal", (event) => {
+    session.on("signal:report-info", (event) => {
+    // session.on("signal", (event) => {
       try {
         const reportData = JSON.parse(event.data); // 수신된 데이터를 객체로 변환
         console.log("Received report data:", reportData);
 
         const mappedData = {
-          patientId: "828c6f13-7f91-48cf-a254-44efb497396a", // mock 값
-          reporterId: "ssafy2", // mock 값
-          latitude: "37.5665", // mock 값
-          longitude: "126.9780", // mock 값
+          // patientId: "828c6f13-7f91-48cf-a254-44efb497396a", // mock 값
+          // reporterId: "ssafy2", // mock 값
+          // latitude: "37.5665", // mock 값
+          // longitude: "126.9780", // mock 값
 
-          // patientId: reportData.tagId,
-          // reporterId: reportData.userId,
-          // latitude: reportData.location.latitude,
-          // longitude: reportData.location.longitude,
+          patientId: reportData.tagId,
+          reporterId: reportData.userId,
+          latitude: reportData.location.latitude,
+          longitude: reportData.location.longitude,
         };
+
+        localStorage.setItem("reportData", JSON.stringify(mappedData));
 
         const reportEvent = new CustomEvent('reportInfoReceived', {
           detail: mappedData,
