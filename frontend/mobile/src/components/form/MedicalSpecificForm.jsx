@@ -35,6 +35,7 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
       const { bloodType1, bloodType2, otherInfo } = inputs;
       const medCdis = medCdisInputs.map((item) => item.id);
       const drugInfos = drugInputs.map((item) => item.id);
+      console.log(medCdis);
       const data = {
         bloodType1,
         bloodType2,
@@ -81,17 +82,24 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
     }
   };
 
-  const handleAddInput = (value) => {
+  const handleAddInput = (inputValue) => {
+    console.log(inputValue);
+    const newItem = searchResults.find((item) =>
+      form === "disease"
+        ? item.cdName === inputValue
+        : item.medicineName === inputValue
+    );
+    console.log(newItem);
     if (form === "disease") {
       const data = {
-        id: value.cdId,
-        name: value.cdName,
+        id: newItem.cdInfoId,
+        name: newItem.cdName,
       };
       addMedCdisInputs(data);
     } else {
       const data = {
-        id: value.medicineId,
-        name: value.medicineName,
+        id: newItem.medicineId,
+        name: newItem.medicineName,
       };
       addDrugInputs(data);
     }
@@ -118,6 +126,7 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
         const inputValue = document.querySelector(
           "#swal-react-container input"
         ).value;
+        if (inputValue === "") Swal.showValidationMessage(`입력해주세요`);
         const searchResults = useSearchStore.getState().searchResults;
         const existsInArray = searchResults.some((item) =>
           form === "disease"
@@ -141,32 +150,10 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
           return false;
         } else {
           if (name && inputValue !== name) {
-            if (form === "disease") {
-              const prevIndex = medCdisInputs.findIndex(
-                (item) => item.name === name
-              );
-              if (prevIndex !== -1) {
-                deleteMedCdisInput(prevIndex);
-              }
-            }
-            const prevIndex = drugInputs.findIndex(
-              (item) => item.name === name
-            );
-            if (prevIndex !== -1) {
-              deleteDrugInput(prevIndex);
-            }
+            deleteInput(name);
           }
         }
-        // 추가 처리 로직
-        const newItem = searchResults.find((item) =>
-          form === "disease"
-            ? item.cdName === inputValue
-            : item.medicineName === inputValue
-        );
-
-        return inputValue
-          ? Promise.resolve(newItem)
-          : Promise.reject("입력해 주세요.");
+        return inputValue;
       },
       width: "30em",
       confirmButtonText: "저장하기",
@@ -177,7 +164,19 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
       }
     });
   };
-
+  const deleteInput = (name) => {
+    if (form === "disease") {
+      const prevIndex = medCdisInputs.findIndex((item) => item.name === name);
+      if (prevIndex !== -1) {
+        deleteMedCdisInput(prevIndex);
+      }
+    } else {
+      const prevIndex = drugInputs.findIndex((item) => item.name === name);
+      if (prevIndex !== -1) {
+        deleteDrugInput(prevIndex);
+      }
+    }
+  };
   const btnStyles = {
     _onClick: onClickAddBtn,
     children: "추가하기",
