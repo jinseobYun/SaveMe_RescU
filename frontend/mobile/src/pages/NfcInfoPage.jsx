@@ -87,32 +87,57 @@ const NfcInfoPage = () => {
         <Title>
           NFC tools 사용법
         </Title>
-        <SubTitle>
-          1. NFC Tools 설치
-        </SubTitle>
-        <SubDescription>
-          <StyledLink to="market://details?id=com.wakdev.wdnfc">이곳</StyledLink>을 터치하면 설치화면으로 이동합니다.
-          <img src='' />
-          
-        </SubDescription>
-        <SubTitle>
-          2. NFC Tools 실행
-        </SubTitle>
-        <SubTitle>
-          3. 상단의 [쓰기] 탭으로 이동
-        </SubTitle>
-        <SubTitle>
-          4. [기록 추가] 선택
-        </SubTitle>
-        <SubTitle>
-          5. [사용자 정의 URL/URI] 선택
-        </SubTitle>
-        <SubTitle>
-          6. 입력창에 복사한 URI 붙여넣기
-        </SubTitle>
-        <StyledButton onClick={onClickTokenModal}>
-            NFC 토큰 발급받기
-        </StyledButton>
+        <SubContainer>
+          <SubTitle>
+            1. NFC Tools 설치 후 실행
+          </SubTitle>
+          <SubDescription>
+            <StyledLink to="market://details?id=com.wakdev.wdnfc">이곳을 터치하면 설치화면으로 이동합니다.</StyledLink>
+            <img src="/app/assets/img/nfc1.png" />
+          </SubDescription>
+        </SubContainer>
+        <SubContainer>
+          <SubTitle>
+            2. 상단의 [쓰기] 탭으로 이동 후 기록 추가 선택
+          </SubTitle>
+          <SubDescription>
+            <img src="/app/assets/img/nfc2.png" />
+          </SubDescription>
+        </SubContainer>
+        <SubContainer>
+          <SubTitle>
+            3. [사용자 정의 URL/URI] 선택
+          </SubTitle>
+          <SubDescription>
+            <img src="/app/assets/img/nfc3.png" />
+          </SubDescription>
+        </SubContainer>
+        <SubContainer>
+          <SubTitle>
+            4. 입력창에 복사한 URI 붙여넣기 후 확인
+          </SubTitle>
+          <SubDescription>
+            <StyledButton onClick={onClickTokenModal}>
+                NFC 토큰 발급받기
+            </StyledButton>
+            <img src="/app/assets/img/nfc4.png" />
+          </SubDescription>
+        </SubContainer>
+          <SubTitle>
+            5. 쓰기 선택
+          </SubTitle>
+          <SubDescription>
+            <img src="/app/assets/img/nfc5.png" />
+          </SubDescription>
+        <SubContainer>
+          <SubTitle>
+            6. NFC 스티커 태그
+          </SubTitle>
+          <SubDescription>
+            태그 후 초록색 체크가 떴다면 성공입니다. 빨간색 X가 떴다면 다시 시도해주세요.
+            <img src="/app/assets/img/nfc6.png" />
+          </SubDescription>
+        </SubContainer>
       </Content>
       <TabBar />
     </Container>
@@ -130,8 +155,8 @@ const Content = styled.div`
   display: flex;
   align-items: center;
   overflow: auto;
-  height: 83vh;
-  padding: 0 2rem;
+  height: 91vh;
+  padding: 0 2rem 9vh;
 `;
 const Title = styled.div`
   width: 100%;
@@ -172,10 +197,14 @@ const StyledButton = styled.button`
   border-radius: 8px;
   cursor: pointer;
   text-align: center;
-
+  margin-bottom: 10px;
   &:hover {
     background-color: var(--orange-color-200);
   }
+`;
+
+const SubContainer = styled.div`
+  width: 100%;
 `;
 
 const SubTitle = styled.p`
@@ -189,7 +218,7 @@ const SubTitle = styled.p`
 
 const StyledLink = styled(Link)`
   color: #b379d9;
-  font-size: 13px;
+  font-size: 14px;
 `;
 
 const SubDescription = styled.p`
@@ -199,7 +228,11 @@ const SubDescription = styled.p`
   text-align: start;
   line-height: 1.5;
   margin-left: 15px;
-  margin-bottom: 15px;
+  margin-bottom: 0.5rem;
+
+  & img {
+    margin-bottom: 7px;
+  }
 `;
 
 export default NfcInfoPage;
