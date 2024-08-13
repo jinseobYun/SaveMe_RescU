@@ -5,7 +5,7 @@ export const sendToSTTAPI = async (audioBytes) => {
       const base64String = btoa(String.fromCharCode(...uint8Array));
   
       const response = await fetch(
-        `https://speech.googleapis.com/v1/speech:recognize?key=my-key`,
+        `https://speech.googleapis.com/v1/speech:recognize?key=${import.meta.env.VITE_API_SPEECH_TO_TEXT}`,
         {
           method: 'POST',
           headers: {
