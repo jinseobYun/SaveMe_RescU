@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { putSecondInfoAsync } from "../../slices/reportSlice";
 // 응급실 정보는 다시 호출
 import { fetchEmergencyList } from "../../slices/emergencySlice";
+import { sendEmergencyPush } from "../../api/fcmApi";
 
 import { useNavigate } from "react-router-dom";
 
@@ -167,7 +168,7 @@ const SecondInfo = () => {
   };
 
   // 데이터 전송
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!dispatchOrderId) {
       alert("dispatchOrderId가 없습니다. 1차 정보를 먼저 입력해주세요.");
       return;
@@ -183,6 +184,23 @@ const SecondInfo = () => {
     console.log("이거봐바바바바", payload);
 
     dispatch(putSecondInfoAsync(payload));
+
+
+    const reportData = JSON.parse(localStorage.getItem("reportData"));
+    const fcmPayload = {
+      tagId: reportData.patientId,
+      hospitalName: formData.hospitalName,
+      hospitalAddress: emergencyData.items.find(
+        (hospital) => hospital.dutyName === formData.hospitalName
+      )?.dutyAddr || "",
+    };
+
+    try {
+      await sendEmergencyPush(fcmPayload);
+      alert("2차 정보 전송 및 FCM 전송이 완료되었습니다.");
+    } catch (error) {
+      alert("FCM 전송 중 오류가 발생했습니다.");
+    }
   };
 
   const handleKeyDown = (e, name, index) => {
