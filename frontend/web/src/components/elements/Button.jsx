@@ -7,14 +7,14 @@ const Button = ({
   children = null,
   $margin = false,
   $width = "100%",
-  $height = "60px",
+  $height = "",
   $padding = "10px 24px",
   $bg = { default: "#2D4059", hover: "var(bg-baige-color)" },
   $color = "var(--black-color-100)",
   $disabled = false,
   $border="none",
   // $border = "1px solid var(--black-color-300)",
-  $size = "16px",
+  $size = "30px",
   $bold = false,
   $radius = "10px",
   $boxShadow = false,
@@ -45,6 +45,8 @@ const Button = ({
 
 const BasicButton = styled.button`
   box-sizing: border-box;
+  line-height: 120%;
+  min-height: 9rem;
   width: ${(props) => props.$width};
   height: ${(props) => props.$height};
   cursor: pointer;

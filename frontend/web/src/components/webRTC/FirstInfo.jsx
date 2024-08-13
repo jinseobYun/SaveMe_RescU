@@ -78,10 +78,7 @@ const FirstInfo = () => {
   const handleInputChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
-      [e.target.name]:
-        e.target.name === "emergencyType"
-          ? parseInt(e.target.value, 10)
-          : e.target.value,
+      [e.target.name]: e.target.value,
     }));
   };
   // 반환 필요
@@ -154,7 +151,7 @@ const FirstInfo = () => {
         showClearButton={true}
       />
       <SubmitButton>
-        <Button _onClick={handleSubmit}>보내기</Button>
+        <Button _onClick={handleSubmit} $color="white">보내기</Button>
       </SubmitButton>
     </FormContainer>
   );

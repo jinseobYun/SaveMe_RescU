@@ -33,9 +33,9 @@ export default function LoginComponent() {
       alert("이메일 또는 패스워드를 확인하세요.");
     } else {
       // 로그인 성공 시 JWT 토큰을 로컬 스토리지에 저장
-      localStorage.setItem("JWT-AccessToken", data.accessToken);
-      localStorage.setItem("JWT-RefreshToken", data.refreshToken);
-      localStorage.setItem("memberId", loginParam.memberId);
+      sessionStorage.setItem("JWT-AccessToken", data.accessToken);
+      sessionStorage.setItem("JWT-RefreshToken", data.refreshToken);
+      sessionStorage.setItem("memberId", loginParam.memberId);
       alert("로그인 성공");
       navigate("/main");
     }
@@ -80,9 +80,6 @@ return (
       $bg={{ default: "#fff5b3", hover: "#ffde4d" }} >
           <span className="login-text">로그인</span>
         </Button>
-
-
-
     </div>
   </div>
 );

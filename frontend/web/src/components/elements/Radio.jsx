@@ -10,7 +10,7 @@ const Radio = ({ name, options, selectedValue, setSelectedValue, label }) => {
           <Text
             children={label}
             color="var(--label-gray-color)"
-            size="12px"
+            size="20px"
             lineHeight="16px"
           />
         </Label>
@@ -61,9 +61,11 @@ const RadioWrapper = styled.div`
 
 const RadioLabel = styled.label`
   width: 95%;
+  min-height: 5rem;
   display: flex;
   align-items: center;
   gap: 5px;
+  font-size: 24px;
 `;
 
 const RadioInput = styled.input`

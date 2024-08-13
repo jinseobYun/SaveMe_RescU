@@ -5,13 +5,13 @@
      /* transform 좌우반전 적용 */
     transform: scaleX(-1);
     position :relative;
-    border: 1px solid;
+    /* border: 1px solid; */
 }
 
 .local-position {
     position: absolute;
     bottom: 100px;
-    right: 50px;
+    /* right: 50px; */
 }
 
 .control-panel{
