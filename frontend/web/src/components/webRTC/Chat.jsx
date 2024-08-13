@@ -74,6 +74,13 @@ const Chat = () => {
     }
   }, [session]);
 
+  // 채팅이 업데이트될 때마다 스크롤을 아래로 이동
+  useEffect(() => {
+    if (chatWrapperRef.current) {
+      chatWrapperRef.current.scrollTop = chatWrapperRef.current.scrollHeight;
+    }
+  }, [chat]);
+
   const handleMessageSubmit = (event) => {
     event.preventDefault();
     if (messageInput.trim() !== "") {
@@ -159,6 +166,9 @@ const ChatMessage = styled.div`
     css`
       font-weight: bold;
     `}
+  & p {
+    word-break: break-all;
+  }
 `;
 const ChatInputBox = styled.form`
   display: flex;
