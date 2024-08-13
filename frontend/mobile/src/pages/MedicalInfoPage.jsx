@@ -6,12 +6,15 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Swal from "sweetalert2";
 
 import { Header, TabBar } from "@components/common";
-import { Button, Text } from "@components/elements";
+import { Button, Text, Image } from "@components/elements";
 import useUserStore from "@/store/useUserStore";
 import { getMedicalInfo, deleteMedicalInfo } from "@api/medicalInfoApi";
-import { errorAlert } from "@/util/notificationAlert";
 import useFormInputStore from "@/store/useFormInputStore";
-import { successAlert, yesorNoAlert } from "@/util/notificationAlert";
+import { toastAlert, yesorNoAlert } from "@/util/notificationAlert";
+import chart from "@/assets/img/icon/chart.gif";
+import drug from "@/assets/img/icon/drug.gif";
+import disease from "@/assets/img/icon/disease.gif";
+
 const MedicalInfoPage = () => {
   const { changeFormRegister, changeFormEdit, clearAllInputs } =
     useFormInputStore();
@@ -37,12 +40,11 @@ const MedicalInfoPage = () => {
     $padding: "1rem 2rem",
     $size: "24px",
     $bold: true,
-    // $boxShadow: "0px 4px 0px 0px var(--main-orange-color);",
-    // $padding: "14px 32px",
+    $margin: "20rem 0 0 0",
     $width: "",
     $height: "10vh",
   };
-  const onClickDelteBtn = (contact) => {
+  const onClickDelteBtn = () => {
     yesorNoAlert(
       `의료정보를 삭제하시겠습니까?`,
       "취소",
@@ -52,7 +54,7 @@ const MedicalInfoPage = () => {
           deleteMedicalInfo(
             (response) => {
               if (response.status === 200) {
-                successAlert("삭제되었습니다");
+                toastAlert("삭제되었습니다");
                 clearUserMedicalInfo();
               }
             },
@@ -115,66 +117,93 @@ const MedicalInfoPage = () => {
   return (
     <Container>
       <Header navText="내 의료 정보" goTo="/menu" />
-      <Content>
-        {/* //TODO - 의료 정보 있으면 있는 상태 보여주기 */}
-        {userMedicalInfo ? (
-          <>
-            <ButtonBox>
-              <Button
-                _onClick={() => {
-                  changeFormEdit();
+      {userMedicalInfo ? (
+        <>
+          {/* //TODO - 의료 정보 있으면 있는 상태 보여주기 */}
+          <ButtonBox>
+            <Button
+              _onClick={() => {
+                changeFormEdit();
 
-                  navigate("/medicalinfo/edit?form=basic");
-                }}
-                children="수정하기"
-                $padding=""
-                $border="1px solid  var(--orange-color-200)"
-              />
+                navigate("/medicalinfo/edit?form=basic");
+              }}
+              $width="80px"
+              $bg={{
+                default: "var(--main-orange-color)",
+              }}
+              $color={{ default: "var(--white-color-100)" }}
+              children={
+                <div style={{ gap: "1rem", display: "flex" }}>
+                  <EditIcon />
+                  수정
+                </div>
+              }
+              $padding=""
+              $border="1px solid  var(--orange-color-200)"
+            />
 
-              <Button
-                _onClick={onClickDelteBtn}
-                children="삭제하기"
-                $padding=""
-                $border="1px solid  var(--orange-color-200)"
-              />
-            </ButtonBox>
+            <Button
+              _onClick={onClickDelteBtn}
+              $padding="5px"
+              $border="1px solid  var(--orange-color-200)"
+              $width="80px"
+              $bg={{
+                default: "var(--main-orange-color)",
+              }}
+              $color={{ default: "var(--white-color-100)" }}
+              children={
+                <div style={{ gap: "1rem", display: "flex" }}>
+                  <DeleteIcon />
+                  삭제
+                </div>
+              }
+            />
+          </ButtonBox>
 
+          <Content>
             <InfoContainer>
               <Section>
                 <SectionHeader>
                   <SectionTitle>기본 정보</SectionTitle>
+                  <Image $src={chart} $width="20px" />
                 </SectionHeader>
                 <InfoList>
                   <InfoItem>
                     <span>
                       <Text
                         $color="var(--label-gray-color)"
-                        $size="1.2rem"
+                        $size="1.4rem"
                         children="ABO 혈액형"
                         $padding="0.7rem"
                         $lineHeight=""
                       />
                     </span>
-                    <Value>{userMedicalInfo.bloodType1}형</Value>
+                    <Value>
+                      {userMedicalInfo.bloodType1 &&
+                        `${userMedicalInfo.bloodType1}형`}
+                    </Value>
                   </InfoItem>
                   <InfoItem>
                     <span>
                       <Text
                         $color="var(--label-gray-color)"
-                        $size="1.2rem"
+                        $size="1.4rem"
                         children="RH 혈액형"
                         $padding="0.7rem"
                         $lineHeight=""
                       />
                     </span>
 
-                    <Value>{userMedicalInfo.bloodType2}형</Value>
+                    <Value>
+                      {userMedicalInfo.bloodType2 &&
+                        `${userMedicalInfo.bloodType2}형`}
+                    </Value>
                   </InfoItem>
                   <InfoItem ref={infoItemRef} $isColumn={isColumn}>
                     <span>
                       <Text
                         $color="var(--label-gray-color)"
-                        $size="1.2rem"
+                        $size="1.4rem"
                         children="기타 특이사항"
                         $padding="0.7rem"
                         $lineHeight=""
@@ -188,12 +217,7 @@ const MedicalInfoPage = () => {
               <Section>
                 <SectionHeader>
                   <SectionTitle>투약 정보</SectionTitle>
-                  {/* <EditButton
-                    onClick={() => navigate("/medicalinfo/edit?form=drug")}
-                  >
-                    <EditIcon />
-                    수정
-                  </EditButton> */}
+                  <Image $src={drug} $width="20px" />
                 </SectionHeader>
                 <InfoList>
                   {userMedicalInfo.drugInfos.map((item, index) => {
@@ -202,7 +226,7 @@ const MedicalInfoPage = () => {
                         <span>
                           <Text
                             $color="var(--black-color-200)"
-                            $size="1.3rem"
+                            $size="1.4rem"
                             children={item.name}
                             $padding="0.7rem"
                             $lineHeight=""
@@ -216,12 +240,7 @@ const MedicalInfoPage = () => {
               <Section>
                 <SectionHeader>
                   <SectionTitle>지병 정보</SectionTitle>
-                  {/* <EditButton
-                    onClick={() => navigate("/medicalinfo/edit?form=disease")}
-                  >
-                    <EditIcon />
-                    수정
-                  </EditButton> */}
+                  <Image $src={disease} $width="20px" />
                 </SectionHeader>
                 <InfoList>
                   {userMedicalInfo.medCdis.map((item, index) => {
@@ -230,7 +249,7 @@ const MedicalInfoPage = () => {
                         <span>
                           <Text
                             $color="var(--black-color-200)"
-                            $size="1.3rem"
+                            $size="1.4rem"
                             children={item.name}
                             $padding="0.7rem"
                             $lineHeight=""
@@ -242,11 +261,11 @@ const MedicalInfoPage = () => {
                 </InfoList>
               </Section>
             </InfoContainer>
-          </>
-        ) : (
-          <Button {...btnStyles} />
-        )}
-      </Content>
+          </Content>
+        </>
+      ) : (
+        <Button {...btnStyles} />
+      )}
       <TabBar />
     </Container>
   );
@@ -259,6 +278,7 @@ const Container = styled.div`
   flex-direction: column;
   height: 100vh;
   width: 100vw;
+  align-items: center;
 `;
 const Content = styled.div`
   flex-direction: column;
@@ -268,6 +288,7 @@ const Content = styled.div`
   height: 83vh;
   align-items: flex-end;
   margin: auto;
+  background-color: #f5f5f5;
 `;
 
 const InfoContainer = styled.div`
@@ -277,18 +298,20 @@ const InfoContainer = styled.div`
 `;
 
 const Section = styled.div`
-  // background-color: var(--white-color-200);
-  // border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 16px;
+  // padding: 20px;
+  // margin-bottom: 20px;
+  // border-radius: 16px;
   // border: 1px solid var(--main-orange-color);
-  backdrop-filter: blur(2px);
-  background-color: rgba(255, 255, 255, 0.6);
-  box-shadow:
-    2px 2px 10px 0px rgba(255, 178, 44, 0.5),
-    inset -5px -5px 16px 0px rgba(255, 178, 44, 0.6),
-    inset 0px 11px 28px 0px rgb(255, 255, 255);
+  // background-color: #f5f5f5;
+  // // background-color: rgba(255, 255, 255, 0.6);
+  // // box-shadow: 2px 2px 10px 0px rgba(255, 178, 44, 0.5),
+  // //   inset -5px -5px 5px 0px rgba(255, 178, 44, 0.6),
+  // //   inset 0px 11px 28px 0px rgb(255, 255, 255);
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+  padding: 15px;
 `;
 
 const SectionHeader = styled.div`
@@ -296,19 +319,13 @@ const SectionHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+  justify-content: flex-start;
+  gap: 1rem;
 `;
 
 const SectionTitle = styled.h2`
-  font-size: 18px;
+  font-size: 20px;
   margin: 0;
-`;
-
-const StyledBtn = styled.button`
-  font-size: 14px;
-  color: var(--dark-blue-color);
-  background: none;
-  border: none;
-  cursor: pointer;
 `;
 
 const InfoList = styled.ul`
@@ -341,5 +358,5 @@ const ButtonBox = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 01em;
+  gap: 2rem;
 `;

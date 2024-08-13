@@ -8,9 +8,9 @@ const GlobalStyles = createGlobalStyle`
         --dark-blue-color:#2D4059;
         --bg-baige-color:#FFFCE3;
         --label-gray-color:#7A7D84;
-        --chat-pink-color:#FFCC70;
         --confirm-blue-color:#96C9F4;
 
+				
 				--orange-color-100:#FFCC70; //swal basic btn
 				--orange-color-200:#f39800;
 
