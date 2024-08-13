@@ -11,7 +11,6 @@ export default function BasicLayout({ children }) {
           {memberId && <BasicMenus />}
         </header>
         <main>{children}</main>
-        <footer></footer>
       </container>
     </>
   );
