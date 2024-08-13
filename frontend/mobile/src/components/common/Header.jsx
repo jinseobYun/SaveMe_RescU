@@ -1,0 +1,64 @@
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import Swal from "sweetalert2";
+import { Grid, Button, Text } from "@components/elements";
+import useFormInputStore from "@/store/useFormInputStore";
+import { yesorNoAlert } from "@/util/notificationAlert";
+
+const Header = ({ navText, backAlert, goTo }) => {
+  const navigate = useNavigate();
+  const { clearAllInputs } = useFormInputStore();
+
+  const onClickGoBack = () => {
+    goTo
+      ? navigate(goTo)
+      : backAlert
+        ? yesorNoAlert(
+            "변경사항이 저장되지 않습니다",
+            "취소",
+            "뒤로가기",
+            (result) => {
+              if (result.isDismissed) {
+                navigate(-1);
+                clearAllInputs();
+              }
+            }
+          )
+        : navigate(-1);
+  };
+  return (
+    <>
+      <StyledDiv>
+        <Button
+          _onClick={onClickGoBack}
+          $width="2rem"
+          $height="2rem"
+          $bg={{ default: "transparent" }}
+          children={<ArrowBackIcon fontSize="large" />}
+        />
+      </StyledDiv>
+      <Grid
+        $display="flex"
+        $width="100%"
+        $height="10vh"
+        $flex_direction="row"
+        $justify_content="center"
+        $align_items="center"
+        $gap="35vw"
+      >
+        <Text $size="2rem" children={navText} $padding="1rem" $lineHeight="" />
+      </Grid>
+    </>
+  );
+};
+
+export default Header;
+
+const StyledDiv = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  // width: 100%;
+`;

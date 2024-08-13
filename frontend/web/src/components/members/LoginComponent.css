@@ -1,0 +1,40 @@
+
+
+.logincontainer {
+    width: 500px;
+    height: 367px;
+    flex-shrink: 0;
+    margin: auto;
+    margin-top: 140px;
+}
+.login-logo-image {
+    width: 350px; 
+    height: auto; 
+    margin-bottom: 150px; 
+  }
+
+.login-info {
+    display: inline-flex;
+    height: 93px;
+    padding: 38px 1px 26px 14px;
+    justify-content: flex-end;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.login-input {
+    display: flex;
+    width: 400px;
+    height: 200px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    flex-shrink: 0;
+}
+
+.id, .password{
+    width: 100%;
+}
+
+
+  

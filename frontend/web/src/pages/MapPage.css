@@ -1,0 +1,42 @@
+.map {
+}
+
+.map-left-side {
+  width: 35vw;
+  height: 100vh;
+  float: left;
+  display: flex;
+  flex-direction: column;
+  /* background-color: azure; */
+  /* border: 1px solid */
+}
+
+.controls {
+  padding-left: 10px;
+  padding-top: 10px;
+  display: flex;
+  gap: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #D0D0D0;
+
+}
+
+.mappage-btn {
+  /* font */
+  color: white;
+  background-color: #2D4059;
+  font-weight: 600;
+  line-height: 16px;
+  padding: 20px;
+  width: 15rem;
+  font-size: 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+  
+.kakao-map-container {
+  width: 65vw;
+  height: 100vh;
+  float: left;
+}
