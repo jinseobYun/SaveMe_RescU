@@ -51,7 +51,7 @@ const Textarea = ({
         }}
       />
       <CharacterCount>
-        {value.length}/{maxLength}
+        {value && value.length}/{maxLength}
       </CharacterCount>
     </TextAreaContainer>
   );
@@ -79,7 +79,7 @@ const StyledTextArea = styled.textarea`
   border: 1px solid;
   box-shadow: 0px 1px 2px 0px rgba(55, 65, 81, 0.08);
   color: var(--gray-color-400);
-  font-size: 16px;
+  font-size: 24px;
   font-weight: 500;
   line-height: 24px;
   background: var(--white-color-100);

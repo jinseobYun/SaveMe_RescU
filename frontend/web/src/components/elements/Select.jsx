@@ -18,7 +18,7 @@ const Select = ({ label, options, selectedValue, setSelectedValue }) => {
           <Text
             children={label}
             color="var(--label-gray-color)"
-            size="12px"
+            size="16px"
             lineHeight="16px"
           />
         </Label>
@@ -43,6 +43,7 @@ const SelectContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  font-size: 24px;
   gap: 5px;
 `;
 
@@ -56,6 +57,7 @@ const Label = styled.div`
 
 const SelectWrapper = styled.div`
   width: 100%;
+  min-height: 5rem;
   padding: 5px;
   box-sizing: border-box;
   border: 1px solid;
@@ -79,6 +81,8 @@ const StyledSelect = styled.select`
   background-repeat: no-repeat;
   background-position-x: 100%;
   background-position-y: 50%;
+  min-height: 5rem;
+  font-size: 24px;
 `;
 
 export default Select;
