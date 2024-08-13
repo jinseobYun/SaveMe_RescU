@@ -228,9 +228,8 @@ const ReportOpenViduPage = () => {
       const videoDevices = devices.filter(
         (device) => device.kind === "videoinput"
       );
-      console.log(isCameraFront);
       // if (!videoDevices || videoDevices.length < 2) return;
-
+      console.log("바꾸기 전 아이디: " + currentVideoDevice.deviceId);
       let newPublisher = await OV.initPublisherAsync(undefined, {
         audioSource: undefined,
         videoSource: isCameraFront
@@ -240,7 +239,11 @@ const ReportOpenViduPage = () => {
         publishVideo: true, // 비디오 퍼블리싱 여부
         mirror: isCameraFront, // 전면 카메라일 경우 화면 반전 여부
       });
-
+      console.log(
+        "바꿀 아이디 : " + isCameraFront
+          ? videoDevices[2].deviceId
+          : videoDevices[0].deviceId
+      );
       setIsCameraFront(!isCameraFront);
 
       await session.unpublish(getPublisher());
