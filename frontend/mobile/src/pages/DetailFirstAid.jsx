@@ -4,9 +4,7 @@ import { useLocation, useSearchParams } from "react-router-dom";
 
 import { Header, TabBar } from "@components/common";
 import { Button, Grid, Text, Image } from "@components/elements";
-
 import { aidTopicsJson } from "@/assets/json/firstAid.js";
-
 const DetailFirstAid = () => {
   const [searchParams] = useSearchParams();
   const idx = searchParams.get("topic");
@@ -39,16 +37,30 @@ const DetailFirstAid = () => {
   return (
     <Container>
       <Header navText={aidTopicsJson[idx].name} goTo="/firstaid" />
-
       <Content>
+        <Title>
+          {curPage + 1}. {aidTopicsJson[idx].title[curPage]}
+        </Title>
         <IconWrapper>
-          <Image src={aidImg} alt={aidTopicsJson[idx].name} />
+          <Image $src={aidTopicsJson[idx].imgUrl[curPage]} $width="50vw" />
         </IconWrapper>
         <Description>{aidDesc}</Description>
         <PageBtn>
-          {curPage > 0 && <Button _onClick={handlePrev} children="&#8249;" />}
+          {curPage > 0 && (
+            <Button
+              _onClick={handlePrev}
+              $width="fit-content"
+              $margin="1rem"
+              children={<Text $size="5rem" children="&#8249;" />}
+            />
+          )}
           {aidTopicsJson[idx] && curPage < aidTopicsJson[idx].page - 1 && (
-            <Button _onClick={handleNext} children="&#8250;" />
+            <Button
+              _onClick={handleNext}
+              $width="fit-content"
+              $margin="1rem"
+              children={<Text $size="5rem" children="&#8250;" />}
+            />
           )}
         </PageBtn>
       </Content>
@@ -68,18 +80,24 @@ const Container = styled.div`
 const Content = styled.div`
   flex-direction: column;
   display: flex;
+  height: 81vh;
   align-items: center;
   overflow: auto;
-  height: 83vh;
   padding: 0 2rem;
+  margin: 2rem;
+  position: relative;
 `;
 const PageBtn = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
   padding: 10px 0;
-
+  margin: 10px 0;
+  font-size: 2rem;
   width: 100%;
+  position: absolute;
+  bottom: 0;
+  flex-grow: 1;
 `;
 
 const Title = styled.div`
@@ -107,4 +125,11 @@ const Description = styled.p`
   line-height: 1.5;
   text-align: center;
   margin-bottom: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+  padding: 15px;
+  cursor: pointer;
+  white-space: pre-wrap;
+  word-break: keep-all;
 `;

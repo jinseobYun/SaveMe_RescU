@@ -65,7 +65,6 @@ const NfcInfoPage = () => {
       `saveme://open?tagId=${token}`
     );
   };
-  //FIXME - navigator.clipboard.writeText(`saveme://open?tagId=${userNfc}`);
   return (
     <Container>
       <Header navText="NFC 정보 등록" goTo="/menu" />
