@@ -44,16 +44,22 @@ export const initOpenVidu = async (sessionId, user) => {
     });
 
     // 1차정보 전달받는 이벤트 등록
-    session.on("signal:report-info", (event) => {
+    // session.on("signal:report-info", (event) => {
+    session.on("signal", (event) => {
       try {
         const reportData = JSON.parse(event.data); // 수신된 데이터를 객체로 변환
         console.log("Received report data:", reportData);
 
         const mappedData = {
-          patientId: reportData.tagId,
-          reporterId: reportData.userId,
-          latitude: reportData.location.latitude,
-          longitude: reportData.location.longitude,
+          patientId: "828c6f13-7f91-48cf-a254-44efb497396a", // mock 값
+          reporterId: "ssafy2", // mock 값
+          latitude: "37.5665", // mock 값
+          longitude: "126.9780", // mock 값
+
+          // patientId: reportData.tagId,
+          // reporterId: reportData.userId,
+          // latitude: reportData.location.latitude,
+          // longitude: reportData.location.longitude,
         };
 
         const reportEvent = new CustomEvent('reportInfoReceived', {
@@ -141,29 +147,29 @@ export const initOpenVidu = async (sessionId, user) => {
     const processInterval = setInterval(processAudioData, 100);
 
     // 일정 간격으로 STT API 호출
-    setInterval(async () => {
-      if (collectedAudioData.length > 0) {
-        const audioBytes = convertFloat32ToInt16(collectedAudioData);
-        const result = await sendToSTTAPI(audioBytes);
-        console.log("STT 결과 반환 result: ", result);
-        if (result && result.results && result.results.length > 0) {
-          const transcription = result.results
-            .map((res) => res.alternatives[0].transcript)
-            .join("\n");
+    // setInterval(async () => {
+    //   if (collectedAudioData.length > 0) {
+    //     const audioBytes = convertFloat32ToInt16(collectedAudioData);
+    //     const result = await sendToSTTAPI(audioBytes);
+    //     console.log("STT 결과 반환 result: ", result);
+    //     if (result && result.results && result.results.length > 0) {
+    //       const transcription = result.results
+    //         .map((res) => res.alternatives[0].transcript)
+    //         .join("\n");
 
           
-          // STT 데이터를, Chat과 동일하게 JSON으로
-          const data = { message: transcription, sender: "stt"}
-          session.signal({
-            data: JSON.stringify(data),
-            to: [], // 모든 사용자에게 전송
-            type: "my-chat",
-          });
-          console.log("transcription은? :", transcription);
-        }
-        collectedAudioData = [];
-      }
-    }, 5000); // 5초마다 실행
+    //       // STT 데이터를, Chat과 동일하게 JSON으로
+    //       const data = { message: transcription, sender: "stt"}
+    //       session.signal({
+    //         data: JSON.stringify(data),
+    //         to: [], // 모든 사용자에게 전송
+    //         type: "my-chat",
+    //       });
+    //       console.log("transcription은? :", transcription);
+    //     }
+    //     collectedAudioData = [];
+    //   }
+    // }, 5000); // 5초마다 실행
 
     publisher = await OV.initPublisherAsync(undefined, {
       audioSource: filteredStream.stream,
@@ -196,6 +202,7 @@ export const leaveSession = () => {
 export const toggleAudio = () => {
   if (publisher) {
     const enabled = !publisher.stream.audioActive;
+
     publisher.publishAudio(enabled);
     return enabled;
   }

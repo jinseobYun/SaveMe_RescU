@@ -80,9 +80,6 @@ return (
       $bg={{ default: "#fff5b3", hover: "#ffde4d" }} >
           <span className="login-text">로그인</span>
         </Button>
-
-
-
     </div>
   </div>
 );
