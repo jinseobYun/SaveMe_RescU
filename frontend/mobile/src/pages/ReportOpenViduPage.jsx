@@ -111,7 +111,7 @@ const ReportOpenViduPage = () => {
           const videoDevices = devices.filter(
             (device) => device.kind === "videoinput"
           );
-          const currentVideoDeviceId = getMainStreamManager()
+          const currentVideoDeviceId = await getMainStreamManager()
             .stream.getMediaStream()
             .getVideoTracks()[0]
             .getSettings().deviceId;
@@ -119,6 +119,10 @@ const ReportOpenViduPage = () => {
           const currentVideoDevice = videoDevices.find(
             (device) => device.deviceId === currentVideoDeviceId
           );
+          console.log(
+            "첫 연결후 비디오 디바이스 " + currentVideoDevice.deviceId
+          );
+
           setCurrentVideoDevice(currentVideoDevice);
         }
       });
@@ -156,7 +160,7 @@ const ReportOpenViduPage = () => {
     }
   }, [remoteStream]);
 
-  const handleCameraChange = useCallback(() => {
+  const handleCameraChange = () => {
     const execute = async () => {
       try {
         const devices = await OV.getDevices();
@@ -164,7 +168,7 @@ const ReportOpenViduPage = () => {
           (device) => device.kind === "videoinput"
         );
         // if (!videoDevices || videoDevices.length < 2) return;
-
+        console.log("현재 비디오 " + currentVideoDevice.deviceId);
         const newVideoDevice = videoDevices.filter(
           (device) => device.deviceId !== currentVideoDevice.deviceId
         );
@@ -185,7 +189,8 @@ const ReportOpenViduPage = () => {
           // 새로운 퍼블리셔 생성
           let newPublisher = await OV.initPublisherAsync(undefined, {
             audioSource: undefined,
-            videoSource: isCameraFront ? videoDevices[0] : videoDevices[2],
+            // videoSource: isCameraFront ? newVideoDevice[0] : newVideoDevice[1],
+            videoDevices: videoDevices[1],
             publishAudio: true,
             publishVideo: true,
             mirror: isCameraFront,
@@ -199,7 +204,7 @@ const ReportOpenViduPage = () => {
 
           // 상태 업데이트
           setIsCameraFront(!isCameraFront);
-
+          setCurrentVideoDevice(newVideoDevice);
           // 로컬 비디오 업데이트
           const videoStream = new MediaStream(
             newPublisher.stream.getMediaStream().getVideoTracks()
@@ -216,7 +221,7 @@ const ReportOpenViduPage = () => {
 
     // execute 함수를 호출하여 비동기적으로 동작하도록 함
     execute();
-  }, [isCameraFront, getMainStreamManager, muted, currentVideoDevice]);
+  };
 
   const onClickScreen = () => {
     if (isChatting && !showMenuAll) {
