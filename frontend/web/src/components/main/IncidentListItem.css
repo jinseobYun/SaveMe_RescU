@@ -2,6 +2,10 @@
     display: flex;
     border-top: 1px solid;
     border: 1px solid;
+    height:6rem;
+    font-size: 24px;
+    justify-content: center;
+    align-items: center;
 }
 
 .incident-list-item:hover {

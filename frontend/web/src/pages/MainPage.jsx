@@ -8,6 +8,7 @@ import BasicLayout from "../layouts/BasicLayout";
 import Filter from "../components/main/Filter";
 import IncidentList from "../components/main/IncidentList";
 import InfoForm from "../components/main/InfoForm";
+import Pagination from "../components/main/Pagination";
 import "./MainPage.css";
 
 function formatStartDate(date) {
@@ -24,7 +25,6 @@ function formatEndDate(date) {
   return `${year}-${month}-${day}`;
 }
 
-
 const MainPage = () => {
   const dispatch = useDispatch();
   const { list, details, loading, error } = useSelector(
@@ -32,12 +32,15 @@ const MainPage = () => {
   );
   const [formData, setFormData] = useState({
     startDate: formatStartDate(new Date()),
-    endDate:formatEndDate(new Date()),
+    endDate: formatEndDate(new Date()),
     createdBy: "",
   });
 
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // 페이지 로드 시 기본 데이터 불러오기
   useEffect(() => {
-    dispatch(fetchIncidentList({}));
+    dispatch(fetchIncidentList({ page: currentPage }));
   }, [dispatch]);
 
   const handleInputChange = (e) => {
@@ -48,11 +51,19 @@ const MainPage = () => {
   };
 
   const handleFilter = () => {
-    dispatch(fetchIncidentList(formData));
+    setCurrentPage(1);
+    dispatch(fetchIncidentList({ page: 1, ...formData }));
   };
 
   const handleIncidentClick = (id) => {
     dispatch(fetchIncidentDetails(id));
+  };
+
+  const handlePageChange = (page) => {
+    if (page !== currentPage) {
+    setCurrentPage(page);
+    dispatch(fetchIncidentList({ page, ...formData }));
+    }
   };
 
   return (
@@ -67,6 +78,14 @@ const MainPage = () => {
           {loading && <p>Loading...</p>}
           {error && <p>Error: {error}</p>}
           <IncidentList data={list} onIncidentClick={handleIncidentClick} />
+          <div className="pagination">
+            <Pagination
+              currentPage={currentPage}
+              totalItems={list.totalElements}
+              onPageChange={handlePageChange}
+              itemsPerPage={10}
+            />
+          </div>
         </div>
         <div className="main-divide"></div>
         <div className="main-right">
