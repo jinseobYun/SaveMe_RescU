@@ -123,7 +123,7 @@ const ReportOpenViduPage = () => {
             "첫 연결후 비디오 디바이스 " + currentVideoDevice.deviceId
           );
 
-          setCurrentVideoDevice(currentVideoDevice);
+          setCurrentVideoDevice(currentVideoDeviceId);
         }
       });
     }
@@ -229,7 +229,7 @@ const ReportOpenViduPage = () => {
         (device) => device.kind === "videoinput"
       );
       // if (!videoDevices || videoDevices.length < 2) return;
-      console.log("바꾸기 전 아이디: " + currentVideoDevice.deviceId);
+      console.log("바꾸기 전 아이디: " + currentVideoDevice);
       let newPublisher = await OV.initPublisherAsync(undefined, {
         audioSource: undefined,
         videoSource: isCameraFront
@@ -245,7 +245,9 @@ const ReportOpenViduPage = () => {
           : videoDevices[0].deviceId
       );
       setIsCameraFront(!isCameraFront);
-
+      setCurrentVideoDevice(
+        isCameraFront ? videoDevices[2].deviceId : videoDevices[0].deviceId
+      );
       await session.unpublish(getPublisher());
       console.log("기존 퍼블리셔 제거 완료");
 
