@@ -21,7 +21,6 @@ const AutoCompleteInput = ({ $prev, $onChange, $formType }) => {
   //FIXME - 입력 디바운스
   const debouncedSearch = useCallback(
     debounce((value) => {
-      console.log(value);
       fetchSearchResults(value, $formType);
     }, 500),
     []
