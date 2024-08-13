@@ -185,7 +185,7 @@ const ReportOpenViduPage = () => {
           // 새로운 퍼블리셔 생성
           let newPublisher = await OV.initPublisherAsync(undefined, {
             audioSource: undefined,
-            videoSource: isCameraFront ? videoDevices[2] : videoDevices[0],
+            videoSource: isCameraFront ? videoDevices[0] : videoDevices[2],
             publishAudio: true,
             publishVideo: true,
             mirror: isCameraFront,
