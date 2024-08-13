@@ -119,20 +119,26 @@ const MedicalInfoPage = () => {
         {/* //TODO - 의료 정보 있으면 있는 상태 보여주기 */}
         {userMedicalInfo ? (
           <>
-            <StyledBtn
-              onClick={() => {
-                changeFormEdit();
+            <ButtonBox>
+              <Button
+                _onClick={() => {
+                  changeFormEdit();
 
-                navigate("/medicalinfo/edit?form=basic");
-              }}
-            >
-              <EditIcon />
-              수정
-            </StyledBtn>
-            <StyledBtn onClick={onClickDelteBtn}>
-              <DeleteIcon />
-              삭제
-            </StyledBtn>
+                  navigate("/medicalinfo/edit?form=basic");
+                }}
+                children="수정하기"
+                $padding=""
+                $border="1px solid  var(--orange-color-200)"
+              />
+
+              <Button
+                _onClick={onClickDelteBtn}
+                children="삭제하기"
+                $padding=""
+                $border="1px solid  var(--orange-color-200)"
+              />
+            </ButtonBox>
+
             <InfoContainer>
               <Section>
                 <SectionHeader>
@@ -266,18 +272,23 @@ const Content = styled.div`
 
 const InfoContainer = styled.div`
   width: 95vw;
-  background-color: var(--white-color-200);
   padding: 20px;
   // min-height: 100vh;
 `;
 
 const Section = styled.div`
-  background-color: white;
-  border-radius: 10px;
+  // background-color: var(--white-color-200);
+  // border-radius: 10px;
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 16px;
-  border: 1px solid var(--main-orange-color);
+  // border: 1px solid var(--main-orange-color);
+  backdrop-filter: blur(2px);
+  background-color: rgba(255, 255, 255, 0.6);
+  box-shadow:
+    2px 2px 10px 0px rgba(255, 178, 44, 0.5),
+    inset -5px -5px 16px 0px rgba(255, 178, 44, 0.6),
+    inset 0px 11px 28px 0px rgb(255, 255, 255);
 `;
 
 const SectionHeader = styled.div`
@@ -324,4 +335,11 @@ const Value = styled.span`
   color: var(--black-color-200);
   word-break: keep-all;
   font-size: 1.3rem;
+`;
+const ButtonBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 01em;
 `;
