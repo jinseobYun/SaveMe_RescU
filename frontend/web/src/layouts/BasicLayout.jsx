@@ -3,7 +3,7 @@ import BasicMenus from "../components/menus/BasicMenus";
 import "./BasicLayout.css";
 
 export default function BasicLayout({ children }) {
-  const memberId = localStorage.getItem("memberId");
+  const memberId = sessionStorage.getItem("memberId");
   return (
     <>
       <container>

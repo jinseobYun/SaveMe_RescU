@@ -28,7 +28,7 @@ export const updatePassword = async (passwordData) => {
       passwordData,
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("JWT-AccessToken")}`,
+          Authorization: `Bearer ${sessionStorage.getItem("JWT-AccessToken")}`,
         },
       }
     );

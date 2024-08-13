@@ -8,7 +8,7 @@ export const getEmergencyList = async ({ lat, lon }) => {
     const response = await axios.get(`${serverHost}/nearest-hospitals`, {
       params: { lat: lat.toString(), lon: lon.toString() },
       headers: {
-        authorization: `Bearer ${localStorage.getItem("JWT-AccessToken")}`,
+        authorization: `Bearer ${sessionStorage.getItem("JWT-AccessToken")}`,
       },
     });
     return response.data;
@@ -29,7 +29,7 @@ export const getRoute = async ({
     const response = await axios.get(`${serverHost}/directions`, {
       params: { originX:originX.toString(), originY:originY.toString(), destinationX:destinationX.toString(), destinationY:destinationY.toString() },
       headers: {
-        authorization: `Bearer ${localStorage.getItem("JWT-AccessToken")}`,
+        authorization: `Bearer ${sessionStorage.getItem("JWT-AccessToken")}`,
       },
     });
     return response.data;

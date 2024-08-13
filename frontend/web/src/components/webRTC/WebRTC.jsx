@@ -39,8 +39,7 @@ const WebRTC = () => {
 
   useEffect(() => {
     const user = { username: "myname", userno: 1 }; // 실제 사용자 정보로 대체
-    // const sessionId = "ses_G4tWX7SMuX"; // 실제 세션 ID로 대체
-    const sessionId = "ses_G4tWX7SMuQ"; // 실제 세션 ID로 대체
+    const sessionId = sessionStorage.getItem("memberId"); // 실제 세션 ID로 대체
 
     initOpenVidu(sessionId, user).then(() => {
       console.log("OpenVidu Init 시작!");
@@ -82,6 +81,7 @@ const WebRTC = () => {
   const onClickCallEnd = async () => {
     try {
       await leaveSession(); // leaveSession 호출이 끝난 후 리다이렉트
+      localStorage.removeItem("reportData")
       navigate("/main", { replace: true });
     } catch (error) {
       console.error("Error while ending the call: ", error);
