@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import EditIcon from "@mui/icons-material/Edit";
+
 import { Grid, Button, Text, NextPageButton } from "@components/elements";
 import AutoCompleteInput from "@components//input/AutoCompleteInput";
 import useUserStore from "@/store/useUserStore";
@@ -11,6 +13,8 @@ import useFormInputStore from "@/store/useFormInputStore";
 import useSearchStore from "@/store/useSearchStore";
 import { registerMedicalInfo, updateMedicalInfo } from "@api/medicalInfoApi";
 import { successAlert, errorAlert } from "@/util/notificationAlert";
+
+const MySwal = withReactContent(Swal);
 
 const MedicalSpecificForm = ({ form, btnSetting }) => {
   const {
@@ -26,7 +30,6 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
   } = useFormInputStore();
   const { setUserMedicalInfo } = useUserStore();
   const searchResults = useSearchStore((state) => state.searchResults);
-  const setSearchResults = useSearchStore((state) => state.setSearchResults);
 
   const navigate = useNavigate();
 
@@ -84,6 +87,9 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
 
   const handleAddInput = (inputValue) => {
     console.log(inputValue);
+    const searchResults = useSearchStore.getState().searchResults;
+
+    console.log(searchResults);
     const newItem = searchResults.find((item) =>
       form === "disease"
         ? item.cdName === inputValue
@@ -104,29 +110,82 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
       addDrugInputs(data);
     }
   };
+  const inputRef = useRef();
+
   const onClickAddBtn = (name) => {
     let formType = "의약품";
     if (form === "disease") formType = "지병";
     if (name == "[object Object]") name = "";
-    Swal.fire({
+    // Swal.fire({
+    //   title: `${formType} 명을 입력해주세요`,
+    //   html: '<div id="swal-react-container"></div>',
+    //   didOpen: () => {
+    //     const container = document.getElementById("swal-react-container");
+    //     const root = createRoot(container);
+    //     root.render(
+    //       <AutoCompleteInput
+    //         $onChange={Swal.resetValidationMessage}
+    //         $prev={name}
+    //         $formType={form}
+    //       />
+    //     );
+    //   },
+    //   preConfirm: () => {
+    //     const inputValue = document.querySelector(
+    //       "#swal-react-container input"
+    //     ).value;
+    //     if (inputValue === "") Swal.showValidationMessage(`입력해주세요`);
+    //     // const searchResults = useSearchStore.getState().searchResults;
+    //     const existsInArray = searchResults.some((item) =>
+    //       form === "disease"
+    //         ? item.cdName === inputValue
+    //         : item.medicineName === inputValue
+    //     );
+    //     const existsInInputs =
+    //       form === "disease"
+    //         ? medCdisInputs.some((item) => item.name === inputValue)
+    //         : drugInputs.some((item) => item.name === inputValue);
+    //     if (!existsInArray) {
+    //       Swal.showValidationMessage(
+    //         `해당하는 단어가 ${formType}정보에 없습니다.`
+    //       );
+    //       return false;
+    //     }
+
+    //     if (existsInInputs) {
+    //       Swal.showValidationMessage("이미 추가된 항목입니다.");
+    //       return false;
+    //     } else {
+    //       if (name && inputValue !== name) {
+    //         deleteInput(name);
+    //       }
+    //     }
+    //     return inputValue;
+    //   },
+    //   width: "30em",
+    //   confirmButtonText: "저장하기",
+    //   confirmButtonColor: "#FFCC70",
+    // }).then((result) => {
+    //   if (result.isConfirmed) {
+    //     handleAddInput(result.value);
+    //   }
+    // });
+    MySwal.fire({
       title: `${formType} 명을 입력해주세요`,
-      html: '<div id="swal-react-container"></div>',
-      didOpen: () => {
-        const container = document.getElementById("swal-react-container");
-        const root = createRoot(container);
-        root.render(
-          <AutoCompleteInput
-            $onChange={Swal.resetValidationMessage}
-            $prev={name}
-            $formType={form}
-          />
-        );
-      },
+      html: (
+        <AutoCompleteInput
+          $onChange={MySwal.resetValidationMessage}
+          $prev={name}
+          $formType={form}
+          inputRef={inputRef}
+        />
+      ),
       preConfirm: () => {
-        const inputValue = document.querySelector(
-          "#swal-react-container input"
-        ).value;
-        if (inputValue === "") Swal.showValidationMessage(`입력해주세요`);
+        const inputValue = inputRef.current.value;
+        if (inputValue === "") {
+          MySwal.showValidationMessage("입력해주세요");
+          return false;
+        }
         const searchResults = useSearchStore.getState().searchResults;
         const existsInArray = searchResults.some((item) =>
           form === "disease"
@@ -139,20 +198,21 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
             : drugInputs.some((item) => item.name === inputValue);
 
         if (!existsInArray) {
-          Swal.showValidationMessage(
-            `해당하는 단어가 ${formType}정보에 없습니다.`
+          MySwal.showValidationMessage(
+            `해당하는 단어가 ${formType} 정보에 없습니다.`
           );
           return false;
         }
 
         if (existsInInputs) {
-          Swal.showValidationMessage("이미 추가된 항목입니다.");
+          MySwal.showValidationMessage("이미 추가된 항목입니다.");
           return false;
         } else {
           if (name && inputValue !== name) {
             deleteInput(name);
           }
         }
+
         return inputValue;
       },
       width: "30em",
