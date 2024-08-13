@@ -50,15 +50,20 @@ const NfcInfoPage = () => {
       );
     }
 
-    confirmAlert("NFC 토큰", "복사하기", (result) => {
-      if (result.isDismissed) {
-        navigator.clipboard
-          .writeText(`saveme://open?tagId=${token}`)
-          .then(() => {
-            toastAlert(true, "NFC 토큰이 복사되었습니다");
-          });
-      }
-    });
+    confirmAlert(
+      "NFC 토큰",
+      "복사",
+      (result) => {
+        if (result.dismiss === Swal.DismissReason.cancel) {
+          navigator.clipboard
+            .writeText(`saveme://open?tagId=${token}`)
+            .then(() => {
+              toastAlert(true, "NFC 토큰이 복사되었습니다");
+            });
+        }
+      },
+      `saveme://open?tagId=${token}`
+    );
   };
   //FIXME - navigator.clipboard.writeText(`saveme://open?tagId=${userNfc}`);
   return (

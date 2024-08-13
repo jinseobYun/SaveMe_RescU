@@ -37,13 +37,14 @@ export const yesorNoAlert = (
   }).then(confirmFuc);
 };
 
-export const confirmAlert = (title, confirmButtonText, confirmFuc) => {
+export const confirmAlert = (title, confirmButtonText, confirmFuc, text) => {
   Swal.fire({
     title: title,
+    text: text,
     showCancelButton: true,
-    confirmButtonText: `<span style="color: #2C2C2E;">취소</span>`,
+    confirmButtonText: `취소`,
     cancelButtonText: confirmButtonText,
-    confirmButtonColor: "#FFFCE3",
+    confirmButtonColor: "#b5b5b5",
     cancelButtonColor: "#FFCC70",
   }).then(confirmFuc);
 };
