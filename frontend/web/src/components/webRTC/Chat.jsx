@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
-import { session } from "../../util/openvidu"; // OpenVidu 세션 객체 가져오기
+import { session } from "../../util/openvidu";
 import SendIcon from "@mui/icons-material/Send";
 import Text from "../elements/Text";
 import Button from "../elements/Button";
@@ -47,7 +47,16 @@ const Chat = () => {
               isSTTMessage: isSTTMessage,
             },
           ]);
-        }
+        } else if (eventJson.sender === "stt") {
+          setChat((prevChat) => [
+            ...prevChat,
+            {
+              alignment: "mid",
+              message: eventJson.message,
+              isSTTMessage: isSTTMessage,
+            },
+          ]);
+        } 
       };
 
       session.on("signal:my-chat", handleChatMessage);
@@ -94,8 +103,8 @@ const Chat = () => {
         {chat.map((message, index) => (
           <ChatMessage
             key={index}
-            alignment={message.alignment}
-            isSTTMessage={message.isSTTMessage}
+            $alignment={message.alignment}
+            $isSTTMessage={message.isSTTMessage}
           >
             <Text children={message.message} $size="2rem" />
           </ChatMessage>
@@ -133,18 +142,20 @@ const ChatMessage = styled.div`
   padding: 10px;
   border-radius: 10px;
   max-width: 100%;
-  justify-content: ${({ alignment }) =>
-    alignment === "right" ? "flex-end" : "flex-start"};
-  background-color: ${({ alignment, isSTTMessage }) =>
-    isSTTMessage
+  justify-content: ${({ $alignment }) =>
+    $alignment === "right" ? "flex-end" : "flex-start"}; // 수정된 부분
+  background-color: ${({ $alignment, $isSTTMessage }) =>
+    $isSTTMessage
       ? "var(--chat-stt-color)"
-      : alignment === "right"
+      : $alignment === "right"
       ? "var(--main-yellow-color)"
-      : "var(--chat-pink-color)"};
-  margin-left: ${({ alignment }) => (alignment === "right" ? "50%" : "0px")};
-  margin-right: ${({ alignment }) => (alignment === "left" ? "50%" : "0px")};
-  ${({ isSTTMessage }) =>
-    isSTTMessage &&
+      : "var(--chat-pink-color)"}; // 수정된 부분
+  margin-left: ${({ $alignment }) =>
+    $alignment === "right" ? "50%" : "0px"}; // 수정된 부분
+  margin-right: ${({ $alignment }) =>
+    $alignment === "left" ? "50%" : "0px"}; // 수정된 부분
+  ${({ $isSTTMessage }) =>
+    $isSTTMessage &&
     css`
       font-weight: bold;
     `}
