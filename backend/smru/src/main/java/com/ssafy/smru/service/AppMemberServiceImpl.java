@@ -71,7 +71,7 @@ public class AppMemberServiceImpl implements AppMemberService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         AppMember appMember = appMemberRepository.findByMemberId(dto.getMemberId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 일치하지 않습니다."));
+                .orElseThrow(() -> new UnauthorizedException("아이디 또는 비밀번호가 일치하지 않습니다."));
         appMember.changeDeviceToken(dto.getDeviceToken()); // 기기의 토큰 값 저장
         //--- 3. 인증 정보를 기반으로 JWT 생성
         return appJwtProvider.generateToken(authentication, appMember.getAppMemberId(), appMember.getMemberName());
@@ -128,7 +128,6 @@ public class AppMemberServiceImpl implements AppMemberService {
         AppMember member = appMemberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
         member.changePassword(passwordEncoder.encode(newPassword));
-        appMemberRepository.save(member);
     }
 
     @Override
