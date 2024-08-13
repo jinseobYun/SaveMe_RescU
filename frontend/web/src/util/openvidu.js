@@ -49,6 +49,7 @@ export const initOpenVidu = async (sessionId, user) => {
         console.log("Received report data:", reportData);
 
         const mappedData = {
+          
           patientId: reportData.tagId,
           reporterId: reportData.userId,
           latitude: reportData.location.latitude,
@@ -155,7 +156,7 @@ export const initOpenVidu = async (sessionId, user) => {
               collectedAudioData = [];
               sttTimeout = null;
             }
-          }, 1000000000000);
+          }, 1000000);
         }
       } else {
         if (sttTimeout) {
