@@ -38,3 +38,71 @@ export const updatePassword = async (passwordData) => {
     throw error;
   }
 };
+// Refresh token 요청 함수
+const tokenRegeneration = async () => {
+  const refreshToken = sessionStorage.getItem("JWT-RefreshToken");
+  if (!refreshToken) throw new Error("No refresh token available");
+
+  try {
+    const response = await axios.post(`${serverHost}/refresh`, {
+      refreshToken: refreshToken,
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Error refreshing token:", error);
+    throw error;
+  }
+};
+
+// Axios 인스턴스 생성
+export const createAxiosInstance = () => {
+  const instance = axios.create({
+    baseURL: API_SERVER_DOMAIN,
+    headers: {
+      "Content-Type": "application/json;charset=utf-8",
+    },
+  });
+
+  // 요청 인터셉터 추가
+  instance.interceptors.request.use(
+    (config) => {
+      const accessToken = sessionStorage.getItem("JWT-AccessToken");
+      if (accessToken) {
+        config.headers["Authorization"] = `Bearer ${accessToken}`;
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+
+  // 응답 인터셉터 추가
+  instance.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      const originalRequest = error.config;
+      if (
+        (error.response.status === 401 || error.response.status === 403) &&
+        !originalRequest._retry
+      ) {
+        originalRequest._retry = true;
+        try {
+          const { accessToken, refreshToken } = await tokenRegeneration();
+          sessionStorage.setItem("JWT-AccessToken", accessToken);
+          sessionStorage.setItem("JWT-RefreshToken", refreshToken);
+          originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
+          return axios(originalRequest);
+        } catch (error) {
+          console.log("Failed to refresh token, redirecting to login");
+          sessionStorage.clear();
+          window.location.replace("/");
+          return Promise.reject(error);
+        }
+      }
+      return Promise.reject(error);
+    }
+  );
+
+  return instance;
+};
