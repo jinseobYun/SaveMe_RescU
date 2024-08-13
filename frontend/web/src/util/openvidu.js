@@ -149,29 +149,29 @@ export const initOpenVidu = async (sessionId, user) => {
     const processInterval = setInterval(processAudioData, 100);
 
     // 일정 간격으로 STT API 호출
-    // setInterval(async () => {
-    //   if (collectedAudioData.length > 0) {
-    //     const audioBytes = convertFloat32ToInt16(collectedAudioData);
-    //     const result = await sendToSTTAPI(audioBytes);
-    //     console.log("STT 결과 반환 result: ", result);
-    //     if (result && result.results && result.results.length > 0) {
-    //       const transcription = result.results
-    //         .map((res) => res.alternatives[0].transcript)
-    //         .join("\n");
+    setInterval(async () => {
+      if (collectedAudioData.length > 0) {
+        const audioBytes = convertFloat32ToInt16(collectedAudioData);
+        const result = await sendToSTTAPI(audioBytes);
+        console.log("STT 결과 반환 result: ", result);
+        if (result && result.results && result.results.length > 0) {
+          const transcription = result.results
+            .map((res) => res.alternatives[0].transcript)
+            .join("\n");
 
           
-    //       // STT 데이터를, Chat과 동일하게 JSON으로
-    //       const data = { message: transcription, sender: "stt"}
-    //       session.signal({
-    //         data: JSON.stringify(data),
-    //         to: [], // 모든 사용자에게 전송
-    //         type: "my-chat",
-    //       });
-    //       console.log("transcription은? :", transcription);
-    //     }
-    //     collectedAudioData = [];
-    //   }
-    // }, 5000); // 5초마다 실행
+          // STT 데이터를, Chat과 동일하게 JSON으로
+          const data = { message: transcription, sender: "stt"}
+          session.signal({
+            data: JSON.stringify(data),
+            to: [], // 모든 사용자에게 전송
+            type: "my-chat",
+          });
+          console.log("transcription은? :", transcription);
+        }
+        collectedAudioData = [];
+      }
+    }, 5000); // 5초마다 실행
 
     publisher = await OV.initPublisherAsync(undefined, {
       audioSource: filteredStream.stream,
