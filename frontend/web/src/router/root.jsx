@@ -8,11 +8,16 @@ import MyPage from "../pages/members/MyPage";
 import FirstInfo from "../components/webRTC/FirstInfo";
 import SecondInfo from "../components/webRTC/SecondInfo";
 import PrivateRoute from "./PrivateRoute";
+import LoginRedirect from "./LoginRedirect"
 
 const root = createBrowserRouter([
   {
     path: "",
-    element: <LoginPage />,
+    element: (
+      <LoginRedirect>
+        <LoginPage />
+      </LoginRedirect>
+    ),
   },
   {
     path: "/main",
