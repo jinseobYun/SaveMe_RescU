@@ -44,7 +44,7 @@ const GlobalStyles = createGlobalStyle`
 @font-face {
     font-family: 'PTBandocheB';
     src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408@1.0/PTBandocheB.woff2') format('woff2');
-		// src:url("@/assets/fonts/vudxor.ttf) format('woff2")
+		// src:url("/app/assets/fonts/vudxor.ttf) format('truetype')
     font-weight: 700;
     font-style: normal;
 }

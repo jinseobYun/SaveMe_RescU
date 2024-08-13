@@ -30,35 +30,35 @@ const Header = ({ navText, backAlert, goTo }) => {
   };
   return (
     <>
-      <StyledDiv>
-        <Button
-          _onClick={onClickGoBack}
-          $width="2rem"
-          $height="2rem"
-          $bg={{ default: "transparent" }}
-          children={<ArrowBackIcon fontSize="large" />}
-        />
-      </StyledDiv>
-      <Grid
-        $display="flex"
-        $width="100%"
-        $height="10vh"
-        $flex_direction="row"
-        $justify_content="center"
-        $align_items="center"
-        $gap="35vw"
-      >
+      <StyledHeader>
+        <StyledDiv>
+          <Button
+            _onClick={onClickGoBack}
+            $width="2rem"
+            $height="2rem"
+            $bg={{ default: "transparent" }}
+            children={<ArrowBackIcon fontSize="large" />}
+          />
+        </StyledDiv>
+
         <Text $size="2rem" children={navText} $padding="1rem" $lineHeight="" />
-      </Grid>
+      </StyledHeader>
     </>
   );
 };
 
 export default Header;
-
+const StyledHeader = styled.div`
+  width: 100%;
+  height: 10vh;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 35vw;
+  display: flex;
+  position: relative;
+`;
 const StyledDiv = styled.div`
   position: absolute;
-  top: 0;
-  left: 0;
-  // width: 100%;
+  left: 1.5rem;
 `;

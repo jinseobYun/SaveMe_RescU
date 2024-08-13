@@ -60,9 +60,10 @@ const AutoCompleteInput = ({ $prev, $onChange, $formType }) => {
           {inputValue.length > 0 && searchResults.length === 0 && (
             <DropDownItem>해당하는 단어가 없습니다</DropDownItem>
           )}
-          {$formType === "disease"
+          {$formType !== "disease"
             ? searchResults.map(
                 ({ medicineId, medicineName }, dropDownIndex) => {
+                  console.log(medicineName);
                   return (
                     <DropDownItem
                       key={dropDownIndex}
