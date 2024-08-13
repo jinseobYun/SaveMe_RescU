@@ -14,7 +14,7 @@ export default function BasicMenus() {
     document.cookie = "member=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
     // 로그아웃 후 메인 페이지로 이동
-    navigate("/");
+    navigate("/",{ replace: true });
   };
 
   return (
