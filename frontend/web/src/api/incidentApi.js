@@ -8,7 +8,7 @@ const serverHost = `${API_SERVER_DOMAIN}`;
 export const fetchIncidentListApi = async ({ page, startDate, endDate, createdBy }) => {
   const response = await axios.get(`${serverHost}/dispatch-orders`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("JWT-AccessToken")}`,
+      Authorization: `Bearer ${sessionStorage.getItem("JWT-AccessToken")}`,
     },
     params: {
       page,
@@ -23,7 +23,7 @@ export const fetchIncidentListApi = async ({ page, startDate, endDate, createdBy
 export const fetchIncidentDetailsApi = async (id) => {
   const response = await axios.get(`${serverHost}/dispatch-orders/${id}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("JWT-AccessToken")}`,
+      Authorization: `Bearer ${sessionStorage.getItem("JWT-AccessToken")}`,
     },
   });
   return response.data;

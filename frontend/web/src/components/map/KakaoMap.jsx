@@ -1,16 +1,13 @@
 /* global kakao */
 import React, { useEffect, useState, useRef } from "react";
 
-const KakaoMap = ({ markerPositions = [], route=null, size = [70, 100] }) => {
+const KakaoMap = ({ markerPositions = [], route = null, size = [70, 100] }) => {
   const [kakaoMap, setKakaoMap] = useState(null);
   const [markers, setMarkers] = useState([]);
+  const [patientMarker, setPatientMarker] = useState(null);
   const container = useRef();
 
-  // 환자 위치임시설정
-  const latlon = {
-    lat: 37.50802,
-    lon: 127.062835,
-  };
+  const initialLatLon = { lat: 36.3553193257957, lon: 127.29820111515 };
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -19,7 +16,7 @@ const KakaoMap = ({ markerPositions = [], route=null, size = [70, 100] }) => {
 
     script.onload = () => {
       kakao.maps.load(() => {
-        const center = new kakao.maps.LatLng(latlon.lat, latlon.lon);
+        const center = new kakao.maps.LatLng(initialLatLon.lat, initialLatLon.lon);
         const options = {
           center,
           level: 3,
@@ -35,6 +32,7 @@ const KakaoMap = ({ markerPositions = [], route=null, size = [70, 100] }) => {
     };
   }, []);
 
+  // 지도 크기와 위치 재설정
   useEffect(() => {
     if (kakaoMap === null) return;
 
@@ -47,52 +45,96 @@ const KakaoMap = ({ markerPositions = [], route=null, size = [70, 100] }) => {
     kakaoMap.setCenter(center);
   }, [kakaoMap, size]);
 
+  // 마커 설정
   useEffect(() => {
     if (kakaoMap === null) return;
 
+    const storedData = JSON.parse(localStorage.getItem("reportData"));
 
-    // 환자용마커 
-    const patientMarkerPosition = new kakao.maps.LatLng(latlon.lat, latlon.lon);
-    const patientMarkerImage = new kakao.maps.MarkerImage(
-      'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png  ',
-      new kakao.maps.Size(44, 44),
-      { offset: new kakao.maps.Point(27, 69) }
-    );
-    const patientMarker = new kakao.maps.Marker({
-      map: kakaoMap,
-      position: patientMarkerPosition,
-      image: patientMarkerImage,
-    });
+    if (storedData) {
+      const patientPosition = new kakao.maps.LatLng(storedData.latitude, storedData.longitude);
 
-
-
-    const positions = markerPositions.map(
-      (pos) => new kakao.maps.LatLng(...pos)
-    );
-
-    setMarkers((markers) => {
-      markers.forEach((marker) => marker.setMap(null));
-      return positions.map(
-        (position) => new kakao.maps.Marker({ map: kakaoMap, position })
-      );
-    });
-
-    if (positions.length > 0) {
-      const bounds = positions.reduce(
-        (bounds, latlng) => bounds.extend(latlng),
-        new kakao.maps.LatLngBounds()
-      );
-
-      // 선택시, 환자 위치와 선택위치를 기준으로 bound 설정
-      if (positions.length === 1) {
-        bounds.extend(patientMarkerPosition);
+      if (patientMarker) {
+        patientMarker.setMap(null);
       }
+
+      const newPatientMarker = new kakao.maps.Marker({
+        map: kakaoMap,
+        position: patientPosition,
+        image: new kakao.maps.MarkerImage(
+          'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png',
+          new kakao.maps.Size(44, 44),
+          { offset: new kakao.maps.Point(27, 69) }
+        ),
+      });
+
+      setPatientMarker(newPatientMarker);
+
+      const bounds = new kakao.maps.LatLngBounds();
+      bounds.extend(patientPosition);
+
+      markerPositions.forEach(([lat, lon]) => {
+        const position = new kakao.maps.LatLng(lat, lon);
+        bounds.extend(position);
+        const marker = new kakao.maps.Marker({
+          map: kakaoMap,
+          position,
+        });
+        setMarkers((prevMarkers) => [...prevMarkers, marker]);
+      });
 
       kakaoMap.setBounds(bounds);
     }
   }, [kakaoMap, markerPositions]);
 
-  // ★★★★ 지도에 경로 그리기 ★★★★★★★★★★★★★★★★★★★★★★★
+  // 로컬 스토리지 변화 감지
+  useEffect(() => {
+    const handleStorageChange = (event) => {
+      if (event.key === "reportData") {
+        const storedData = JSON.parse(event.newValue);
+        if (storedData) {
+          const patientPosition = new kakao.maps.LatLng(storedData.latitude, storedData.longitude);
+
+          if (patientMarker) {
+            patientMarker.setMap(null);
+          }
+
+          const newPatientMarker = new kakao.maps.Marker({
+            map: kakaoMap,
+            position: patientPosition,
+            image: new kakao.maps.MarkerImage(
+              'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png',
+              new kakao.maps.Size(44, 44),
+              { offset: new kakao.maps.Point(27, 69) }
+            ),
+          });
+
+          setPatientMarker(newPatientMarker);
+
+          const bounds = new kakao.maps.LatLngBounds();
+          bounds.extend(patientPosition);
+
+          markerPositions.forEach(([lat, lon]) => {
+            const position = new kakao.maps.LatLng(lat, lon);
+            bounds.extend(position);
+          });
+
+          kakaoMap.setBounds(bounds);
+        } else if (patientMarker) {
+          patientMarker.setMap(null);
+          setPatientMarker(null);
+        }
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [kakaoMap, markerPositions, patientMarker]);
+
+  // 지도에 경로 그리기
   useEffect(() => {
     if (kakaoMap === null || route === null) return;
 
@@ -119,8 +161,6 @@ const KakaoMap = ({ markerPositions = [], route=null, size = [70, 100] }) => {
       polyline.setMap(null);
     };
   }, [kakaoMap, route]);
-
-  // ★★★★★★★★★★★★★★★★★★★★★★★★★★
 
   return <div ref={container} style={{ width: "100%", height: "100%" }} />;
 };

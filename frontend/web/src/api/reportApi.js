@@ -9,7 +9,7 @@ export const getReport = async (patientId, reporterId, latitude, longitude) => {
     const res = await axios.get(`${serverHost}/report-info`, {
       params: { patientId, reporterId, latitude, longitude },
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("JWT-AccessToken")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("JWT-AccessToken")}`,
       },
     });
     return res.data;
@@ -21,11 +21,9 @@ export const getReport = async (patientId, reporterId, latitude, longitude) => {
 
 export const postFirstInfo = async (firstInfo) => {
   try {
-    console.log("1차 보내는정보:", firstInfo)
-    console.log(`Bearer ${localStorage.getItem("JWT-AccessToken")}`)
     const res = await axios.post(`${fetchServerHost}/1st-info`, firstInfo, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("JWT-AccessToken")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("JWT-AccessToken")}`,
       },
     });
     return res.data;
@@ -39,7 +37,7 @@ export const putSecondInfo  = async (secondInfo) => {
   try {
     const res = await axios.put(`${fetchServerHost}/2nd-info`, secondInfo, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("JWT-AccessToken")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("JWT-AccessToken")}`,
       },
     });
     return res.data;

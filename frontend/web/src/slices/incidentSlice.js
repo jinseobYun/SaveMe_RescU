@@ -8,7 +8,7 @@ import {
 const initialState = {
   list: [],
   details: {
-    emergencyType: null,
+    emergencyType: "",
     reportedTime: "",
     hospital: "",
     reporterName: "",

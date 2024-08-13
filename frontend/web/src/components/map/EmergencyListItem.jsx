@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectHospital, fetchRoute } from "../../slices/emergencySlice";
 import PhoneImage from '../../assets/phone-icon.png'
@@ -8,9 +8,11 @@ import HospitalMapImage from '../../assets/hospital-map-icon.png'
 import "./EmergencyListItem.css";
 
 // 호출용 mock lat, lng
-const latlon = {
-  lat: 37.50802,
-  lon: 127.062835,
+const getInitialLatLon = () => {
+  const storedData = JSON.parse(localStorage.getItem("reportData"));
+  return storedData
+    ? { lat: storedData.latitude, lon: storedData.longitude }
+    : { lat: 37.50802, lon: 127.062835 }; // 기본값
 };
 
 const EmergencyListItem = ({
@@ -30,6 +32,29 @@ const EmergencyListItem = ({
   const selectedHospital = useSelector(
     (state) => state.emergencySlice.selectedHospital
   );
+
+  const [latlon, setLatlon] = useState(getInitialLatLon());
+
+  // 로컬 스토리지 변화 감지 및 latlon 업데이트
+  useEffect(() => {
+    const handleStorageChange = (event) => {
+      if (event.key === "reportData") {
+        const storedData = JSON.parse(event.newValue);
+        if (storedData) {
+          setLatlon({
+            lat: storedData.latitude,
+            lon: storedData.longitude,
+          });
+        }
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
 
   const handleClick = () => {
