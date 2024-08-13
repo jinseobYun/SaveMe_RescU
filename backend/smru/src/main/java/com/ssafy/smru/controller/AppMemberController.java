@@ -292,7 +292,7 @@ public class AppMemberController {
 
         try {
             appMemberService.updatePassword(currentUserName, request.getNewPassword());
-            return ResponseEntity.ok().body("true");
+            return ResponseEntity.ok().body(true);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (IllegalArgumentException e) {
