@@ -1,13 +1,12 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, forwardRef } from "react";
 import styled from "styled-components";
 import debounce from "lodash.debounce";
 
 import useSearchStore from "@/store/useSearchStore";
 import { Text } from "@components/elements";
 
-const AutoCompleteInput = ({ $prev, $onChange, $formType }) => {
+const AutoCompleteInput = ({ $prev, $onChange, $formType, inputRef }) => {
   const searchResults = useSearchStore((state) => state.searchResults);
-  const setSearchResults = useSearchStore((state) => state.setSearchResults);
   const fetchSearchResults = useSearchStore(
     (state) => state.fetchSearchResults
   );
@@ -36,7 +35,8 @@ const AutoCompleteInput = ({ $prev, $onChange, $formType }) => {
 
   const clickDropDownItem = (clickedItem) => {
     setInputValue(clickedItem);
-    setIsHaveInputValue(false);
+    setIsHaveInputValue(true);
+    $onChange && $onChange();
   };
 
   useEffect(() => {
@@ -49,7 +49,13 @@ const AutoCompleteInput = ({ $prev, $onChange, $formType }) => {
   return (
     <WholeBox>
       <InputBox $isHaveInputValue={isHaveInputValue}>
-        <Input type="text" value={inputValue} onChange={changeInputValue} />
+        <Input
+          type="text"
+          value={inputValue}
+          onChange={changeInputValue}
+          ref={inputRef}
+          autoFocus={true}
+        />
         {/* <DeleteButton onClick={() => setInputValue("")}>&times;</DeleteButton> */}
       </InputBox>
       {/* {error && <p>Error: {error}</p>} */}
