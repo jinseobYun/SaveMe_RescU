@@ -81,11 +81,37 @@ const NfcInfoPage = () => {
         </Description>
         <Description>
           SAVE ME를 통해 사용자의 건강 상태와 중요 정보를 빠르게 공유하여, 응급
-          상황에서 더욱 신속하고 적절한 신고를 할 수 있습니다. 아래 'NFC 툴즈
+          상황에서 더욱 신속하고 적절한 신고를 할 수 있습니다. 아래 'NFC tools
           사용법'을 참고하여 NFC 스티커에 앱을 연동해주세요!
         </Description>
+        <Title>
+          NFC tools 사용법
+        </Title>
+        <SubTitle>
+          1. NFC Tools 설치
+        </SubTitle>
+        <SubDescription>
+          <StyledLink to="market://details?id=com.wakdev.wdnfc">이곳</StyledLink>을 터치하면 설치화면으로 이동합니다.
+          <img src='' />
+          
+        </SubDescription>
+        <SubTitle>
+          2. NFC Tools 실행
+        </SubTitle>
+        <SubTitle>
+          3. 상단의 [쓰기] 탭으로 이동
+        </SubTitle>
+        <SubTitle>
+          4. [기록 추가] 선택
+        </SubTitle>
+        <SubTitle>
+          5. [사용자 정의 URL/URI] 선택
+        </SubTitle>
+        <SubTitle>
+          6. 입력창에 복사한 URI 붙여넣기
+        </SubTitle>
         <StyledButton onClick={onClickTokenModal}>
-          NFC 토큰 발급받기
+            NFC 토큰 발급받기
         </StyledButton>
       </Content>
       <TabBar />
@@ -128,15 +154,17 @@ const Icon = styled.img`
 
 const Description = styled.p`
   color: var(--black-color-100);
-  font-size: 13px;
+  width: 100%;
+  font-size: 14px;
+  text-align: start;
   line-height: 1.5;
-  text-align: center;
   margin-bottom: 20px;
 `;
 
+
 const StyledButton = styled.button`
   width: 100%;
-  padding: 16px;
+  padding: 12px;
   background-color: var(--main-orange-color);
   color: white;
   font-size: 16px;
@@ -149,4 +177,29 @@ const StyledButton = styled.button`
     background-color: var(--orange-color-200);
   }
 `;
+
+const SubTitle = styled.p`
+  color: var(--black-color-100);
+  width: 100%;
+  font-size: 14px;
+  text-align: start;
+  line-height: 1.5;
+  margin-bottom: 5px;
+`;
+
+const StyledLink = styled(Link)`
+  color: #b379d9;
+  font-size: 13px;
+`;
+
+const SubDescription = styled.p`
+  color: var(--black-color-100);
+  width: 100%;
+  font-size: 13px;
+  text-align: start;
+  line-height: 1.5;
+  margin-left: 15px;
+  margin-bottom: 15px;
+`;
+
 export default NfcInfoPage;
