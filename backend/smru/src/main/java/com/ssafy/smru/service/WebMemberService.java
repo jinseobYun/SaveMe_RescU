@@ -16,4 +16,6 @@ public interface WebMemberService {
    List<WebMemberDto.Response> getAllMembers();
 
     public String getMembername();
+
+    public void deleteMember(String memberId);
 }

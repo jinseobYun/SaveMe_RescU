@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -92,6 +93,7 @@ public class WebMemberServiceImpl implements WebMemberService {
     @Override
     @Transactional
     public void changePassword(String memberId, WebPasswordChangeDto.Request dto){
+
         WebMember webMember = webMemberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 "));
 
@@ -126,6 +128,23 @@ public class WebMemberServiceImpl implements WebMemberService {
         System.out.println(webmember.getMemberId());
         System.out.println(webmember.getName());
         return webmember.getName();
+
+    }
+
+    @Override
+    public void deleteMember(String memberId){
+
+        WebMember webMember = webMemberRepository.findByMemberId(memberId)
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 아이디 입니다."));
+
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//
+//
+//        if(!role.equals("ADMIN")){
+//            throw new AccessDeniedException("관리자만 접근 가능합니다.");
+//        }
+
+        webMemberRepository.delete(webMember);
 
     }
 
