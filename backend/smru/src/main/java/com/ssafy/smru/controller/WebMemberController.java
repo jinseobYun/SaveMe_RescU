@@ -58,6 +58,7 @@ public class WebMemberController {
             return ResponseEntity.internalServerError().body("서버에서 오류 발생");
         }
     }
+
     // 비밀번호 입력 했는지 확인
     // 현재 비밀번호가 DB에 등록된 정보와  맞는지 확인
     // 새비밀번호와 비밀번호 확인 번호가 일치하는지 확인
@@ -77,6 +78,7 @@ public class WebMemberController {
             return new ResponseEntity<>("An unexpected error occurred.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     // 로그인된 유저 이름 반환
     @GetMapping("/extract-memberId")
     public ResponseEntity<?> extractUsername() {
@@ -90,5 +92,16 @@ public class WebMemberController {
     public ResponseEntity<?> memberList(){
         List<WebMemberDto.Response> members = webMemberService.getAllMembers();
         return new ResponseEntity<>(members,HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{memberId}")
+    public ResponseEntity<?> deleteMember(@PathVariable String memberId){
+        try{
+        webMemberService.deleteMember(memberId);
+
+        return new ResponseEntity<>("삭제되었습니다",HttpStatus.OK);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body("삭제에 실패했습니다");
+        }
     }
 }
