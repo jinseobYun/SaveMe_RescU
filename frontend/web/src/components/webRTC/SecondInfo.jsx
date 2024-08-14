@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Input from "../elements/Input";
 import Button from "../elements/Button";
@@ -10,14 +10,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { putSecondInfoAsync } from "../../slices/reportSlice";
 // 응급실 정보는 다시 호출
 import { fetchEmergencyList } from "../../slices/emergencySlice";
+import { sendEmergencyPush } from "../../api/fcmApi";
 
 import { useNavigate } from "react-router-dom";
 
 const SecondInfo = () => {
-  // api 연결
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // 없는경우 {}
   const reportData = useSelector((state) => state.reportSlice.reportData);
   const dispatchOrderId = useSelector(
     (state) => state.reportSlice.dispatchOrderId
@@ -25,6 +24,9 @@ const SecondInfo = () => {
   const emergencyData = useSelector((state) => state.emergencySlice) || {
     items: [],
   };
+
+  const chronicDiseaseRefs = useRef([]);
+  const drugInfosRefs = useRef([]);
 
   // form 변수명 수정
   const [formData, setFormData] = useState({
@@ -63,28 +65,15 @@ const SecondInfo = () => {
       setFormData((prevFormData) => ({
         ...prevFormData,
         hospitalName: emergencyData.items[0].dutyName,
-        // hpid: emergencyData.items[0].hpid,
       }));
     }
   }, [emergencyData.items]);
 
   useEffect(() => {
-    if (reportData && reportData.hospitals && reportData.hospitals.length > 0) {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        memberName: reportData.taggingMedicalInformation.memberName,
-        gender: reportData.taggingMedicalInformation.gender,
-        birth: reportData.taggingMedicalInformation.birth,
-        bloodType: reportData.taggingMedicalInformation.bloodType1,
-        bloodType2: reportData.taggingMedicalInformation.bloodType2,
-        chronicDisease: reportData.taggingMedicalInformation.medCdis.map(
-          (disease) => disease.cdName
-        ),
-        drugInfos: reportData.taggingMedicalInformation.drugInfos.map(
-          (med) => med.medicineName
-        ),
-        otherInfo: reportData.taggingMedicalInformation.otherInfo,
-      }));
+    if (reportData && reportData.taggingMedicalInformation) {
+      handleLoadTagData();
+    } else if (reportData && reportData.reporterMedicalInformation) {
+      handleLoadReporterData();
     }
   }, [reportData]);
 
@@ -122,44 +111,44 @@ const SecondInfo = () => {
   };
 
   const handleLoadTagData = () => {
-    console.log("태그된 환자 정보 : ", reportData.taggingMedicalInformation);
-    setFormData({
-      ...formData,
-      drugInfos: reportData.taggingMedicalInformation.memberName,
-      gender: reportData.taggingMedicalInformation.gender,
-      birth: reportData.taggingMedicalInformation.birth,
-      bloodType1: reportData.taggingMedicalInformation.bloodType1,
-      bloodType2: reportData.taggingMedicalInformation.bloodType2,
-      chronicDisease: reportData.taggingMedicalInformation.medCdis.map(
-        (disease) => disease.cdName
-      ),
-      drugInfos: reportData.taggingMedicalInformation.drugInfos.map(
-        (med) => med.medicineName
-      ),
-      otherInfo: reportData.taggingMedicalInformation.otherInfo,
-    });
+    if (reportData && reportData.taggingMedicalInformation) {
+      setFormData({
+        ...formData,
+        memberName: reportData.taggingMedicalInformation.memberName,
+        gender: reportData.taggingMedicalInformation.gender === 0 ? "남" : "여",
+        birth: reportData.taggingMedicalInformation.birth,
+        bloodType1: reportData.taggingMedicalInformation.bloodType1,
+        bloodType2: reportData.taggingMedicalInformation.bloodType2,
+        chronicDisease: reportData.taggingMedicalInformation.medCdis.map(
+          (disease) => disease.cdName
+        ),
+        drugInfos: reportData.taggingMedicalInformation.drugInfos.map(
+          (med) => med.medicineName
+        ),
+        otherInfo: reportData.taggingMedicalInformation.otherInfo,
+      });
+    }
   };
 
   const handleLoadReporterData = () => {
-    console.log(
-      "신고자의 저장 된 정보 : ",
-      reportData.reporterMedicalInformation
-    );
-    setFormData({
-      ...formData,
-      memberName: reportData.reporterMedicalInformation.memberName,
-      gender: "",
-      birth: reportData.reporterMedicalInformation.birth,
-      bloodType1: reportData.reporterMedicalInformation.bloodType1,
-      bloodType2: reportData.reporterMedicalInformation.bloodType2,
-      chronicDisease: reportData.reporterMedicalInformation.medCdis.map(
-        (disease) => disease.cdName
-      ),
-      drugInfos: reportData.reporterMedicalInformation.drugInfos.map(
-        (med) => med.medicineName
-      ),
-      otherInfo: reportData.reporterMedicalInformation.otherInfo,
-    });
+    if (reportData && reportData.reporterMedicalInformation) {
+      setFormData({
+        ...formData,
+        memberName: reportData.reporterMedicalInformation.memberName,
+        gender:
+          reportData.reporterMedicalInformation.gender === 0 ? "남" : "여",
+        birth: reportData.reporterMedicalInformation.birth,
+        bloodType1: reportData.reporterMedicalInformation.bloodType1,
+        bloodType2: reportData.reporterMedicalInformation.bloodType2,
+        chronicDisease: reportData.reporterMedicalInformation.medCdis.map(
+          (disease) => disease.cdName
+        ),
+        drugInfos: reportData.reporterMedicalInformation.drugInfos.map(
+          (med) => med.medicineName
+        ),
+        otherInfo: reportData.reporterMedicalInformation.otherInfo,
+      });
+    }
   };
 
   const handleHospitalChange = (value, index) => {
@@ -176,7 +165,7 @@ const SecondInfo = () => {
   };
 
   // 데이터 전송
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!dispatchOrderId) {
       alert("dispatchOrderId가 없습니다. 1차 정보를 먼저 입력해주세요.");
       return;
@@ -185,11 +174,48 @@ const SecondInfo = () => {
     const payload = {
       dispatchOrderId,
       ...formData,
+      chronicDisease: formData.chronicDisease.filter((item) => item !== ""),
+      drugInfos: formData.drugInfos.filter((item) => item !== ""),
     };
 
     console.log("이거봐바바바바", payload);
 
     dispatch(putSecondInfoAsync(payload));
+
+    const reportData = JSON.parse(localStorage.getItem("reportData"));
+    const fcmPayload = {
+      tagId: reportData.patientId,
+      hospitalName: formData.hospitalName,
+      hospitalAddress:
+        emergencyData.items.find(
+          (hospital) => hospital.dutyName === formData.hospitalName
+        )?.dutyAddr || "",
+    };
+
+    if (reportData.patientId) {
+      try {
+        await sendEmergencyPush(fcmPayload);
+        alert("2차 정보 전송 및 FCM 전송이 완료되었습니다.");
+      } catch (error) {
+        alert("FCM 전송 중 오류가 발생했습니다.");
+      }
+    }
+  };
+
+  const handleKeyDown = (e, name, index) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      setFormData((prevState) => {
+        const updatedArray = [...prevState[name]];
+        if (updatedArray[index] !== "") {
+          updatedArray.push("");
+        }
+        return {
+          ...prevState,
+          [name]: updatedArray,
+        };
+      });
+    }
   };
 
   return (
@@ -205,11 +231,18 @@ const SecondInfo = () => {
           }
         />
         <div>
-          <Button _onClick={handleClearAll}>환자정보 일괄삭제</Button>
+          <Button _onClick={handleClearAll} $color="white">
+            환자정보 일괄삭제
+          </Button>
         </div>
         <ButtonRow>
-          <Button _onClick={handleLoadTagData}>태그 정보 불러오기</Button>
-          <Button _onClick={handleLoadReporterData}>신고자정보 불러오기</Button>
+          <Button _onClick={handleLoadTagData} $color="white">
+            태그 정보 <br /> 불러오기
+          </Button>
+          <Button _onClick={handleLoadReporterData} $color="white">
+            신고자정보 <br />
+            불러오기
+          </Button>
         </ButtonRow>
       </Section>
       <Section>
@@ -221,12 +254,14 @@ const SecondInfo = () => {
             onChange={handleInputChange}
             placeholder="이름"
           />
-          <Input
+          <Select
             label="성별"
             name="gender"
-            value={formData.gender}
-            onChange={handleInputChange}
-            placeholder="남/여"
+            options={["남", "여"]}
+            selectedValue={formData.gender}
+            setSelectedValue={(value) =>
+              handleInputChange({ target: { name: "gender", value } })
+            }
           />
           <Input
             label="생년월일"
@@ -259,7 +294,10 @@ const SecondInfo = () => {
       </Section>
       <Section>
         <Label>지병정보</Label>
-        {formData.chronicDisease.map((disease, index) => (
+        {(formData.chronicDisease.length === 0
+          ? [""]
+          : formData.chronicDisease
+        ).map((disease, index) => (
           <Input
             key={index}
             name={`disease_${index}`}
@@ -267,25 +305,27 @@ const SecondInfo = () => {
             onChange={(e) =>
               handleArrayInputChange("chronicDisease", index, e.target.value)
             }
+            onKeyDown={(e) => handleKeyDown(e, "chronicDisease", index)}
             placeholder={`지병을 입력하세요`}
-            // showClearButton={true}
           />
         ))}
       </Section>
       <Section>
         <Label>투약정보</Label>
-        {formData.drugInfos.map((medication, index) => (
-          <Input
-            key={index}
-            name={`medication_${index}`}
-            value={medication}
-            onChange={(e) =>
-              handleArrayInputChange("drugInfos", index, e.target.value)
-            }
-            placeholder={`투약정보를 입력하세요`}
-            // showClearButton={true}
-          />
-        ))}
+        {(formData.drugInfos.length === 0 ? [""] : formData.drugInfos).map(
+          (medication, index) => (
+            <Input
+              key={index}
+              name={`medication_${index}`}
+              value={medication}
+              onChange={(e) =>
+                handleArrayInputChange("drugInfos", index, e.target.value)
+              }
+              onKeyDown={(e) => handleKeyDown(e, "drugInfos", index)}
+              placeholder={`투약정보를 입력하세요`}
+            />
+          )
+        )}
       </Section>
       <Section>
         <Textarea
@@ -297,8 +337,12 @@ const SecondInfo = () => {
         />
       </Section>
       <ButtonRow>
-        <Button _onClick={() => navigate(-1)}>뒤로가기</Button>
-        <Button _onClick={handleSubmit}>보내기</Button>
+        <Button _onClick={() => navigate(-1)} $color="white">
+          뒤로가기
+        </Button>
+        <Button _onClick={handleSubmit} $color="white">
+          보내기
+        </Button>
       </ButtonRow>
     </FormContainer>
   );
@@ -330,6 +374,7 @@ const InputRow = styled.div`
 `;
 
 const Label = styled.div`
+  font-size: 16px;
   font-weight: bold;
 `;
 

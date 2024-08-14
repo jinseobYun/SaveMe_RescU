@@ -5,10 +5,10 @@ const Text = ({
   children = null,
   $bold = false,
   $color = "var(--black-color-300)",
-  $size = "12px",
+  $size = "16px",
   $margin = false,
   $title = false,
-  $lineHeight = "16px",
+  $lineHeight = "1.2",
   _onClick = () => {},
 }) => {
   const styles = {

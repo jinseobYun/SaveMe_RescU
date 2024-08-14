@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useCustomLogin from "../../hooks/useCustomLogin";
-import logoImage from "../../assets/RescULogo.png"
-import Button from "../../components/elements/Button";
-import Input from "../../components/elements/Input";
+import logoImage from "../../assets/RescULogo.png";
+// import Button from "../../components/elements/Button";
+// import Input from "../../components/elements/Input";
 
-// import { loginPost } from "../../api/membersApi";
+
 import "./LoginComponent.css";
 
 const initState = {
   memberId: "",
   password: "",
+  rememberMe: false,
 };
 
 export default function LoginComponent() {
@@ -19,9 +20,10 @@ export default function LoginComponent() {
   const { doLogin } = useCustomLogin();
 
   const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
     setLoginParam((prevState) => ({
       ...prevState,
-      [e.target.name]: e.target.value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -39,51 +41,55 @@ export default function LoginComponent() {
       alert("로그인 성공");
       navigate("/main");
     }
-  } catch (error) {
-    console.error("로그인 중 오류 발생:", error);
-    alert("로그인 중 오류가 발생했습니다.");
-  }
-}
+  };
 
-return (
-  <div className="logincontainer">
-    <div className="login-info">
-      <img src={logoImage} alt="로고" className="login-logo-image" />
-    </div>
-    <div className="login-input">
-      <div className="id">
-        <div className="input-tag">아이디</div>
-        <Input
+  return (
+    <div className="logincontainer">
+      <div className="login-info">
+        <img src={logoImage} alt="로고" className="login-logo-image" />
+      </div>
+      <div className="login-input">
+        <div className="login-input-tag">아이디</div>
+        <input
           type="text"
           name="memberId"
           value={loginParam.memberId}
           onChange={handleInputChange}
           placeholder="아이디"
-          showClearButton={true}
+          className="input-field"
         />
-      </div>
-      <div className="password">
-        <div className="input-tag">비밀번호</div>
-        <Input
+
+        <div className="login-input-tag">비밀번호</div>
+        <input
           type="password"
           name="password"
           value={loginParam.password}
           onChange={handleInputChange}
           placeholder="비밀번호"
-          showClearButton={true}
+          className="input-field"
         />
-      </div>
-      <Button 
-       className="login-button btn-12" 
-      _onClick={handleSubmit} 
-       disabled={false}
-      $bg={{ default: "#fff5b3", hover: "#ffde4d" }} >
+
+        <div className="remember-me">
+          <input
+            type="checkbox"
+            name="rememberMe"
+            checked={loginParam.rememberMe}
+            onChange={handleInputChange}
+            className="remember-me-checkbox"
+          />
+          <label htmlFor="rememberMe" className="remember-me-label">
+            아이디 기억하기
+          </label>
+        </div>
+
+        <button
+          className="login-button btn-12"
+          onClick={handleSubmit}
+          disabled={false}
+        >
           <span className="login-text">로그인</span>
-        </Button>
-
-
-
+        </button>
+      </div>
     </div>
-  </div>
-);
+  );
 }

@@ -4,7 +4,6 @@ import {
   initOpenVidu,
   leaveSession,
   mainStreamManager,
-  subscribers,
   toggleAudio,
   toggleVideo,
 } from "../../util/openvidu";
@@ -20,7 +19,6 @@ import "./WebRTC.css";
 const WebRTC = () => {
   const [muted, setMuted] = useState(true);
   const [cameraOff, setCameraOff] = useState(true);
-  const [currentVideoDevice, setCurrentVideoDevice] = useState(null);
 
   // 상대방 스트림 상태 관리
   const [remoteStream, setRemoteStream] = useState(null);
@@ -41,8 +39,7 @@ const WebRTC = () => {
 
   useEffect(() => {
     const user = { username: "myname", userno: 1 }; // 실제 사용자 정보로 대체
-    // const sessionId = "ses_WEyWspxXTD"; // 실제 세션 ID로 대체
-    const sessionId = "ses_G4tWX7SMuX"; // 실제 세션 ID로 대체
+    const sessionId = localStorage.getItem("memberId"); // 실제 세션 ID로 대체
 
     initOpenVidu(sessionId, user).then(() => {
       console.log("OpenVidu Init 시작!");
@@ -81,9 +78,15 @@ const WebRTC = () => {
     };
   }, []);
 
-  const onClickCallEnd = () => {
-    leaveSession();
-    navigate("/");
+  const onClickCallEnd = async () => {
+    try {
+      await leaveSession(); // leaveSession 호출이 끝난 후 리다이렉트
+      localStorage.removeItem("reportData")
+      navigate("/main", { replace: true });
+    } catch (error) {
+      console.error("Error while ending the call: ", error);
+      navigate("/main", { replace: true }); // 오류가 발생해도 안전하게 메인으로 이동
+    }
   };
 
   useEffect(() => {

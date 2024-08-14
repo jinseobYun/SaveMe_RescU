@@ -24,6 +24,7 @@ const Input = ({
   defaultMessage = "",
   showClearButton = false,
   isError = false,
+  onKeyDown = () => {},
 }) => {
   const [helperText, setHelperText] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -77,7 +78,7 @@ const Input = ({
             <Text
               children={label}
               color="var(--label-gray-color)"
-              size="12px"
+              size="20px"
               lineHeight="16px"
             />
           )}
@@ -95,6 +96,7 @@ const Input = ({
             onBlur={onBlur}
             onChange={handleChange}
             ref={ref}
+            onKeyDown={(e) => onKeyDown(e)}
           />
           {type === "password" ? (
             <TogglePasswordButton onClick={handleTogglePassword}>
@@ -108,7 +110,7 @@ const Input = ({
         <HelpText>
           <Text
             children={helperText}
-            size="12px"
+            size="16px"
             color={
               isError
                 ? "var(--red-color-100)"
@@ -143,7 +145,6 @@ const InputWrapper = styled.div`
 
   // 색 확인하기 -------------------------------------
   border: 1px solid;
-  // var(--gray-color-400);
   border-radius: 5px;
   box-shadow: 0px 1px 2px 0px rgba(55, 65, 81, 0.08);
   color: var(--gray-color-400);
@@ -151,14 +152,14 @@ const InputWrapper = styled.div`
 `;
 const BasicInput = styled.input`
   width: 100%;
+  min-height: 5rem;
+  font-size: 24px;
   display: flex;
   border: none;
   outline: none;
   color: var(--gray-color-400);
-  font-size: 16px;
   font-weight: 500;
   line-height: 24px;
-  background: var(--white-color-100);
   /* Light / Elevation / 200 */
 
   &::placeholder {
@@ -183,36 +184,6 @@ const TogglePasswordButton = styled.button`
   align-items: center;
 `;
 
-// 임시
-const CheckInput = styled.div`
-  width: 100%;
-  padding: 5px;
-  box-sizing: border-box;
-  border-radius: 5px;
-  border: 1px solid var(--main-orange-color);
-  outline: none;
-  color: var(--gray-color-400);
-  font-size: 10px;
-  font-weight: 500;
-  line-height: 24px;
-  border-radius: 4px;
-  background: var(--white-color-100);
-  /* Light / Elevation / 200 */
-  box-shadow: 0px 1px 2px 0px rgba(55, 65, 81, 0.08);
-  &::placeholder {
-    color: var(--gray-color-400);
-  }
-  &:user-invalid {
-    border: 1px solid var(--red-color-100);
-    box-shadow: 0px 0px 0px 2px #fde2dd,
-      0px 0px 0px 1px var(--red-color-100) inset;
-  }
-  &:user-valid {
-    border: 1px solid var(--green-color-100);
-    box-shadow: 0px 0px 0px 2px #cbf4c9,
-      0px 0px 0px 1px var(--green-color-100) inset;
-  }
-`;
 
 const HelpText = styled.div`
   display: flex;

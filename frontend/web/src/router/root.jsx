@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate  } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import LoginPage from "../pages/members/LoginPage";
 import MainPage from "../pages/MainPage";
 import WebRTC from "../pages/WebRTC";
@@ -7,19 +7,33 @@ import AdminPage from "../pages/AdminPage";
 import MyPage from "../pages/members/MyPage";
 import FirstInfo from "../components/webRTC/FirstInfo";
 import SecondInfo from "../components/webRTC/SecondInfo";
+import PrivateRoute from "./PrivateRoute";
+import LoginRedirect from "./LoginRedirect"
 
 const root = createBrowserRouter([
   {
     path: "",
-    element: <LoginPage />,
+    element: (
+      <LoginRedirect>
+        <LoginPage />
+      </LoginRedirect>
+    ),
   },
   {
     path: "/main",
-    element: <MainPage />,
+    element: (
+      <PrivateRoute>
+        <MainPage />
+      </PrivateRoute>
+    ),
   },
   {
     path: "/webrtc",
-    element: <WebRTC />,
+    element: (
+      <PrivateRoute>
+        <WebRTC />
+      </PrivateRoute>
+    ),
     children: [
       {
         path: "",
@@ -37,19 +51,31 @@ const root = createBrowserRouter([
   },
   {
     path: "/map",
-    element: <Map />,
+    element: (
+      <PrivateRoute>
+        <Map />
+      </PrivateRoute>
+    ),
   },
   {
     path: "/admin",
-    element: <AdminPage />,
+    element: (
+      <PrivateRoute>
+        <AdminPage />
+      </PrivateRoute>
+    ),
   },
   {
     path: "/mypage",
-    element: <MyPage />,
+    element: (
+      <PrivateRoute>
+        <MyPage />
+      </PrivateRoute>
+    ),
   },
 ],
 {
-  basename: "/rescu",
+  basename: "/rescu/",
 }
 );
 

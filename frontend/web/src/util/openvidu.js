@@ -7,6 +7,8 @@ export let session;
 export let mainStreamManager;
 export let publisher;
 export let subscribers = [];
+let sttInterval = null; // STT 데이터 처리 인터벌
+let sttTimeout = null; // STT 호출 타임아웃
 
 export const initOpenVidu = async (sessionId, user) => {
   try {
@@ -21,8 +23,6 @@ export const initOpenVidu = async (sessionId, user) => {
       );
       const subscriber = session.subscribe(event.stream, undefined);
       subscribers.push(subscriber);
-
-      // mainStreamManager = subscriber;
 
       const streamEvent = new CustomEvent("streamCreated", {
         detail: { subscriber },
@@ -43,18 +43,20 @@ export const initOpenVidu = async (sessionId, user) => {
       console.log("Received signal:", event.data);
     });
 
-    // 1차정보 전달받는 이벤트 등록
     session.on("signal:report-info", (event) => {
       try {
-        const reportData = JSON.parse(event.data); // 수신된 데이터를 객체로 변환
+        const reportData = JSON.parse(event.data); 
         console.log("Received report data:", reportData);
 
         const mappedData = {
+        
           patientId: reportData.tagId,
           reporterId: reportData.userId,
-          latitude: reportData.location.latitude,
-          longitude: reportData.location.longitude,
+          latitude: reportData.location ? reportData.location.latitude : 36.3553193257957,
+          longitude: reportData.location ? reportData.location.longitude : 127.29820111515,
         };
+
+        localStorage.setItem("reportData", JSON.stringify(mappedData));
 
         const reportEvent = new CustomEvent('reportInfoReceived', {
           detail: mappedData,
@@ -71,38 +73,35 @@ export const initOpenVidu = async (sessionId, user) => {
     console.log("token은 : ", token);
     await session.connect(token, { clientData: user });
 
-    // 마이크 성능설정 최대치
+    // 마이크 성능 설정
     const audioSource = await navigator.mediaDevices.getUserMedia({
       audio: {
         echoCancellation: true,
         noiseSuppression: true,
         autoGainControl: false,
         suppressLocalAudioPlaybackExperimental: true,
-        channelCount: 2, // 스테레오
-        sampleRate: 48000, // 샘플링 속도 설정
-        sampleSize: 24, // 샘플 크기 설정
-        latency: 0.01, // 낮은 지연 시간 설정
+        channelCount: 2,
+        sampleRate: 48000,
+        sampleSize: 24,
+        latency: 0.01,
       },
     });
 
     const audioContext = new window.AudioContext({ sampleRate: 48000 });
     const sourceNode = audioContext.createMediaStreamSource(audioSource);
 
-    // 게인 노드 (볼륨 조절)
+    // 오디오 필터 설정
     const gainNode = audioContext.createGain();
     gainNode.gain.value = 1.0;
 
-    // 고역 필터 (저주파 제거)
     const highPassFilter = audioContext.createBiquadFilter();
     highPassFilter.type = "highpass";
     highPassFilter.frequency.setValueAtTime(100, audioContext.currentTime);
 
-    // 저역 필터 (고주파 제거)
     const lowPassFilter = audioContext.createBiquadFilter();
     lowPassFilter.type = "lowpass";
     lowPassFilter.frequency.setValueAtTime(10000, audioContext.currentTime);
 
-    // 다이나믹 컴프레서 (동적 범위 압축)
     const compressor = audioContext.createDynamicsCompressor();
     compressor.threshold.setValueAtTime(-50, audioContext.currentTime);
     compressor.knee.setValueAtTime(40, audioContext.currentTime);
@@ -110,22 +109,20 @@ export const initOpenVidu = async (sessionId, user) => {
     compressor.attack.setValueAtTime(0, audioContext.currentTime);
     compressor.release.setValueAtTime(0.25, audioContext.currentTime);
 
-    // 노드를 연결
     sourceNode.connect(gainNode);
     gainNode.connect(highPassFilter);
     highPassFilter.connect(lowPassFilter);
     lowPassFilter.connect(compressor);
 
-    // 내 마이크와 오디오의 분리. (내가 입력한 오디오가 나에게 반환되지 않도록)
+    // 내 마이크와 오디오의 분리
     const filteredStream = audioContext.createMediaStreamDestination();
-    sourceNode.connect(filteredStream);
+    compressor.connect(filteredStream); // 수정: compressor까지의 오디오 노드를 연결
 
-    // STT용으로 샘플링 속도를 16000Hz로 변환
+    // STT용 샘플링 속도를 16000Hz로 변환
     const downsampledAudioContext = new AudioContext({ sampleRate: 16000 });
     const downsampledSourceNode =
       downsampledAudioContext.createMediaStreamSource(filteredStream.stream);
 
-    // 오디오 데이터 수집 및 STT 호출
     const analyserNode = downsampledAudioContext.createAnalyser();
     downsampledSourceNode.connect(analyserNode);
 
@@ -136,34 +133,66 @@ export const initOpenVidu = async (sessionId, user) => {
     const processAudioData = () => {
       analyserNode.getFloatTimeDomainData(dataArray);
       collectedAudioData.push(...dataArray);
+
+      const maxVolume = Math.max(...dataArray);
+      if (maxVolume < 0.01) {
+        if (!sttTimeout) {
+          sttTimeout = setTimeout(async () => {
+            if (collectedAudioData.length > 0) {
+              const audioBytes = convertFloat32ToInt16(collectedAudioData);
+              const result = await sendToSTTAPI(audioBytes);
+              if (result && result.results && result.results.length > 0) {
+                const transcription = result.results
+                  .map((res) => res.alternatives[0].transcript)
+                  .join("\n");
+
+                const data = { message: transcription, sender: "stt" };
+                session.signal({
+                  data: JSON.stringify(data),
+                  to: [], 
+                  type: "my-chat",
+                });
+              }
+              collectedAudioData = [];
+              sttTimeout = null;
+            }
+          }, 100000);
+        }
+      } else {
+        if (sttTimeout) {
+          clearTimeout(sttTimeout);
+          sttTimeout = null;
+        }
+      }
     };
 
-    const processInterval = setInterval(processAudioData, 100);
-
-    // 일정 간격으로 STT API 호출
-    setInterval(async () => {
-      if (collectedAudioData.length > 0) {
-        const audioBytes = convertFloat32ToInt16(collectedAudioData);
-        const result = await sendToSTTAPI(audioBytes);
-        console.log("STT 결과 반환 result: ", result);
-        if (result && result.results && result.results.length > 0) {
-          const transcription = result.results
-            .map((res) => res.alternatives[0].transcript)
-            .join("\n");
-
-          
-          // STT 데이터를, Chat과 동일하게 JSON으로
-          const data = { message: transcription, sender: "stt"}
-          session.signal({
-            data: JSON.stringify(data),
-            to: [], // 모든 사용자에게 전송
-            type: "my-chat",
-          });
-          console.log("transcription은? :", transcription);
-        }
-        collectedAudioData = [];
+    const startSTT = () => {
+      if (!sttInterval) {
+        sttInterval = setInterval(processAudioData, 100);
       }
-    }, 5000); // 5초마다 실행
+    };
+
+    const stopSTT = () => {
+      try {
+        if (sttTimeout) {
+          clearTimeout(sttTimeout);
+          sttTimeout = null;
+        }
+        if (sttInterval) {
+          clearInterval(sttInterval);
+          sttInterval = null;
+        }
+      } catch (error) {
+        console.error("STT정상종료");
+      }
+    };
+
+    session.on("sessionDisconnected", () => {
+      try {
+        stopSTT();
+      } catch {
+      }
+    });
 
     publisher = await OV.initPublisherAsync(undefined, {
       audioSource: filteredStream.stream,
@@ -177,6 +206,7 @@ export const initOpenVidu = async (sessionId, user) => {
     session.publish(publisher);
     mainStreamManager = publisher;
 
+    startSTT();
   } catch (error) {
     console.error("Error initializing OpenVidu:", error);
   }
@@ -184,6 +214,10 @@ export const initOpenVidu = async (sessionId, user) => {
 
 export const leaveSession = () => {
   if (session) {
+    try {
+      stopSTT();
+    } catch {
+    }
     session.disconnect();
   }
   OV = null;
@@ -210,7 +244,6 @@ export const toggleVideo = () => {
 };
 
 const addChatMessage = (message, alignment) => {
-  // Chat 컴포넌트에 메시지를 추가하는 함수
   const event = new CustomEvent("addChatMessage", {
     detail: { message, alignment },
   });
@@ -222,7 +255,7 @@ export const sendChatMessage = (message) => {
     session
       .signal({
         data: message,
-        to: [], // 빈 배열은 모든 사용자에게 메시지 전송
+        to: [], 
         type: "chat",
       })
       .then(() => {
