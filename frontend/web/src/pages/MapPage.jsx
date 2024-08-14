@@ -27,7 +27,7 @@ export default function Map() {
 
   // 로컬 스토리지나 세션 스토리지에서 값을 불러와 latlon에 할당
   useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem("reportData")) || JSON.parse(sessionStorage.getItem("reportData"));
+    const storedData = JSON.parse(localStorage.getItem("reportData")) || JSON.parse(localStorage.getItem("reportData"));
     if (storedData) {
       setLatlon({
         lat: storedData.latitude,

@@ -28,7 +28,7 @@ export const updatePassword = async (passwordData) => {
       passwordData,
       {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("JWT-AccessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("JWT-AccessToken")}`,
         },
       }
     );
@@ -40,7 +40,7 @@ export const updatePassword = async (passwordData) => {
 };
 // Refresh token 요청 함수
 const tokenRegeneration = async () => {
-  const refreshToken = sessionStorage.getItem("JWT-RefreshToken");
+  const refreshToken = localStorage.getItem("JWT-RefreshToken");
   if (!refreshToken) throw new Error("No refresh token available");
 
   try {
@@ -66,7 +66,7 @@ export const createAxiosInstance = () => {
   // 요청 인터셉터 추가
   instance.interceptors.request.use(
     (config) => {
-      const accessToken = sessionStorage.getItem("JWT-AccessToken");
+      const accessToken = localStorage.getItem("JWT-AccessToken");
       if (accessToken) {
         config.headers["Authorization"] = `Bearer ${accessToken}`;
       }
@@ -89,13 +89,13 @@ export const createAxiosInstance = () => {
         originalRequest._retry = true;
         try {
           const { accessToken, refreshToken } = await tokenRegeneration();
-          sessionStorage.setItem("JWT-AccessToken", accessToken);
-          sessionStorage.setItem("JWT-RefreshToken", refreshToken);
+          localStorage.setItem("JWT-AccessToken", accessToken);
+          localStorage.setItem("JWT-RefreshToken", refreshToken);
           originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
           return axios(originalRequest);
         } catch (error) {
           console.log("Failed to refresh token, redirecting to login");
-          sessionStorage.clear();
+          localStorage.clear();
           window.location.replace("/");
           return Promise.reject(error);
         }
