@@ -357,6 +357,9 @@ const ButtonBox = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
   gap: 2rem;
+  width: 100%;
+  margin-right: 2rem;
+  margin-bottom: 2rem;
+  justify-content: flex-end;
 `;
