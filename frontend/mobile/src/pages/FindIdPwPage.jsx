@@ -47,11 +47,14 @@ const FindIdPwPage = () => {
     <>
       <Container>
         <Header navText="" backAlert={true} />
-        <Text>회원 가입 시 등록한 정보를 입력해 주세요.</Text>
+        <StyledTitle>
+          <Text $size="var(--font-size-title)">
+            회원 가입 시 등록한 정보를 입력해 주세요.
+          </Text>
+        </StyledTitle>
         <StyledForm>
           <Input
             $name="memberName"
-            $placeholder="이름"
             $value={values.memberName}
             _onChange={handleChange}
             $haveToCheckValid={false}
@@ -59,7 +62,6 @@ const FindIdPwPage = () => {
           />
           <Input
             $name="phoneNumber"
-            $placeholder="휴대폰 번호"
             $label="휴대폰 번호*"
             $type="number"
             $value={values.phoneNumber}
@@ -109,5 +111,8 @@ const StyledForm = styled.div`
   margin-left: 2rem;
   margin-right: 2rem;
   gap: 1.5rem;
-  padding: 10vh 15px;
+  padding: 5vh 15px;
+`;
+const StyledTitle = styled.div`
+  padding: 1rem var(--margin-lr-default);
 `;

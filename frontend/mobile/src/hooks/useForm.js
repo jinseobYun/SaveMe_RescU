@@ -11,7 +11,6 @@ function useForm({ initialValues, onSubmit, validate }) {
   }, 300); // 300ms 디바운싱
 
   const handleChange = (event) => {
-
     const { name, value } = event.target;
     setValues({ ...values, [name]: value });
     // setErrors(validate(values));
