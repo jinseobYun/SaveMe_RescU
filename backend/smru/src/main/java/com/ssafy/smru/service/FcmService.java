@@ -8,6 +8,7 @@ import com.google.common.net.HttpHeaders;
 import com.ssafy.smru.dto.AppMemberDto;
 import com.ssafy.smru.dto.FcmMessageDto;
 import com.ssafy.smru.dto.FcmRequestDto;
+import com.ssafy.smru.dto.PushNotificationDto;
 import com.ssafy.smru.entity.AppMember;
 import com.ssafy.smru.entity.PushNotification;
 import com.ssafy.smru.entity.app.EmergencyContact;
@@ -85,13 +86,13 @@ public class FcmService {
         }
     }
 
-    public Map<String, Object> getPushNotificationList(String memberId) {
-        Map<String, Object> result = new HashMap<>();
+    public List<PushNotificationDto.Response> getPushNotificationList(String memberId) {
         AppMember appMember = appMemberRepository.findByMemberId(memberId)
                         .orElseThrow(() -> new NotFoundException("존재하지 않는 사용자입니다."));
-        List<PushNotification> pushNotificationList = fcmRepository.findAllByAppMember(appMember);
-        result.put("pushNotificationList", pushNotificationList);
-        return result;
+        return fcmRepository.findAllByAppMember(appMember)
+                .stream()
+                .map(PushNotification::toResponse)
+                .collect(Collectors.toList());
     }
 
 //    public void sendMessageTo(String targetToken, String title, String body) throws IOException {

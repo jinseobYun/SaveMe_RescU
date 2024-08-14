@@ -1,5 +1,6 @@
 package com.ssafy.smru.entity;
 
+import com.ssafy.smru.dto.PushNotificationDto;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,5 +36,14 @@ public class PushNotification {
         this.body = body;
         this.notificationTime = notificationTime;
         this.appMember = appMember;
+    }
+
+    public PushNotificationDto.Response toResponse() {
+        return PushNotificationDto.Response.builder()
+                .pushNotificationId(pushNotificationId)
+                .title(title)
+                .body(body)
+                .notificationTime(notificationTime)
+                .build();
     }
 }
