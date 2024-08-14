@@ -28,18 +28,26 @@ export default function LoginComponent() {
   };
 
   const handleSubmit = async () => {
-  try {
-    const data = await doLogin(loginParam);
-    console.log(data);
-    if (data.error) {
-      alert("이메일 또는 패스워드를 확인하세요.");
-    } else {
-      // 로그인 성공 시 JWT 토큰을 로컬 스토리지에 저장
-      localStorage.setItem("JWT-AccessToken", data.accessToken);
-      localStorage.setItem("JWT-RefreshToken", data.refreshToken);
-      localStorage.setItem("memberId", loginParam.memberId);
-      alert("로그인 성공");
-      navigate("/main");
+    try {
+      const data = await doLogin(loginParam);
+      console.log(data);
+      if (data.error) {
+        alert("이메일 또는 패스워드를 확인하세요.");
+      } else {
+        localStorage.setItem("JWT-AccessToken", data.accessToken);
+        localStorage.setItem("JWT-RefreshToken", data.refreshToken);
+        localStorage.setItem("memberId", loginParam.memberId);
+        if (loginParam.rememberMe) {
+          localStorage.setItem("rememberMe", loginParam.memberId);
+        } else {
+          localStorage.removeItem("rememberMe");
+        }
+        alert("로그인 성공");
+        navigate("/main");
+      }
+    } catch (error) {
+      console.error("로그인 중 오류 발생:", error);
+      alert("로그인 중 오류가 발생했습니다.");
     }
   };
 
