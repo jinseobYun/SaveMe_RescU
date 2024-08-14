@@ -46,7 +46,7 @@ const ReportOpenViduPage = () => {
   const [cameraOff, setCameraOff] = useState(true);
   const [isCameraFront, setIsCameraFront] = useState(true);
   const [currentVideoDevice, setCurrentVideoDevice] = useState(null);
-
+  const scrollRef = useRef();
   // 상대방 스트림 상태 관리
   const navigate = useNavigate();
   const [remoteStream, setRemoteStream] = useState(null);
@@ -193,6 +193,7 @@ const ReportOpenViduPage = () => {
   }, [isCameraFront, getMainStreamManager, muted, currentVideoDevice]);
 
   const onClickScreen = () => {
+    console.log("onclickScreen");
     if (isChatting && !showMenuAll) {
       setShowMenu(true);
       setIsChatting(false);
@@ -275,6 +276,7 @@ const ReportOpenViduPage = () => {
       setChatlogWrapperHeight(chatHeight);
 
       localVideoRef.current.style.bottom = `${chatHeight}px`;
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [chatlog, isChatting]);
   useEffect(() => {
@@ -421,7 +423,7 @@ const ReportOpenViduPage = () => {
           {isChatting ? (
             <ChattingWrapper ref={chatWrapperRef}>
               {chatlog && (
-                <ChattingContents>
+                <ChattingContents ref={scrollRef}>
                   {chatlog.map((message, index) => (
                     <Grid
                       key={index}
@@ -432,8 +434,12 @@ const ReportOpenViduPage = () => {
                           : "flex-start"
                       }
                     >
-                      <ChattingMessage alignment={message.alignment}>
-                        <Text children={message.message} $size="2rem" />
+                      <ChattingMessage $alignment={message.alignment}>
+                        <Text
+                          children={message.message}
+                          $size="2rem"
+                          $lineHeight="1.3em"
+                        />
                       </ChattingMessage>
                     </Grid>
                   ))}
@@ -528,7 +534,7 @@ const ChattingWrapper = styled.div`
   left: 0;
   width: 100%;
   max-height: 44vh; /* 최대 높이 설정 */
-  border-top: 1px solid #ddd;
+  // border-top: 1px solid #ddd;
   overflow-y: auto; /* 내용이 넘칠 경우 스크롤 추가 */
   display: flex;
   flex-direction: column;
@@ -564,12 +570,12 @@ const ChattingMessage = styled.div`
   max-width: 100%;
   width: fit-content;
 
-  background-color: ${({ alignment }) =>
-    alignment === "right"
+  background-color: ${({ $alignment }) =>
+    $alignment === "right"
       ? "var(--main-yellow-color)"
-      : "var(--chat-pink-color)"};
-  margin-left: ${({ alignment }) => (alignment === "right" ? "50%" : "0px")};
-  margin-right: ${({ alignment }) => (alignment === "left" ? "50%" : "0px")};
+      : "var(--bg-baige-color)"};
+  margin-left: ${({ $alignment }) => ($alignment === "right" ? "50%" : "0px")};
+  margin-right: ${({ $alignment }) => ($alignment === "left" ? "50%" : "0px")};
 `;
 
 const ChatInputBox = styled.div`

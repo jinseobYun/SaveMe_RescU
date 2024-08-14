@@ -8,7 +8,7 @@ const GlobalStyles = createGlobalStyle`
         --dark-blue-color:#2D4059;
         --bg-baige-color:#FFFCE3;
         --label-gray-color:#7A7D84;
-        --chat-pink-color:#FF9393;
+        --chat-pink-color:#FFCC70;
         --confirm-blue-color:#96C9F4;
 
 				--orange-color-100:#FFCC70; //swal basic btn
@@ -33,11 +33,12 @@ const GlobalStyles = createGlobalStyle`
         --black-color-200:#2C2C2E;
         --black-color-300:#000000;
 
-        --font-size-title: 4rem;
-        --font-size-large: 2.8rem;
-        --font-size-medium: 2.2rem;
-        --font-size-small: 2rem;
-        --font-size-primary: 1.6rem;
+        --font-size-title: 1.8rem;
+        --font-size-large: 2rem;
+        --font-size-medium: 1.7rem;
+        --font-size-small: 1.32rem;
+
+				--margin-lr-default:3rem;
 				
     }
 
