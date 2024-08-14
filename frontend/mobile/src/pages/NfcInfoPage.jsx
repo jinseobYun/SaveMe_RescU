@@ -35,13 +35,11 @@ const NfcInfoPage = () => {
   };
 
   const onClickTokenModal = () => {
-    let token = userNfc;
     if (!userNfc) {
       getNFCToken(
         userId,
         (response) => {
           setUserNfc(response.data.nfcToken);
-          token = response.data.nfcToken;
         },
         (error) => {
           console.log(error);
@@ -55,13 +53,13 @@ const NfcInfoPage = () => {
       (result) => {
         if (result.dismiss === Swal.DismissReason.cancel) {
           navigator.clipboard
-            .writeText(`saveme://open?tagId=${token}`)
+            .writeText(`saveme://open?tagId=${userNfc}`)
             .then(() => {
-              toastAlert(true, "NFC 토큰이 복사되었습니다");
+              toastAlert("NFC 토큰이 복사되었습니다");
             });
         }
       },
-      `saveme://open?tagId=${token}`
+      `saveme://open?tagId=${userNfc}`
     );
   };
   return (

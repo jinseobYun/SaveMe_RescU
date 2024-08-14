@@ -3,9 +3,9 @@ import { createRoot } from "react-dom/client";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-
+import AddIcon from "@mui/icons-material/Add";
 import { Header, TabBar } from "@components/common";
-import { Grid, Button, Text, Input } from "@components/elements";
+import { Button, Text } from "@components/elements";
 import {
   getEmergencycontacts,
   registerEmergencycontact,
@@ -15,11 +15,7 @@ import {
 import useUserStore from "@/store/useUserStore";
 import useFormInputStore from "@/store/useFormInputStore";
 import EmergencyContactInput from "@components/input/EmergencyContactInput";
-import {
-  successAlert,
-  yesorNoAlert,
-  errorAlert,
-} from "@/util/notificationAlert";
+import { yesorNoAlert, toastAlert } from "@/util/notificationAlert";
 
 const EmergencycontactsPage = () => {
   const emergencyContactList = useUserStore(
@@ -92,12 +88,14 @@ const EmergencycontactsPage = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         result.value.emergencyContactId
-          ? updateEmergencycontact(
+          ? (result.value.relation !== contactItem.relation ||
+              result.value.phoneNumber !== contactItem.phoneNumber) &&
+            updateEmergencycontact(
               result.value.emergencyContactId,
               result.value,
               (response) => {
                 if (response.status === 200) {
-                  successAlert("수정되었습니다!");
+                  toastAlert("수정되었습니다!");
 
                   deleteEmergencyContact(result.value.emergencyContactId);
                   addEmergencyContact(result.value);
@@ -112,7 +110,7 @@ const EmergencycontactsPage = () => {
               result.value,
               (response) => {
                 if (response.status === 201) {
-                  successAlert("등록되었습니다!");
+                  toastAlert("등록되었습니다!");
 
                   console.log(response.data);
                   let newContact = result.value;
@@ -139,12 +137,12 @@ const EmergencycontactsPage = () => {
       "취소",
       "삭제하기",
       (result) => {
-        if (result.isDismissed) {
+        if (result.dismiss === Swal.DismissReason.cancel) {
           deleteEmergencycontact(
             contact.emergencyContactId,
             (response) => {
               if (response.status === 200) {
-                successAlert("삭제되었습니다!");
+                toastAlert("삭제되었습니다!");
                 deleteEmergencyContact(contact.emergencyContactId);
                 if (emergencyContactList.length === 0) setShowButton(true);
               }
@@ -175,6 +173,7 @@ const EmergencycontactsPage = () => {
     // $padding: "14px 32px",
     $width: "",
     $height: "10vh",
+    $margin: "20rem 0 0 0",
   };
   useEffect(() => {
     getEmergencycontacts(
@@ -202,7 +201,21 @@ const EmergencycontactsPage = () => {
       <Content>
         {!showButton ? (
           <ContactList>
-            <AddButton onClick={onClickShowModal}>추가 하기</AddButton>
+            <AddBtnDiv>
+              <Button
+                _onClick={onClickShowModal}
+                $width="40px"
+                $height="40px"
+                $bg={{
+                  default: "var(--orange-color-200)",
+                }}
+                $color={{ default: "var(--white-color-100)" }}
+                children={<AddIcon />}
+                $padding=""
+                $border="1px solid  var(--orange-color-200)"
+                $radius="50%"
+              />
+            </AddBtnDiv>
             {emergencyContactList &&
               emergencyContactList.map((contact, index) => (
                 <ContactCard key={index}>
@@ -215,18 +228,20 @@ const EmergencycontactsPage = () => {
                       _onClick={() => {
                         onClickShowModal(contact);
                       }}
-                      children="수정하기"
+                      children="수정"
                       $padding=""
                       $border="1px solid  var(--orange-color-200)"
+                      $radius="10px"
                     />
 
                     <Button
                       _onClick={() => {
                         onClickDeleteBtn(contact);
                       }}
-                      children="삭제하기"
+                      children="삭제"
                       $padding=""
                       $border="1px solid  var(--orange-color-200)"
+                      $radius="10px"
                     />
                   </ButtonBox>
                 </ContactCard>
@@ -250,21 +265,21 @@ const Container = styled.div`
   height: 100vh;
   width: 100vw;
 `;
+const AddBtnDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  margin-right: 2rem;
+  margin-bottom: 1.5rem;
+`;
+
 const Content = styled.div`
   flex-direction: column;
   display: flex;
   align-items: center;
   overflow: auto;
   height: 83vh;
-`;
-
-const AddButton = styled.button`
-  background-color: var(--orange-color-100);
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 14px;
 `;
 
 const ContactList = styled.div`
@@ -302,5 +317,5 @@ const ButtonBox = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 01em;
+  gap: 1em;
 `;

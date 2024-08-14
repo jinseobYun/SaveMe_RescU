@@ -4,7 +4,7 @@ import { Grid, Button, Text, Input } from "@components/elements";
 import useForm from "@/hooks/useForm";
 import { EmergencyContactValidation } from "@/util/validation";
 
-const EmergencyContactInput = ({ $onChange, $prev }) => {
+const EmergencyContactInput = ({ $onChange, $prev, relationRef }) => {
   const { values, errors, isLoading, handleChange, handleSubmit } = useForm({
     initialValues: {
       relation: $prev.relation || "",

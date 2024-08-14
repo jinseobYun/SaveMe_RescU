@@ -18,7 +18,7 @@ const LoadingScreenContainer = styled.div`
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(0, 0, 0, 0.2);
   z-index: 9999;
 `;
 
@@ -27,7 +27,8 @@ const Spinner = styled.div`
   height: 40px;
   border-radius: 50%;
   border: 5px solid transparent;
-  border-top-color: #3498db;
+  border-top-color: #ffcc70;
+  margin-bottom: 10px;
   animation: ${spin} 1s linear infinite;
 `;
 

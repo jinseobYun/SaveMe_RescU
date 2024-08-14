@@ -1,35 +1,34 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
 import { Grid, Text, NextPageButton } from "@components/elements";
 import useUserStore from "@/store/useUserStore";
 import useFormInputStore from "@/store/useFormInputStore";
-import useForm from "@/hooks/useForm";
 
 const MedicalInfoForm = () => {
-  const { userName, userMedicalInfo } = useUserStore();
+  const { userName } = useUserStore();
   const { updateInputs, inputs } = useFormInputStore();
   const navigate = useNavigate();
-  const { values, errors, isLoading, handleChange, handleSubmit } = useForm({
-    initialValues: {
-      bloodType1: inputs.bloodType1 || "",
-      bloodType2: inputs.bloodType2 || "",
-      otherInfo: inputs.otherInfo || "",
-    },
-    onSubmit: (values) => {
-      updateInputs(values);
-      navigate("/medicalinfo/edit?form=drug");
-    },
-    validate: null,
-  });
-  const onChangeRhRadio = (e) => {
-    e.preventDefault();
-    handleChange(e);
+  const [bloodType1, setBloodType1] = useState(inputs.bloodType1);
+  const [bloodType2, setBloodType2] = useState(inputs.bloodType2);
+  const [otherInfo, setOtherInfo] = useState(inputs.otherInfo);
+
+  const onClickSaveInfo = () => {
+    updateInputs({ bloodType1, bloodType2, otherInfo });
+    navigate("/medicalinfo/edit?form=drug");
   };
+
+  const onChangeRhRadio = (e) => {
+    setBloodType2(e.target.value);
+  };
+
   const onChangeAboRadio = (e) => {
-    e.preventDefault();
-    handleChange(e);
+    setBloodType1(e.target.value);
+  };
+
+  const handleOtherInfoChange = (e) => {
+    setOtherInfo(e.target.value);
   };
 
   return (
@@ -45,14 +44,13 @@ const MedicalInfoForm = () => {
       >
         <Text
           children={`${userName}님! 신고 시 전달될 정보를 등록해 주세요`}
-          $color="var(--blakc-color-300)"
+          $color="var(--black-color-300)"
         />
         <StyledForm noValidate>
           <Grid
-            // $width="40%"
             $display="flex"
             $flex_direction="column"
-            $marign="0 0 2rem 0"
+            $margin="0 0 2rem 0"
             $gap="0.5rem"
             $align_items="flex-start"
           >
@@ -81,7 +79,7 @@ const MedicalInfoForm = () => {
                 type="radio"
                 name="bloodType2"
                 onChange={onChangeRhRadio}
-                checked={values.bloodType2 === "RH+"}
+                checked={bloodType2 === "RH+"}
               />
               <Text
                 children="RH-"
@@ -94,15 +92,14 @@ const MedicalInfoForm = () => {
                 type="radio"
                 name="bloodType2"
                 onChange={onChangeRhRadio}
-                checked={values.bloodType2 === "RH-"}
+                checked={bloodType2 === "RH-"}
               />
             </Grid>
           </Grid>
           <Grid
-            // $width="40%"
             $display="flex"
             $flex_direction="column"
-            $marign="0 0 2rem 0"
+            $margin="0 0 2rem 0"
             $gap="0.5rem"
             $align_items="flex-start"
           >
@@ -132,7 +129,7 @@ const MedicalInfoForm = () => {
                 type="radio"
                 name="bloodType1"
                 onChange={onChangeAboRadio}
-                checked={values.bloodType1 === "A"}
+                checked={bloodType1 === "A"}
               />
               <Text
                 children="B"
@@ -145,7 +142,7 @@ const MedicalInfoForm = () => {
                 type="radio"
                 name="bloodType1"
                 onChange={onChangeAboRadio}
-                checked={values.bloodType1 === "B"}
+                checked={bloodType1 === "B"}
               />
               <Text
                 children="AB"
@@ -158,7 +155,7 @@ const MedicalInfoForm = () => {
                 type="radio"
                 name="bloodType1"
                 onChange={onChangeAboRadio}
-                checked={values.bloodType1 === "AB"}
+                checked={bloodType1 === "AB"}
               />
               <Text
                 children="O"
@@ -171,15 +168,14 @@ const MedicalInfoForm = () => {
                 type="radio"
                 name="bloodType1"
                 onChange={onChangeAboRadio}
-                checked={values.bloodType1 === "O"}
+                checked={bloodType1 === "O"}
               />
             </Grid>
           </Grid>
           <Grid
-            // $width="40%"
             $display="flex"
             $flex_direction="column"
-            $marign="0 0 2rem 0"
+            $margin="0 0 2rem 0"
             $gap="0.5rem"
             $align_items="flex-start"
           >
@@ -190,17 +186,20 @@ const MedicalInfoForm = () => {
               $lineHeight="16px"
             />
             <StyledTextarea
-              name="otherInfo"
               rows="5"
               cols="33"
-              maxLength={"1000"}
-              value={values.otherInfo}
-              onChange={handleChange}
+              maxLength="1000"
+              value={otherInfo}
+              onChange={handleOtherInfoChange}
             />
           </Grid>
         </StyledForm>
       </Grid>
-      <NextPageButton isError={false} text="다음" handleClick={handleSubmit} />
+      <NextPageButton
+        isError={false}
+        text="다음"
+        handleClick={onClickSaveInfo}
+      />
     </Container>
   );
 };
