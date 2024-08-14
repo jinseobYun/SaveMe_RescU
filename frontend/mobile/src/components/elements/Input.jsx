@@ -157,7 +157,6 @@ const BasicInput = styled.input`
   color: var(--black-color-200);
   font-size: 1.5rem;
   font-weight: 500;
-  box-shadow: 0px 1px 2px 0px rgba(55, 65, 81, 0.08);
   &::placeholder {
     color: var(--label-gray-color);
     font-size: 1rem;

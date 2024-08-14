@@ -59,7 +59,7 @@ const SignupUserInfoForm = () => {
         $display="flex"
         $width="100%"
         $height="100%"
-        $padding="10vh 4px"
+        $padding="3rem var(--margin-lr-default)"
         $flex_direction="column"
       >
         <StyledForm noValidate>
@@ -119,13 +119,12 @@ const SignupUserInfoForm = () => {
                   $size="12px"
                   $lineHeight="16px"
                 />
-                <label></label>
                 <StyledRadio
                   value="0"
                   type="radio"
                   name="gender"
                   onChange={onChangeGender}
-                  defaultChecked={inputs.gender === "0"}
+                  checked={values.gender === "0"}
                 />
                 <Text
                   children="여성"
@@ -138,7 +137,7 @@ const SignupUserInfoForm = () => {
                   type="radio"
                   name="gender"
                   onChange={onChangeGender}
-                  defaultChecked={inputs.gender === "1"}
+                  checked={values.gender === "1"}
                 />
               </Grid>
             </Grid>
@@ -198,7 +197,5 @@ const StyledRadio = styled.input`
     ); // 체크 시 내부 원으로 표시될 색상
     border: 3px solid white; // 테두리가 아닌, 테두리와 원 사이의 색상
     box-shadow: 0 0 0 1.6px var(--main-orange-color); // 얘가 테두리가 됨
-    // 그림자로 테두리를 직접 만들어야 함 (퍼지는 정도를 0으로 주면 테두리처럼 보입니다.)
-    // 그림자가 없으면 그냥 설정한 색상이 꽉 찬 원으로만 나옵니다.
   }
 `;

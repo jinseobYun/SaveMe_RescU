@@ -29,14 +29,18 @@ function SignUpValidationLoginInfo({ id, password, passwordConfirm }) {
   } else if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,20}$/.test(id)) {
     errors.id = "아이디는5~20 자 이내 영문과 숫자 조합이어야합니다";
   } else if (previd !== id) {
+    console.log(previd);
     checkIdDuplication(
       id,
       ({ data }) => {
         if (!data) {
           errors.id = "중복된 아이디입니다.";
+          console.log("중복!");
+          previd = id;
         } else {
           previd = id;
         }
+        console.log(errors.id);
       },
       (error) => {
         console.log(error.toJSON());
