@@ -14,7 +14,7 @@ export const getReport = async (patientId, reporterId, latitude, longitude) => {
         longitude: longitude ? longitude : "",
       },
       headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("JWT-AccessToken")}`,
+        Authorization: `Bearer ${localStorage.getItem("JWT-AccessToken")}`,
       },
     });
     return res.data;
@@ -28,7 +28,7 @@ export const postFirstInfo = async (firstInfo) => {
   try {
     const res = await axios.post(`${fetchServerHost}/1st-info`, firstInfo, {
       headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("JWT-AccessToken")}`,
+        Authorization: `Bearer ${localStorage.getItem("JWT-AccessToken")}`,
       },
     });
     return res.data;
@@ -42,7 +42,7 @@ export const putSecondInfo = async (secondInfo) => {
   try {
     const res = await axios.put(`${fetchServerHost}/2nd-info`, secondInfo, {
       headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("JWT-AccessToken")}`,
+        Authorization: `Bearer ${localStorage.getItem("JWT-AccessToken")}`,
       },
     });
     return res.data;

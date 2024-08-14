@@ -160,6 +160,7 @@ const VerifyCodeForm = () => {
           switch (type) {
             case "signup":
               navigate("/signup/logininfo");
+              updateInputs({ id: "", password: "", passwordConfirm: "" });
               break;
             case "findid":
               clearInputs();
@@ -238,6 +239,7 @@ const VerifyCodeForm = () => {
             $display="flex"
             $flex_direction="row"
             $align_items="center"
+            $justify_content="center"
             $gap="5px"
           >
             <Text

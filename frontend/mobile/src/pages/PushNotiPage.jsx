@@ -4,7 +4,7 @@ import styled from "styled-components";
 import useUserStore from "@/store/useUserStore";
 import { getPushNoti } from "@/api/pushNotiApi";
 import { Header, TabBar } from "@components/common";
-import { Grid, Button, Text, Input } from "@components/elements";
+import { Text } from "@components/elements";
 const PushNotiPage = () => {
   const { userName, userId } = useUserStore();
   const [expandedId, setExpandedId] = useState(null);
@@ -12,33 +12,13 @@ const PushNotiPage = () => {
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
   };
-  const [notifications, setNotifications] = useState([
-    {
-      pushNotificationId: 1,
-      title: "김싸피님에 대한 신고가 접수되었습니다",
-      notificationTime: "2021.05.22",
-      body: "김싸피님이 싸피싸핍 병원(으)로 이송될 예정입니다.",
-    },
-    {
-      pushNotificationId: 2,
-      title: "박싸피님에 대한 신고가 접수되었습니다",
-      notificationTime: "2021.05.22",
-      body: "박싸피님이 대전3반 병원(으)로 이송될 예정입니다.",
-    },
-    {
-      pushNotificationId: 3,
-      title: "이싸피님에 대한 신고가 접수되었습니다",
-      notificationTime: "2021.05.22",
-      body: "이싸피님이 5팀 병원(으)로 이송될 예정입니다.",
-    },
-  ]);
+  const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     getPushNoti(
       userId,
       (response) => {
-        //FIXME - 더미 데이터 지우기
-        // setNotifications(response.data);
+        setNotifications(response.data);
       },
       (error) => {
         console.log(error);
@@ -48,8 +28,9 @@ const PushNotiPage = () => {
   return (
     <Container>
       <Header navText="보호자 알림" goTo="/menu" />
+
       <NotiBox>
-        {notifications.length > 0 &&
+        {notifications.length > 0 ? (
           notifications.map((notification) => (
             <NotificationCard
               key={notification.pushNotificationId}
@@ -66,8 +47,12 @@ const PushNotiPage = () => {
                 <BodyText>{notification.body}</BodyText>
               )}
             </NotificationCard>
-          ))}
+          ))
+        ) : (
+          <Text $size="var(--font-size-large)">알림이 없습니다.</Text>
+        )}
       </NotiBox>
+
       <TabBar />
     </Container>
   );
@@ -78,6 +63,7 @@ const NotiBox = styled.div`
   width: 100%;
   padding: 20px;
   background-color: #f5f5f5;
+  margin-top: 20px;
 `;
 const Container = styled.div`
   display: flex;

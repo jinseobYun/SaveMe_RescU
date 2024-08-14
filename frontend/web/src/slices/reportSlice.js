@@ -90,6 +90,7 @@ const reportSlice = createSlice({
         }
       })
       .addCase(putSecondInfoAsync.fulfilled, (state, action) => {
+        alert(action.payload)
         console.log(action.payload);
       });
   },

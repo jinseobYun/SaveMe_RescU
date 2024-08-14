@@ -149,7 +149,10 @@ const MedicalInfoPage = () => {
                         $lineHeight=""
                       />
                     </span>
-                    <Value>{userMedicalInfo.bloodType1}형</Value>
+                    <Value>
+                      {userMedicalInfo.bloodType1 &&
+                        `${userMedicalInfo.bloodType1}형`}
+                    </Value>
                   </InfoItem>
                   <InfoItem>
                     <span>
@@ -162,7 +165,10 @@ const MedicalInfoPage = () => {
                       />
                     </span>
 
-                    <Value>{userMedicalInfo.bloodType2}형</Value>
+                    <Value>
+                      {userMedicalInfo.bloodType2 &&
+                        `${userMedicalInfo.bloodType2}형`}
+                    </Value>
                   </InfoItem>
                   <InfoItem ref={infoItemRef} $isColumn={isColumn}>
                     <span>

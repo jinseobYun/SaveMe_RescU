@@ -45,8 +45,8 @@ const MenuPage = () => {
     },
     {
       icon: <InfoOutlinedIcon />,
-      label: "개인 정보 수집 활용 동의서",
-      path: "/privacyagreement",
+      label: "서비스 이용약관",
+      path: "/serviceterms",
     },
     {
       icon: <PersonOutlinedIcon />,
