@@ -12,7 +12,7 @@ const PushNotiPage = () => {
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
   };
-  const [notifications, setNotifications] = useState();
+  const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     getPushNoti(
@@ -63,6 +63,7 @@ const NotiBox = styled.div`
   width: 100%;
   padding: 20px;
   background-color: #f5f5f5;
+  margin-top: 20px;
 `;
 const Container = styled.div`
   display: flex;

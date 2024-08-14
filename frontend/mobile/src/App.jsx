@@ -30,6 +30,7 @@ import {
   ReportOpenViduPage,
   DetailFirstAid,
   PushNotiPage,
+  ServiceTermsPage,
 } from "@/pages";
 import GlobalStyle from "@/globalStyles.js";
 import useUserStore from "@/store/useUserStore";
@@ -73,6 +74,7 @@ function App() {
             />
             <Route path="/nfcinfo" element={<NfcInfoPage />} />
             <Route path="/pushnotis" element={<PushNotiPage />} />
+            <Route path="/serviceterms" element={<ServiceTermsPage />} />
           </Route>
           {/* 인증을 하지않아야 */}
           <Route element={<PrivateRoute authentication={false} />}>

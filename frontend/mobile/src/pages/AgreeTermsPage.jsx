@@ -109,7 +109,7 @@ const AgreeTermsPage = () => {
                 checked={allCheck}
                 onChange={allBtnEvent}
               />
-              전체동의
+              약관 전체동의
             </TitleBox>
           </Title>
         </AllTermsCard>
