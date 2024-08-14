@@ -29,7 +29,7 @@ export const yesorNoAlert = (
   Swal.fire({
     title: title,
     showCancelButton: true,
-    confirmButtonColor: "#3085d6",
+    confirmButtonColor: "#b5b5b5",
     cancelButtonColor: "#FF4C4C",
     confirmButtonText: confirmButtonText,
     cancelButtonText: cancelButtonText,
@@ -59,7 +59,7 @@ const Toast = Swal.mixin({
   },
 });
 
-export const toastAlert = (isSuccess, title, width) => {
+export const toastAlert = (title, width, isSuccess = true,) => {
   Toast.fire({
     icon: isSuccess ? "success" : "error",
     title: title,

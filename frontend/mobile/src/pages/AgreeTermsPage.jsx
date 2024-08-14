@@ -5,17 +5,12 @@ import Swal from "sweetalert2";
 import { Header } from "@components/common";
 import useFormInputStore from "@/store/useFormInputStore";
 
-import {
-  Grid,
-  Button,
-  Text,
-  Input,
-  NextPageButton,
-} from "@components/elements";
+import { NextPageButton } from "@components/elements";
 import useForm from "@/hooks/useForm";
 import { errorAlert, successAlert } from "@/util/notificationAlert";
 
 import { registerUser } from "@/api/userApi";
+import { termsContent } from "@/assets/json/terms";
 const AgreeTermsPage = () => {
   const navigate = useNavigate();
 
@@ -127,7 +122,9 @@ const AgreeTermsPage = () => {
             </TitleBox>
             <ToggleIcon>{expandedId === "gps" ? "▲" : "▼"}</ToggleIcon>
           </Title>
-          {expandedId === "gps" && <BodyText>약관 내용</BodyText>}
+          {expandedId === "gps" && (
+            <BodyText>{termsContent[1].content}</BodyText>
+          )}
         </TermsCard>
         <TermsCard onClick={() => toggleExpand("info")}>
           <Title>
@@ -143,7 +140,9 @@ const AgreeTermsPage = () => {
             </TitleBox>
             <ToggleIcon>{expandedId === "info" ? "▲" : "▼"}</ToggleIcon>
           </Title>
-          {expandedId === "info" && <BodyText>약관 내용</BodyText>}
+          {expandedId === "info" && (
+            <BodyText>{termsContent[0].content}</BodyText>
+          )}
         </TermsCard>
       </NotiBox>
 

@@ -76,7 +76,7 @@ const MenuPage = () => {
       confirmAlert("정말 로그아웃 하시겠습니까?", "네", (result) => {
         if (result.dismiss === Swal.DismissReason.cancel) {
           logout();
-          toastAlert(true, "로그아웃 완료");
+          toastAlert("로그아웃 완료");
 
           navigate("/");
         }
@@ -90,7 +90,10 @@ const MenuPage = () => {
   }, []);
   return (
     <Container>
-      <Header navText={"내 정보"} goTo="/" />
+      <Header
+        navText={"내 정보"}
+        goTo={pathname === "/menu/changeInfo" ? "/menu" : "/"}
+      />
 
       <MenuList>
         {pathname === "/menu/changeInfo"
