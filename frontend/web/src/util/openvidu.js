@@ -49,11 +49,11 @@ export const initOpenVidu = async (sessionId, user) => {
         console.log("Received report data:", reportData);
 
         const mappedData = {
-          
+        
           patientId: reportData.tagId,
           reporterId: reportData.userId,
-          latitude: reportData.location.latitude,
-          longitude: reportData.location.longitude,
+          latitude: reportData.location ? reportData.location.latitude : 36.3553193257957,
+          longitude: reportData.location ? reportData.location.longitude : 127.29820111515,
         };
 
         localStorage.setItem("reportData", JSON.stringify(mappedData));
@@ -156,7 +156,7 @@ export const initOpenVidu = async (sessionId, user) => {
               collectedAudioData = [];
               sttTimeout = null;
             }
-          }, 1000000);
+          }, 100000);
         }
       } else {
         if (sttTimeout) {

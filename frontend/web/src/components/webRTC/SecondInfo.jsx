@@ -41,7 +41,6 @@ const SecondInfo = () => {
     drugInfos: [""],
   });
 
-
   const [hospitalOptions, setHospitalOptions] = useState([]);
 
   // api 호출 데이터 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
@@ -70,7 +69,6 @@ const SecondInfo = () => {
     }
   }, [emergencyData.items]);
 
-
   useEffect(() => {
     if (reportData && reportData.taggingMedicalInformation) {
       handleLoadTagData();
@@ -78,7 +76,6 @@ const SecondInfo = () => {
       handleLoadReporterData();
     }
   }, [reportData]);
-
 
   const handleInputChange = (e) => {
     setFormData((prevState) => ({
@@ -113,7 +110,6 @@ const SecondInfo = () => {
     });
   };
 
-
   const handleLoadTagData = () => {
     if (reportData && reportData.taggingMedicalInformation) {
       setFormData({
@@ -139,7 +135,8 @@ const SecondInfo = () => {
       setFormData({
         ...formData,
         memberName: reportData.reporterMedicalInformation.memberName,
-        gender: reportData.reporterMedicalInformation.gender === 0 ? "남" : "여",
+        gender:
+          reportData.reporterMedicalInformation.gender === 0 ? "남" : "여",
         birth: reportData.reporterMedicalInformation.birth,
         bloodType1: reportData.reporterMedicalInformation.bloodType1,
         bloodType2: reportData.reporterMedicalInformation.bloodType2,
@@ -185,21 +182,23 @@ const SecondInfo = () => {
 
     dispatch(putSecondInfoAsync(payload));
 
-
     const reportData = JSON.parse(localStorage.getItem("reportData"));
     const fcmPayload = {
       tagId: reportData.patientId,
       hospitalName: formData.hospitalName,
-      hospitalAddress: emergencyData.items.find(
-        (hospital) => hospital.dutyName === formData.hospitalName
-      )?.dutyAddr || "",
+      hospitalAddress:
+        emergencyData.items.find(
+          (hospital) => hospital.dutyName === formData.hospitalName
+        )?.dutyAddr || "",
     };
 
-    try {
-      await sendEmergencyPush(fcmPayload);
-      alert("2차 정보 전송 및 FCM 전송이 완료되었습니다.");
-    } catch (error) {
-      alert("FCM 전송 중 오류가 발생했습니다.");
+    if (reportData.patientId) {
+      try {
+        await sendEmergencyPush(fcmPayload);
+        alert("2차 정보 전송 및 FCM 전송이 완료되었습니다.");
+      } catch (error) {
+        alert("FCM 전송 중 오류가 발생했습니다.");
+      }
     }
   };
 
@@ -338,8 +337,12 @@ const SecondInfo = () => {
         />
       </Section>
       <ButtonRow>
-        <Button _onClick={() => navigate(-1)} $color="white">뒤로가기</Button>
-        <Button _onClick={handleSubmit} $color="white">보내기</Button>
+        <Button _onClick={() => navigate(-1)} $color="white">
+          뒤로가기
+        </Button>
+        <Button _onClick={handleSubmit} $color="white">
+          보내기
+        </Button>
       </ButtonRow>
     </FormContainer>
   );

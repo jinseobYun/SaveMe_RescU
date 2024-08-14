@@ -8,7 +8,6 @@ export default function BasicMenus() {
   const handleLogout = () => {
     // localStorage 초기화
     localStorage.clear();
-    sessionStorage.clear();
 
     // member 쿠키 삭제
     document.cookie = "member=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
