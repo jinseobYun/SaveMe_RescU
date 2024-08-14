@@ -14,6 +14,7 @@ import NfcInfoPage from "./NfcInfoPage";
 import ReportOpenViduPage from "./ReportOpenViduPage";
 import DetailFirstAid from "./DetailFirstAid";
 import PushNotiPage from "./PushNotiPage";
+import ServiceTermsPage from "./ServiceTermsPage";
 export {
   DetailFirstAid,
   ReportOpenViduPage,
@@ -30,5 +31,6 @@ export {
   FirstAidPage,
   FindIdPwPage,
   ChangePwPage,
-  PushNotiPage
+  PushNotiPage,
+  ServiceTermsPage,
 };
