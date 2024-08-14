@@ -32,7 +32,7 @@ public class DispatchOrderController {
             @RequestParam(required = false) String createdBy,
             @RequestParam(required = false) Date startDate,
             @RequestParam(required = false) Date endDate,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
