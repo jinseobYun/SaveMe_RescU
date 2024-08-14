@@ -145,7 +145,6 @@ const InputWrapper = styled.div`
 
   // 색 확인하기 -------------------------------------
   border: 1px solid;
-  // var(--gray-color-400);
   border-radius: 5px;
   box-shadow: 0px 1px 2px 0px rgba(55, 65, 81, 0.08);
   color: var(--gray-color-400);
@@ -161,7 +160,6 @@ const BasicInput = styled.input`
   color: var(--gray-color-400);
   font-weight: 500;
   line-height: 24px;
-  background: var(--white-color-100);
   /* Light / Elevation / 200 */
 
   &::placeholder {
