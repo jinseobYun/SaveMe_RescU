@@ -1,6 +1,8 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import styled, { keyframes } from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { useSpring, animated } from "react-spring";
+import { useDrag } from "@use-gesture/react";
 
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import VideocamIcon from "@mui/icons-material/Videocam";
@@ -47,6 +49,17 @@ const ReportOpenViduPage = () => {
   const [isCameraFront, setIsCameraFront] = useState(true);
   const [currentVideoDevice, setCurrentVideoDevice] = useState(null);
   const scrollRef = useRef();
+
+  //내 비디오 드래그 드롭
+  // react-spring의 useSpring을 이용해 드래그 가능한 위치를 애니메이션으로 관리합니다.
+  const [{ x, y }, api] = useSpring(() => ({ x: 0, y: 0 }));
+
+  // react-use-gesture의 useDrag를 사용해 드래그 동작을 정의합니다.
+  const bind = useDrag(({ offset: [ox, oy] }) => {
+    // 드래그 중 위치를 업데이트합니다.
+
+    api.start({ x: ox, y: oy });
+  });
   // 상대방 스트림 상태 관리
   const navigate = useNavigate();
   const [remoteStream, setRemoteStream] = useState(null);
@@ -87,7 +100,7 @@ const ReportOpenViduPage = () => {
       },
       (error) => {
         setLoading(false);
-        successAlert("신고를 종료하셨습니다.", () =>
+        successAlert("신고를 취소하셨습니다.", () =>
           navigate("/", { replace: true })
         );
         navigate("/", { replace: true });
@@ -139,7 +152,9 @@ const ReportOpenViduPage = () => {
 
   const onClickCallEnd = () => {
     leaveSession();
-    navigate("/");
+    successAlert("119 신고가 종료되었습니다.", () => {
+      navigate("/");
+    });
   };
 
   useEffect(() => {
@@ -152,48 +167,42 @@ const ReportOpenViduPage = () => {
   }, [remoteStream]);
 
   const handleCameraChange = useCallback(async () => {
-    try {
-      const devices = await OV.getDevices();
-      const videoDevices = devices.filter(
-        (device) => device.kind === "videoinput"
-      );
-      console.log("바꾸기 전 디바이스아이디: ", currentVideoDevice);
-      if (!videoDevices || videoDevices.length < 2) return;
-
-      let newPublisher = await OV.initPublisherAsync(undefined, {
-        audioSource: undefined,
-        videoSource: isCameraFront
-          ? videoDevices[1].deviceId
-          : videoDevices[0].deviceId,
-        publishAudio: true,
-        publishVideo: true,
-        mirror: isCameraFront,
-      });
-      console.log(
-        "바꾼 후 디바이스아이디 : ",
-        isCameraFront ? videoDevices[1].deviceId : videoDevices[0].deviceId
-      );
-      setIsCameraFront(!isCameraFront);
-
-      await session.unpublish(getPublisher());
-      console.log("기존 퍼블리셔 제거 완료");
-
-      setPublisher(newPublisher);
-      await session.publish(newPublisher);
-
-      const videoStream = new MediaStream(
-        newPublisher.stream.getMediaStream().getVideoTracks()
-      );
-      localVideoRef.current.srcObject = videoStream;
-
-      getPublisher().publishAudio(muted);
-    } catch (e) {
-      console.error(e);
-    }
+    // try {
+    //   const devices = await OV.getDevices();
+    //   const videoDevices = devices.filter(
+    //     (device) => device.kind === "videoinput"
+    //   );
+    //   console.log("바꾸기 전 디바이스아이디: ", currentVideoDevice);
+    //   if (!videoDevices || videoDevices.length < 2) return;
+    //   let newPublisher = await OV.initPublisherAsync(undefined, {
+    //     audioSource: undefined,
+    //     videoSource: isCameraFront
+    //       ? videoDevices[1].deviceId
+    //       : videoDevices[0].deviceId,
+    //     publishAudio: true,
+    //     publishVideo: true,
+    //     mirror: isCameraFront,
+    //   });
+    //   console.log(
+    //     "바꾼 후 디바이스아이디 : ",
+    //     isCameraFront ? videoDevices[1].deviceId : videoDevices[0].deviceId
+    //   );
+    //   setIsCameraFront(!isCameraFront);
+    //   await session.unpublish(getPublisher());
+    //   console.log("기존 퍼블리셔 제거 완료");
+    //   setPublisher(newPublisher);
+    //   await session.publish(newPublisher);
+    //   const videoStream = new MediaStream(
+    //     newPublisher.stream.getMediaStream().getVideoTracks()
+    //   );
+    //   localVideoRef.current.srcObject = videoStream;
+    //   getPublisher().publishAudio(muted);
+    // } catch (e) {
+    //   console.error(e);
+    // }
   }, [isCameraFront, getMainStreamManager, muted, currentVideoDevice]);
 
   const onClickScreen = () => {
-    console.log("onclickScreen");
     if (isChatting && !showMenuAll) {
       setShowMenu(true);
       setIsChatting(false);
@@ -447,9 +456,16 @@ const ReportOpenViduPage = () => {
               )}
               <ChatInputBox>
                 <input type="text" onChange={onChangeMessage} value={input} />
-                <button onClick={handleMessageSubmit}>
+                <Button
+                  _onClick={handleMessageSubmit}
+                  $width=""
+                  $height=""
+                  $padding="0.8rem"
+                  $radius="30%"
+                  $bg={{ default: "var(--white-color-100)" }}
+                >
                   <SendIcon fontSize="large" />
-                </button>
+                </Button>
               </ChatInputBox>
             </ChattingWrapper>
           ) : (
@@ -464,8 +480,9 @@ const ReportOpenViduPage = () => {
               />
             </ChatBtn>
           )}
-
-          <MyVideo ref={localVideoRef} autoPlay />
+          <animated.div {...bind()} style={{ x, y, touchAction: "none" }}>
+            <MyVideo ref={localVideoRef} autoPlay />
+          </animated.div>
         </>
       )}
     </>
@@ -496,6 +513,12 @@ const MyVideo = styled.video`
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg); /* Safari and Chrome */
   -moz-transform: rotateY(180deg); /* Firefox */
+
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
 `;
 const VideoBtn = styled.div`
   height: 55px;
@@ -549,6 +572,10 @@ const ChattingWrapper = styled.div`
   &.filled {
     height: auto;
   }
+  -ms-overflow-style: none;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const ChattingContents = styled.div`
@@ -576,15 +603,21 @@ const ChattingMessage = styled.div`
       : "var(--bg-baige-color)"};
   margin-left: ${({ $alignment }) => ($alignment === "right" ? "50%" : "0px")};
   margin-right: ${({ $alignment }) => ($alignment === "left" ? "50%" : "0px")};
+
+  word-break: break-all;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  text-overflow: ellipsis;
+  overflow: hidden;
 `;
 
 const ChatInputBox = styled.div`
   display: flex;
   align-items: center;
   padding: 1rem;
-  border-top: 1px solid #ccc;
-
   input {
+    border: none;
+    outline: none;
     flex: 1;
     padding: 10px;
     border: 1px solid #ccc;
