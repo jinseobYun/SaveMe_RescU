@@ -61,7 +61,6 @@ export default function Map() {
   // latlon이 있을 때만 데이터를 가져옴
   useEffect(() => {
     if (latlon) {
-      console.log(latlon.lat, latlon.lon);
       dispatch(fetchEmergencyList(latlon));
     }
   }, [dispatch, latlon]);

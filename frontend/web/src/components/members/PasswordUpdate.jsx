@@ -57,14 +57,12 @@ const PasswordUpdate = () => {
 
   // 비밀번호 변경 클릭
   const handleSubmit = async () => {
-    console.log("비밀번호 변경");
     const payload = {
       currentPassword: currentPassword,
       newPassword: newPassword,
       newPasswordConfirm: confirmPassword,
     };
     try {
-      console.log(payload);
       await dispacth(updatePasswordAsync(payload));
       alert("비밀번호 변경 성공");
       dispatch(logout());

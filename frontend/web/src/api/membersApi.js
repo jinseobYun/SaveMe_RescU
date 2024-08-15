@@ -16,7 +16,6 @@ export const loginPost = async (loginParam) => {
     });
     return res.data;
   } catch (error) {
-    console.log(error)
     throw error;
   }
 };
@@ -34,7 +33,6 @@ export const updatePassword = async (passwordData) => {
     );
     return res.data;
   } catch (error) {
-    console.log("Error: 패스워드 변경 실패", error);
     throw error;
   }
 };
@@ -49,7 +47,6 @@ const tokenRegeneration = async () => {
     });
     return response.data;
   } catch (error) {
-    console.log("Error refreshing token:", error);
     throw error;
   }
 };
@@ -94,7 +91,6 @@ export const createAxiosInstance = () => {
           originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
           return axios(originalRequest);
         } catch (error) {
-          console.log("Failed to refresh token, redirecting to login");
           localStorage.clear();
           window.location.replace("/");
           return Promise.reject(error);

@@ -13,8 +13,6 @@ export const getEmergencyList = async ({ lat, lon }) => {
     });
     return response.data;
   } catch (error) {
-    console.log("Error: ", error);
-    console.error("응급실 호출 에러 :", error.response);
     throw error;
   }
 };

@@ -35,7 +35,6 @@ const loginSlice = createSlice({
   initialState: loadMemberCookie() || initState, //쿠키가 없다면 초깃값사용
   reducers: {
     login: (state, action) => {
-      console.log("login.....");
       //{memberId, pw로 구성 }
       const data = action.payload;
 
@@ -47,7 +46,6 @@ const loginSlice = createSlice({
       };
     },
     logout: (state, action) => {
-      console.log("logout....");
       removeCookie("member");
       return { ...initState };
     },
@@ -55,7 +53,6 @@ const loginSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(loginPostAsync.fulfilled, (state, action) => {
-        console.log("fulfilled");
 
         const payload = action.payload;
 
@@ -73,16 +70,12 @@ const loginSlice = createSlice({
       })
 
       .addCase(loginPostAsync.pending, (state, action) => {
-        console.log("pending");
       })
       .addCase(loginPostAsync.rejected, (state, action) => {
-        console.log("rejected");
       })
       .addCase(updatePasswordAsync.fulfilled, (state, action) => {
-        console.log("비밀번호 변경 성공");
       })
       .addCase(updatePasswordAsync.rejected, (state, action) => {
-        console.log("비밀번호 변경 실패");
         throw action.error;
       });
   },

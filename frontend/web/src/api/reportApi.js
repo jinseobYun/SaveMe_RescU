@@ -19,7 +19,6 @@ export const getReport = async (patientId, reporterId, latitude, longitude) => {
     });
     return res.data;
   } catch (error) {
-    console.log("Error : ", error);
     throw error;
   }
 };
@@ -33,7 +32,6 @@ export const postFirstInfo = async (firstInfo) => {
     });
     return res.data;
   } catch (error) {
-    console.log("Error : ", error);
     throw error;
   }
 };

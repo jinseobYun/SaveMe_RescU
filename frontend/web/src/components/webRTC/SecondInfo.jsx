@@ -154,14 +154,12 @@ const SecondInfo = () => {
 
   const handleHospitalChange = (value, index) => {
     if (emergencyData.items && emergencyData.items.length > 0) {
-      console.log(emergencyData);
       setFormData((prevState) => ({
         ...prevState,
         hospitalName: value,
         hpid: emergencyData.items[index].hpid,
       }));
     } else {
-      console.log("응급실 정보 누락");
     }
   };
 
@@ -179,7 +177,6 @@ const SecondInfo = () => {
       drugInfos: formData.drugInfos.filter((item) => item !== ""),
     };
 
-    console.log("이거봐바바바바", payload);
 
     dispatch(putSecondInfoAsync(payload));
 

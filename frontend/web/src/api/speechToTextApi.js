@@ -26,7 +26,6 @@ export const sendToSTTAPI = async (audioBytes) => {
       );
   
       const result = await response.json();
-      console.log(result);
       return result;
     } catch (error) {
       console.error("STT API 호출 오류:", error);
