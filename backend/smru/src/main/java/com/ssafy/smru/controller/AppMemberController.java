@@ -277,6 +277,10 @@ public class AppMemberController {
     public ResponseEntity<?> changePassword(@RequestBody PasswordChangeDto.Request request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserName = authentication.getName();
+        System.out.println(currentUserName);
+        System.out.println(request.getCurrentPassword());
+        System.out.println(request.getNewPassword());
+        System.out.println(request.getNewPasswordConfirm());
         if (request.getCurrentPassword() == null || request.getCurrentPassword().trim().isEmpty() ||
                 request.getNewPassword() == null || request.getNewPassword().trim().isEmpty() ||
                 request.getNewPasswordConfirm() == null || request.getNewPasswordConfirm().trim().isEmpty()) {
@@ -284,15 +288,19 @@ public class AppMemberController {
         }
 
         if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {
+            System.out.println("----------새 비밀번호 불일치----------");
             return ResponseEntity.badRequest().body("새 비밀번호가 일치하지 않습니다.");
         }
         if (!appMemberService.checkPasswordMatchMemberId(currentUserName, request.getCurrentPassword())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("현재 비밀번호가 일치하지 않습니다.");
+            System.out.println("---------현재 비밀번호 불일치----------------");
+
+
+            return new ResponseEntity<>("현재 비밀번호가 일치하지 않습니다.",HttpStatus.BAD_REQUEST);
         }
 
         try {
             appMemberService.updatePassword(currentUserName, request.getNewPassword());
-            return ResponseEntity.ok().body(true);
+            return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (IllegalArgumentException e) {
