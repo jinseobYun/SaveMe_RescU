@@ -49,6 +49,7 @@ dependencies {
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml' // xml 파싱
 	testImplementation 'org.springframework:spring-messaging'
 	testImplementation 'org.mockito:mockito-core'
+	implementation 'net.nurigo:sdk:4.3.0' // coolsms
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 
