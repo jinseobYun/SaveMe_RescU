@@ -46,10 +46,11 @@ function App() {
   }, []);
   useEffect(() => {
     const handlePopState = (event) => {
-      event.preventDefault(); // 페이지 이동 방지
-      event.stopPropagation(); // 이벤트 전파 방지
       if (Swal.isVisible()) {
+        event.preventDefault(); // 페이지 이동 방지
+        event.stopPropagation(); // 이벤트 전파 방지
         Swal.close(); // 모든 SweetAlert2 모달 닫기
+        navigate(+1);
       } else {
         navigate(-1); // 뒤로 가기
       }
