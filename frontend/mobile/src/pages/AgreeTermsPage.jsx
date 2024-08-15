@@ -199,9 +199,8 @@ const AgreeTermsPage = () => {
       </NotiBox>
       <NextPageButton
         text="다음"
-        disabled={!isVerify}
-        onClick={onClickBtn}
-        type="button"
+        isError={!isVerify}
+        handleClick={onClickBtn}
       />
     </Container>
   );
