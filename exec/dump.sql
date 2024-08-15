@@ -2,9 +2,9 @@ CREATE DATABASE  IF NOT EXISTS `smru` /*!40100 DEFAULT CHARACTER SET utf8mb4 COL
 USE `smru`;
 -- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: smru
+-- Host: i11b305.p.ssafy.io    Database: smru
 -- ------------------------------------------------------
--- Server version	8.0.36
+-- Server version	8.0.39
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -85,13 +85,13 @@ DROP TABLE IF EXISTS `dispatch_order`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dispatch_order` (
   `dispatch_order_id` int NOT NULL AUTO_INCREMENT,
-  `firestation` varchar(50) NOT NULL,
-  `doro_location_info` varchar(255) NOT NULL,
-  `jibun_location_info` varchar(255) NOT NULL,
-  `emergency_type` varchar(20) NOT NULL,
-  `reported_time` timestamp NOT NULL,
-  `reporter_name` varchar(20) NOT NULL,
-  `reporter_phone` varchar(20) NOT NULL,
+  `firestation` varchar(50) DEFAULT NULL,
+  `doro_location_info` varchar(255) DEFAULT NULL,
+  `jibun_location_info` varchar(255) DEFAULT NULL,
+  `emergency_type` varchar(20) DEFAULT NULL,
+  `reported_time` timestamp NULL DEFAULT NULL,
+  `reporter_name` varchar(20) DEFAULT NULL,
+  `reporter_phone` varchar(20) DEFAULT NULL,
   `report_details` varchar(255) DEFAULT NULL,
   `created_by` varchar(20) DEFAULT NULL,
   `hospital_name` varchar(255) DEFAULT NULL,
@@ -107,7 +107,7 @@ CREATE TABLE `dispatch_order` (
   PRIMARY KEY (`dispatch_order_id`),
   KEY `FK_web_member_TO_dispatch_order_1` (`web_member_id`),
   CONSTRAINT `FK_web_member_TO_dispatch_order_1` FOREIGN KEY (`web_member_id`) REFERENCES `web_member` (`web_member_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=117 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -380,7 +380,7 @@ CREATE TABLE `web_member` (
   PRIMARY KEY (`web_member_id`),
   KEY `FK_web_member_role_TO_web_member_1` (`role_id`),
   CONSTRAINT `FK_web_member_role_TO_web_member_1` FOREIGN KEY (`role_id`) REFERENCES `web_member_role` (`role_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -389,6 +389,7 @@ CREATE TABLE `web_member` (
 
 LOCK TABLES `web_member` WRITE;
 /*!40000 ALTER TABLE `web_member` DISABLE KEYS */;
+INSERT INTO `web_member` VALUES (10,'testuser01','$2a$10$.to6NWG6N0Z90E1KdW14a..QMGSOLZTKhzcCHIjPLWDqpkuqzH5wy','상황실1',1);
 /*!40000 ALTER TABLE `web_member` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -425,4 +426,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-08-15 19:09:39
+-- Dump completed on 2024-08-15 22:25:24
