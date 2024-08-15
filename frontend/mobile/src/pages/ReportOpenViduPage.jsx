@@ -251,7 +251,6 @@ const ReportOpenViduPage = () => {
     setShowMenu(false);
     setShowMenuAll(false);
     setChatBtnColor("var(--white-color-200)");
-    changeHeight();
   };
 
   //SECTION - chatting
@@ -357,21 +356,19 @@ const ReportOpenViduPage = () => {
       };
     }
   }, [session]);
-  const changeHeight = () => {
+  const handleResize = () => {
     let documentHeight = document.documentElement.clientHeight; // document 객체의 높이
     let viewportHeight = window.visualViewport.height; // viewport 의 높이
     let keyboardHeight = documentHeight - viewportHeight + 1; // 키보드의 높이
-
+    window.alert(keyboardHeight + " " + documentHeight);
     if (chatInputRef.current) {
       chatInputRef.current.style.bottom = keyboardHeight + "px";
     }
   };
   useEffect(() => {
-    window.visualViewport.onresize = changeHeight;
-
-    // Clean up the resize event listener when the component is unmounted
+    window.visualViewport.addEventListener("resize", handleResize);
     return () => {
-      window.visualViewport.onresize = null;
+      window.visualViewport.removeEventListener("resize", handleResize);
     };
   }, []);
   return (
