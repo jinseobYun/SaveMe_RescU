@@ -54,9 +54,13 @@ const RadioWrapper = styled.div`
   padding: 10px;
   box-sizing: border-box;
   border: 1px solid;
+  border-color: var(--gray-color-400);
   border-radius: 5px;
   box-shadow: 0px 1px 2px 0px rgba(55, 65, 81, 0.08);
   background: var(--white-color-100);
+  text-overflow:hidden;
+  overflow:hiddem;
+  color: var(--gray-color-400);
 `;
 
 const RadioLabel = styled.label`
@@ -64,7 +68,7 @@ const RadioLabel = styled.label`
   min-height: 5rem;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
   font-size: 24px;
 `;
 
