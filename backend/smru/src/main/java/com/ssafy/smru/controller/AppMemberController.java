@@ -146,7 +146,7 @@ public class AppMemberController {
 
 
         // 테스트를 위해 프론트로 리스폰스 넘기기
-        return ResponseEntity.ok().body(response.getVerifyCode());
+        return ResponseEntity.ok().body("인증번호 발송 성공");
     }
 
 
