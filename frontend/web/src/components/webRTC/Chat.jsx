@@ -29,7 +29,6 @@ const Chat = () => {
           eventJson.sender !== "web" &&
           event.from.connectionId !== userIdRef.current
         ) {
-          console.log("상대방의 event data:", event.data);
           setChat((prevChat) => [
             ...prevChat,
             {

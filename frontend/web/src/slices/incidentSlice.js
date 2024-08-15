@@ -33,7 +33,6 @@ export const fetchIncidentList = createAsyncThunk(
   "fetchIncidentList",
   async (params) => {
     const data = await fetchIncidentListApi(params);
-    console.log(data)
     return data;
   }
 );
@@ -43,7 +42,6 @@ export const fetchIncidentDetails = createAsyncThunk(
   "fetchIncidentDetails",
   async (id) => {
     const data = await fetchIncidentDetailsApi(id);
-    console.log("상세항목조회 데이터!!",data)
     return data;
   }
 );

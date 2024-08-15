@@ -7,13 +7,10 @@ const useCustomLogin = () => {
   const dispatch = useDispatch();
 
   const exceptionHandle = (ex) => {
-    console.log("예외 발생");
-    console.log(ex);
 
     const errorMsg = ex.response.data.error;
     const errorStr = createSearchParams({ error: errorMsg }).toString();
 
-    console.log(errorStr);
   };
 
   // 로그인 상태

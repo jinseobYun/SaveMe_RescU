@@ -6,7 +6,6 @@ export const fetchEmergencyList = createAsyncThunk(
   async ({ lat, lon }) => {
     const response = await getEmergencyList({ lat, lon });
     // 리스트 호출시 데이터
-    console.log("응답요청 :", response);
     return response;
   }
 );
@@ -64,12 +63,10 @@ const emergencySlice = createSlice({
         state.status = 'succeeded';
         state.route = action.payload;
         state.selectedInfo = action.payload.routes[0];
-        console.log(state.selectedInfo)
       })
       .addCase(fetchRoute.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
-        console.log("경로탐색 에러 : ",state.error)
       });
   },
 });

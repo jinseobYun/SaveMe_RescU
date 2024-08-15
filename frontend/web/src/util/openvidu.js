@@ -17,10 +17,7 @@ export const initOpenVidu = async (sessionId, user) => {
     session = OV.initSession();
 
     session.on("streamCreated", (event) => {
-      console.log(
-        "streamCreated 이벤트 발생, 상대방 session정보: ",
-        event.stream.session
-      );
+
       const subscriber = session.subscribe(event.stream, undefined);
       subscribers.push(subscriber);
 
@@ -40,13 +37,11 @@ export const initOpenVidu = async (sessionId, user) => {
     });
 
     session.on("signal", (event) => {
-      console.log("Received signal:", event.data);
     });
 
     session.on("signal:report-info", (event) => {
       try {
         const reportData = JSON.parse(event.data); 
-        console.log("Received report data:", reportData);
 
         const mappedData = {
         
@@ -69,8 +64,6 @@ export const initOpenVidu = async (sessionId, user) => {
     });
 
     const token = await getToken(sessionId);
-    console.log("Token 획득 성공!!!");
-    console.log("token은 : ", token);
     await session.connect(token, { clientData: user });
 
     // 마이크 성능 설정
@@ -259,7 +252,6 @@ export const sendChatMessage = (message) => {
         type: "chat",
       })
       .then(() => {
-        console.log("Message successfully sent");
       })
       .catch((error) => {
         console.error("Error sending message:", error);

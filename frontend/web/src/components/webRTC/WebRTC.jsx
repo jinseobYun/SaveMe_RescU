@@ -69,33 +69,24 @@ const WebRTC = () => {
     const sessionId = localStorage.getItem("memberId");
 
     initOpenVidu(sessionId, user).then(() => {
-      console.log("OpenVidu Init 시작!");
 
       if (mainStreamManager) {
         const videoStream = new MediaStream(
           // 비디오 트랙만 가지고 오기
           mainStreamManager.stream.getMediaStream().getVideoTracks()
         );
-        console.log("여기확인하세요!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         localVideoRef.current.srcObject = videoStream;
       }
-      console.log("OpenVidu Init 성공!");
     });
 
     const handleStreamCreated = (event) => {
-      console.log("상대방 접속 시작!");
-      console.log(
-        "만약 상대방이 먼저 접속해 있으면 이 이벤트 작동하나?",
-        event.detail.subscriber
-      );
+
       const subscriber = event.detail.subscriber;
       if (subscriber) {
         setTimeout(() => {
           const stream = subscriber.stream.getMediaStream();
-          console.log("상대방 MediaStream정보 : ", stream);
           if (stream) {
             setRemoteStream(stream);
-            console.log("상대방 MediaStream 연결 완료");
           }
         }, 1000);
       }
@@ -122,7 +113,6 @@ const WebRTC = () => {
   useEffect(() => {
     if (remoteStream) {
       if (remoteVideoRef.current) {
-        console.log("상대방 Stream 현재 연결 정보:", remoteVideoRef.current);
         remoteVideoRef.current.srcObject = remoteStream;
       }
     }
