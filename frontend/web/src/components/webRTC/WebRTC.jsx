@@ -30,7 +30,7 @@ const WebRTC = () => {
   const containerRef = useRef(null);
   //remoteVideo 자체를 state로 관리
 
-  const [{ x, y }, api] = useSpring(() => ({ x: 0, y: 0 }));
+  const [{ x, y }, api] = useSpring(() => ({ x: 0, y: 0,config: { tension: 200, friction: 20 } }));
 
   const bind = useDrag(({ offset: [ox, oy] }) => {
     if (containerRef.current) {
@@ -49,7 +49,7 @@ const WebRTC = () => {
 
       api.start({
         x: Math.max(minX, Math.min(maxX, -ox)), // X 좌표 제한
-        y: Math.max(minY, Math.min(maxY, oy)),  // Y 좌표 제한
+        y: Math.max(minY, Math.min(maxY, oy)), // Y 좌표 제한
       });
     }
   });
@@ -65,7 +65,7 @@ const WebRTC = () => {
   };
 
   useEffect(() => {
-    const user = { username: "myname", userno: 1 }; 
+    const user = { username: "myname", userno: 1 };
     const sessionId = localStorage.getItem("memberId");
 
     initOpenVidu(sessionId, user).then(() => {
@@ -76,7 +76,7 @@ const WebRTC = () => {
           // 비디오 트랙만 가지고 오기
           mainStreamManager.stream.getMediaStream().getVideoTracks()
         );
-        console.log("여기확인하세요!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        console.log("여기확인하세요!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         localVideoRef.current.srcObject = videoStream;
       }
       console.log("OpenVidu Init 성공!");
@@ -84,7 +84,10 @@ const WebRTC = () => {
 
     const handleStreamCreated = (event) => {
       console.log("상대방 접속 시작!");
-      console.log("만약 상대방이 먼저 접속해 있으면 이 이벤트 작동하나?", event.detail.subscriber)
+      console.log(
+        "만약 상대방이 먼저 접속해 있으면 이 이벤트 작동하나?",
+        event.detail.subscriber
+      );
       const subscriber = event.detail.subscriber;
       if (subscriber) {
         setTimeout(() => {
@@ -99,7 +102,7 @@ const WebRTC = () => {
     };
 
     window.addEventListener("streamCreated", handleStreamCreated);
-    
+
     return () => {
       leaveSession();
     };
@@ -108,7 +111,7 @@ const WebRTC = () => {
   const onClickCallEnd = async () => {
     try {
       await leaveSession(); // leaveSession 호출이 끝난 후 리다이렉트
-      localStorage.removeItem("reportData")
+      localStorage.removeItem("reportData");
       navigate("/main", { replace: true });
     } catch (error) {
       console.error("Error while ending the call: ", error);
@@ -211,7 +214,7 @@ const LocalVideo = styled.video`
   width: 350px;
   height: 300px;
   z-index: 4;
-    cursor: grab;
+  cursor: grab;
   &:active {
     cursor: grabbing;
   }

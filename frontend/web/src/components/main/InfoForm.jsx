@@ -22,7 +22,15 @@ const InfoForm = ({ formData }) => (
       <div className="patient-basic-info">
         <Input type="text" name="gender" label="성별" value={formData.gender} disabled={true} />
         <Input type="text" name="birthDate" label="생년월일" value={formData.birth} disabled={true} />
-        <Input type="text" name="bloodType" label="혈액형" value={formData.bloodType1 + "형,   " + formData.bloodType2} disabled={true} />
+        {/* <Input type="text" name="bloodType" label="혈액형" value={formData.bloodType1 + "형,   " + formData.bloodType2} disabled={true} /> */}
+        <Input type="text" name="bloodType" label="혈액형" 
+          value={
+            formData.bloodType1 
+              ? `${formData.bloodType1}형${formData.bloodType2 ? ", " + formData.bloodType2 : ""}`
+              : formData.bloodType2 || ""
+          } 
+          disabled={true} 
+        />
       </div>
       <Textarea name="diseases" value={formData.chronicDisease} label="지병정보" overflow="hidden" disabled={true} />
       <Textarea name="medications" value={formData.drugInfos} label="투약정보" overflow="hidden" disabled={true} />
