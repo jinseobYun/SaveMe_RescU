@@ -295,7 +295,7 @@ public class AppMemberController {
             System.out.println("---------현재 비밀번호 불일치----------------");
 
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("현재 비밀번호가 일치하지 않습니다.");
+            return new ResponseEntity<>("현재 비밀번호가 일치하지 않습니다.",HttpStatus.BAD_REQUEST);
         }
 
         try {
