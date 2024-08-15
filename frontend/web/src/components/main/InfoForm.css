@@ -7,7 +7,7 @@ form {
     width: 47%;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 .left-column {
     border-right: 1px solid gainsboro;
@@ -15,4 +15,8 @@ form {
 }
 .right-column {
     margin-right: 1.5rem;
+}
+.patient-basic-info {
+    display: flex;
+    gap : 30px
 }

@@ -11,7 +11,7 @@ import {
   getReportAsync,
   postFirstInfoAsync,
   setDispatchOrderId,
-  setMappedData
+  setMappedData,
 } from "../../slices/reportSlice";
 import { useNavigate } from "react-router-dom";
 
@@ -34,7 +34,7 @@ const FirstInfo = () => {
 
   const [rescueTeamNameOptions, setRescueTeamNameOptions] = useState([]);
 
-  // 이벤트 받아서 처리 
+  // 이벤트 받아서 처리
   useEffect(() => {
     const handleReportInfoReceived = (event) => {
       const mappedData = event.detail;
@@ -92,68 +92,72 @@ const FirstInfo = () => {
   };
 
   return (
-    <FormContainer>
-      <Select
-        label="관할 119안전센터"
-        name="rescueTeamName"
-        options={rescueTeamNameOptions}
-        selectedValue={formData.rescueTeamName}
-        setSelectedValue={(value) =>
-          handleInputChange({ target: { name: "firestation", value } })
-        }
-      />
+    <>
+      <FormContainer>
+        <Select
+          label="관할 119안전센터"
+          name="rescueTeamName"
+          options={rescueTeamNameOptions}
+          selectedValue={formData.rescueTeamName}
+          setSelectedValue={(value) =>
+            handleInputChange({ target: { name: "firestation", value } })
+          }
+        />
 
-      <Input
-        label="신고위치 - 지번"
-        name="jibunLocationInfo"
-        value={formData.jibunLocationInfo}
-        onChange={handleInputChange}
-        showClearButton={true}
-      />
-      <Input
-        label="신고위치 - 도로명"
-        name="doroLocationInfo"
-        value={formData.doroLocationInfo}
-        onChange={handleInputChange}
-        showClearButton={true}
-      />
-      <Input
-        label="긴급구조분류"
-        name="emergencyType"
-        value={formData.emergencyType}
-        onChange={handleInputChange}
-      />
-      <Textarea
-        label="신고내용"
-        name="reportDetail"
-        value={formData.reportDetail}
-        onChange={handleInputChange}
-        placeholder="신고 내용을 입력하세요"
-        cols={40}
-        rows={10}
-        overflow="auto"
-        maxWidth="100%"
-        minHeight="150px"
-        maxLength={1000}
-      />
-      <Input
-        label="신고자명"
-        name="reporterName"
-        value={formData.reporterName}
-        onChange={handleInputChange}
-        showClearButton={true}
-      />
-      <Input
-        label="신고자번호"
-        name="reporterPhone"
-        value={formData.reporterPhone}
-        onChange={handleInputChange}
-        showClearButton={true}
-      />
-      <SubmitButton>
-        <Button _onClick={handleSubmit} $color="white">보내기</Button>
-      </SubmitButton>
-    </FormContainer>
+        <Input
+          label="신고위치 - 지번"
+          name="jibunLocationInfo"
+          value={formData.jibunLocationInfo}
+          onChange={handleInputChange}
+          showClearButton={true}
+        />
+        <Input
+          label="신고위치 - 도로명"
+          name="doroLocationInfo"
+          value={formData.doroLocationInfo}
+          onChange={handleInputChange}
+          showClearButton={true}
+        />
+        <Input
+          label="긴급구조분류"
+          name="emergencyType"
+          value={formData.emergencyType}
+          onChange={handleInputChange}
+        />
+        <Textarea
+          label="신고내용"
+          name="reportDetail"
+          value={formData.reportDetail}
+          onChange={handleInputChange}
+          placeholder="신고 내용을 입력하세요"
+          cols={40}
+          rows={10}
+          overflow="auto"
+          maxWidth="100%"
+          minHeight="150px"
+          maxLength={1000}
+        />
+        <Input
+          label="신고자명"
+          name="reporterName"
+          value={formData.reporterName}
+          onChange={handleInputChange}
+          showClearButton={true}
+        />
+        <Input
+          label="신고자번호"
+          name="reporterPhone"
+          value={formData.reporterPhone}
+          onChange={handleInputChange}
+          showClearButton={true}
+        />
+      </FormContainer>
+        <SubmitButton>
+          <Button _onClick={handleSubmit} $color="white">
+            보내기
+          </Button>
+        </SubmitButton>
+    </>
   );
 };
 
@@ -161,7 +165,13 @@ const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  // overflow-y:scroll;
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  scrollbar-width: none;
+  height:90vh;
 `;
 
 const SubmitButton = styled.div`

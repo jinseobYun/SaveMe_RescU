@@ -1,34 +1,26 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, forwardRef  } from "react";
 import styled from "styled-components";
 import Text from "./Text";
 
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
-const Input = ({
+const Input = forwardRef(({
   type = "text",
   placeholder = "",
   name = "",
   value = "",
   onChange = () => {},
-  // setValue = () => {},
-  maxLen = 20,
   disabled = false,
-  regexCheck = "",
-  _onBlur = () => {},
-  // _onChange = () => {},
   label = "",
   required = false,
-  successMessage = "유효한 값입니다",
-  errorMessage = "유효한 값을 입력해주세요",
-  defaultMessage = "",
   showClearButton = false,
   isError = false,
   onKeyDown = () => {},
-}) => {
+}, ref) => {
   const [helperText, setHelperText] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const ref = useRef();
+  // const ref = useRef();
 
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
@@ -39,34 +31,7 @@ const Input = ({
     onChange(e);
   };
 
-  const onBlur = (e) => {
-    _onBlur(e);
-    //최대값이 지정되어있으면 value를 저장하지 않는다.
-    if (maxLen && maxLen < e.target.value.length) {
-      e.target.value = e.target.value.slice(0, maxLen);
-    }
 
-    //공백인 경우 defaultMessage로 바꾼다.
-    if (required && e.target.value === "") {
-      ref.current.focus();
-      setHelperText("필수 값입니다");
-    } else {
-      setHelperText(defaultMessage);
-    }
-
-    if (regexCheck) {
-      // 정규표현식체크가 통과되면 successText를 송출하고 아니면 errorText를 송출한다
-      if (regexCheck.test(e.target.value)) {
-        setHelperText(successMessage);
-      }
-      if (!regexCheck.test(e.target.value)) {
-        ref.current.focus();
-        setHelperText(errorMessage);
-      }
-    }
-  };
-
-  // 추가
   const clearValue = () => {
     onChange({ target: { name, value: "" } });
   };
@@ -93,7 +58,6 @@ const Input = ({
             placeholder={placeholder}
             name={name}
             required={required}
-            onBlur={onBlur}
             onChange={handleChange}
             ref={ref}
             onKeyDown={(e) => onKeyDown(e)}
@@ -121,7 +85,7 @@ const Input = ({
       </InputContainer>
     </>
   );
-};
+});
 const InputContainer = styled.div`
   display: flex;
   width: 100%;
@@ -161,7 +125,7 @@ const BasicInput = styled.input`
   font-weight: 500;
   line-height: 24px;
   /* Light / Elevation / 200 */
-
+  background-color:white;
   &::placeholder {
     color: var(--gray-color-400);
   }

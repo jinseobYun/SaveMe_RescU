@@ -66,7 +66,8 @@ const WebRTC = () => {
 
   useEffect(() => {
     const user = { username: "myname", userno: 1 }; 
-    const sessionId = localStorage.getItem("memberId");
+    // const sessionId = localStorage.getItem("memberId");
+    const sessionId = "SSAFY"
 
     initOpenVidu(sessionId, user).then(() => {
       console.log("OpenVidu Init 시작!");
@@ -129,9 +130,6 @@ const WebRTC = () => {
     <VideoContainer>
       <div className="remote-position" ref={containerRef}>
         <Video ref={remoteVideoRef} autoPlay playsInline />
-        {/* <div className="local-position">
-          <LocalVideo ref={localVideoRef} autoPlay playsInline />
-        </div> */}
         <LocalPosition {...bind()} style={{ x, y, touchAction: "none" }}>
           <LocalVideo ref={localVideoRef} autoPlay playsInline />
         </LocalPosition>

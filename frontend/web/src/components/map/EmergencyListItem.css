@@ -21,27 +21,27 @@
     padding: 20px;
     line-height: 1.8;
     color: #2D4059;
+    flex-shrink: 1;
+    text-overflow:ellipsis
 }
 
 .detail-right {
     width: 30%;
+    min-width: 80px;
+    min-height: 250px; 
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Y축 중앙 정렬 */
-    align-items: center; /* X축 중앙 정렬 */
+    justify-content: center;
+    align-items: center; 
     margin-left: 20px;
-    padding: 20px; /* 내부 여백 추가 */
-    height: 100%; /* 부모 요소의 높이를 채우도록 설정 */
-    font-size: 18px;
-    color: #2D4059;
+    text-overflow:ellipsis
 }
 
 
-button {
-    background-color: #2D4059; /* 기본 배경색 */
+.detail-right > button {
+    background-color: #2D4059;
     color: white;
-    line-height: 20px;
-    font-weight: 500;
+    font-weight: bold;
     border: none;
     border-radius: 10px;
     padding: 10px 20px;
@@ -79,8 +79,20 @@ button {
     margin-right: 10px; /* 아이콘과 텍스트 사이의 간격 */
     vertical-align: middle; /* 이미지가 텍스트와 수평 정렬되도록 설정 */
 }
-
-
+.find-direction {
+    display: flex;
+    font-size: 24px;
+    min-width: 100px;
+}
+.distance-info {
+    font-size: 24px;
+    padding-bottom: 10px;
+}
+.distance-info > div{
+    font-size: 20px;
+    font-weight: 600;
+    padding-bottom: 20px;
+}
 
 
 

@@ -97,7 +97,7 @@ export default function Map() {
             자세히보기
           </button>
           <button className="mappage-btn" onClick={handleGoMain}>
-            메인페이지로
+            메인페이지
           </button>
         </div>
         <EmergencyList items={items} />
