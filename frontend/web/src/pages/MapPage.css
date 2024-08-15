@@ -2,7 +2,7 @@
 }
 
 .map-left-side {
-  max-width: 35vw;
+  max-width: 35%;
   height: 100vh;
   float: left;
   display: flex;
@@ -35,7 +35,7 @@
 }
   
 .kakao-map-container {
-  width: 65vw;
+  width: 65%;
   height: 100vh;
   float: left;
 }
