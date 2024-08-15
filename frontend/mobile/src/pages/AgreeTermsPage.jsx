@@ -11,6 +11,7 @@ import { errorAlert, successAlert } from "@/util/notificationAlert";
 
 import { registerUser } from "@/api/userApi";
 import { termsContent } from "@/assets/json/terms";
+
 const AgreeTermsPage = () => {
   const navigate = useNavigate();
 
@@ -43,6 +44,7 @@ const AgreeTermsPage = () => {
       }
     );
   };
+
   const [allCheck, setAllCheck] = useState(false);
   const [gpsCheck, setGpsCheck] = useState(false);
   const [useCheck, setUseCheck] = useState(false);
@@ -86,17 +88,19 @@ const AgreeTermsPage = () => {
       setIsVerify(false);
     }
   }, [gpsCheck, useCheck]);
+
   const [expandedId, setExpandedId] = useState(null);
 
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
   };
+
   return (
     <Container>
       <Header navText="이용 약관 동의" />
       <NotiBox>
         <AllTermsCard>
-          <Title>
+          <TermTitle>
             <TitleBox>
               <StyledRadio
                 type="checkbox"
@@ -106,10 +110,11 @@ const AgreeTermsPage = () => {
               />
               약관 전체동의
             </TitleBox>
-          </Title>
+          </TermTitle>
         </AllTermsCard>
+
         <TermsCard onClick={() => toggleExpand("gps")}>
-          <Title>
+          <TermTitle>
             <TitleBox>
               <StyledRadio
                 type="checkbox"
@@ -118,16 +123,40 @@ const AgreeTermsPage = () => {
                 onChange={onClickGpsBtn}
                 onClick={(e) => e.stopPropagation()}
               />
-              위치기반서비스 이용(필수)
+              {termsContent[1].title}
             </TitleBox>
             <ToggleIcon>{expandedId === "gps" ? "▲" : "▼"}</ToggleIcon>
-          </Title>
+          </TermTitle>
           {expandedId === "gps" && (
-            <BodyText>{termsContent[1].content}</BodyText>
+            <BodyText>
+              {termsContent[1].contents.map((section, index) => (
+                <Section key={index}>
+                  <Title>{section.title}</Title>
+                  {Array.isArray(section.content) ? (
+                    section.content.map((item, itemIndex) =>
+                      typeof item === "string" ? (
+                        <Paragraph key={itemIndex}>
+                          {section.content.length > 1 && `${itemIndex + 1}.`}{" "}
+                          {item}
+                        </Paragraph>
+                      ) : (
+                        <SubSection key={itemIndex}>
+                          <Subtitle>{item.subtitle}</Subtitle>
+                          <Paragraph>{item.detail}</Paragraph>
+                        </SubSection>
+                      )
+                    )
+                  ) : (
+                    <Paragraph>{section.content}</Paragraph>
+                  )}
+                </Section>
+              ))}
+            </BodyText>
           )}
         </TermsCard>
+
         <TermsCard onClick={() => toggleExpand("info")}>
-          <Title>
+          <TermTitle>
             <TitleBox>
               <StyledRadio
                 type="checkbox"
@@ -136,26 +165,50 @@ const AgreeTermsPage = () => {
                 onChange={onClicInfoUseBtn}
                 onClick={(e) => e.stopPropagation()}
               />
-              개인정보 수집 및 이용 (필수)
+              {termsContent[0].title}
             </TitleBox>
             <ToggleIcon>{expandedId === "info" ? "▲" : "▼"}</ToggleIcon>
-          </Title>
+          </TermTitle>
           {expandedId === "info" && (
-            <BodyText>{termsContent[0].content}</BodyText>
+            <BodyText>
+              {termsContent[0].contents.map((section, index) => (
+                <Section key={index}>
+                  <Title>{section.title}</Title>
+                  {Array.isArray(section.content) ? (
+                    section.content.map((item, itemIndex) =>
+                      typeof item === "string" ? (
+                        <Paragraph key={itemIndex}>
+                          {section.content.length > 1 && `${itemIndex + 1}.`}{" "}
+                          {item}
+                        </Paragraph>
+                      ) : (
+                        <SubSection key={itemIndex}>
+                          <Subtitle>{item.subtitle}</Subtitle>
+                          <Paragraph>{item.detail}</Paragraph>
+                        </SubSection>
+                      )
+                    )
+                  ) : (
+                    <Paragraph>{section.content}</Paragraph>
+                  )}
+                </Section>
+              ))}
+            </BodyText>
           )}
         </TermsCard>
       </NotiBox>
-
       <NextPageButton
-        isError={!isVerify}
-        text="동의 후 시작하기"
-        handleClick={onClickBtn}
+        text="다음"
+        disabled={!isVerify}
+        onClick={onClickBtn}
+        type="button"
       />
     </Container>
   );
 };
 
 export default AgreeTermsPage;
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -166,6 +219,8 @@ const Container = styled.div`
 const NotiBox = styled.div`
   width: 100%;
   padding: 20px;
+  overflow: auto;
+  height: 82vh;
 `;
 const AllTermsCard = styled.div`
   border-radius: 10px;
@@ -180,7 +235,7 @@ const TermsCard = styled.div`
   padding: 15px;
   cursor: pointer;
 `;
-const Title = styled.div`
+const TermTitle = styled.div`
   font-size: 16px;
   font-weight: bold;
   color: var(--orange-color-200);
@@ -223,4 +278,31 @@ const StyledRadio = styled.input`
     border: 3px solid white; // 테두리가 아닌, 테두리와 원 사이의 색상
     box-shadow: 0 0 0 1.6px var(--main-orange-color); // 얘가 테두리가 됨
   }
+`;
+const Section = styled.div`
+  margin-bottom: 20px;
+  padding: 10px;
+`;
+
+const Title = styled.h2`
+  font-size: 18px;
+  margin-bottom: 10px;
+  font-weight: bold;
+`;
+
+const SubSection = styled.div`
+  margin-left: 20px;
+  margin-bottom: 10px;
+`;
+
+const Subtitle = styled.h3`
+  font-size: 16px;
+  font-weight: bold;
+`;
+
+const Paragraph = styled.p`
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 10px;
+  color: var(--black-color-100);
 `;

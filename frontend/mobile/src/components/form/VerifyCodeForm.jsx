@@ -191,89 +191,87 @@ const VerifyCodeForm = () => {
   };
 
   return (
-    <>
-      <FormWrapper>
-        <Header navText="" />
+    <Container>
+      <Header navText="" />
+      <Grid
+        $display="flex"
+        $padding="5rem 0"
+        $flex_direction="column"
+        $align_items="center"
+        $justify_conents="flex-start"
+        $gap="2.3rem"
+      >
+        <Text
+          $color="var(--gray-color-300)"
+          children="인증 번호 6자리 숫자를 입력해 주세요."
+          $size="var(--font-size-large)"
+        />
         <Grid
           $display="flex"
-          $width="360px"
-          $height="400px"
-          $padding="100px 4px"
-          $flex_direction="column"
+          $flex_direction="row"
           $align_items="center"
-          $justify_conents="flex-start"
-          $gap="14px"
+          $justify_content="center"
+          $gap="1.3rem"
+        >
+          {Array.from({ length: numOfFields }, (_, index) => (
+            <StyledInput
+              key={index}
+              autoFocus={index === 0}
+              maxLength="1"
+              onChange={handleChange}
+              // type="number"
+              name={`ssn-${index + 1}`}
+              inputMode="numeric"
+              autoComplete="off"
+              onKeyDown={handleKeyDown}
+              disabled={index > 1 && !ssnValues[`n${index - 1}`]}
+            />
+          ))}
+        </Grid>
+        <Text
+          $color="var(--gray-color-300)"
+          children={formatTime(remainingTime)}
+          $lineHeight="150%"
+        />
+        <Grid
+          $display="flex"
+          $flex_direction="row"
+          $align_items="center"
+          $justify_content="center"
+          $gap="5px"
         >
           <Text
             $color="var(--gray-color-300)"
-            children="인증 번호 6자리 숫자를 입력해 주세요."
-          />
-          <Grid
-            $display="flex"
-            $flex_direction="row"
-            $align_items="center"
-            $justify_content="center"
-            $gap="1.3rem"
-          >
-            {Array.from({ length: numOfFields }, (_, index) => (
-              <StyledInput
-                key={index}
-                autoFocus={index === 0}
-                maxLength="1"
-                onChange={handleChange}
-                // type="number"
-                name={`ssn-${index + 1}`}
-                inputMode="numeric"
-                autoComplete="off"
-                onKeyDown={handleKeyDown}
-                disabled={index > 1 && !ssnValues[`n${index - 1}`]}
-              />
-            ))}
-          </Grid>
-          <Text
-            $color="var(--gray-color-300)"
-            children={formatTime(remainingTime)}
+            children="문자가 오지 않았나요?."
             $lineHeight="150%"
+            $size="var(--font-size-medium)"
           />
-          <Grid
-            $display="flex"
-            $flex_direction="row"
-            $align_items="center"
-            $justify_content="center"
-            $gap="5px"
-          >
+          <div onClick={onClickResend}>
             <Text
-              $color="var(--gray-color-300)"
-              children="문자가 오지 않았나요?."
+              $color="var(--gray-color-400)"
+              children="재전송하기"
+              $size="var(--font-size-medium)"
               $lineHeight="150%"
             />
-            <div onClick={onClickResend}>
-              <Text
-                $color="var(--gray-color-400)"
-                children="재전송하기"
-                $size="1.1rem"
-                $lineHeight="150%"
-              />
-            </div>
-          </Grid>
+          </div>
         </Grid>
-        <NextPageButton
-          isError={!isVerify}
-          text="인증하기"
-          handleClick={onClickBtn}
-        />
-      </FormWrapper>
-    </>
+      </Grid>
+      <NextPageButton
+        isError={!isVerify}
+        text="인증하기"
+        handleClick={onClickBtn}
+      />
+    </Container>
   );
 };
 
 export default VerifyCodeForm;
 
-const FormWrapper = styled.div`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  flex-shrink: 0;
+  height: 100vh;
+  width: 100vw;
 `;
 
 const StyledInput = styled.input`

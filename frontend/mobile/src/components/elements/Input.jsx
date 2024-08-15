@@ -150,6 +150,7 @@ const InputWrapper = styled.div`
     `  border: 1px solid var(--main-orange-color);
         `};
 `;
+
 const BasicInput = styled.input`
   border: none;
   outline: none;
@@ -157,9 +158,42 @@ const BasicInput = styled.input`
   color: var(--black-color-200);
   font-size: 1.5rem;
   font-weight: 500;
+
   &::placeholder {
     color: var(--label-gray-color);
     font-size: 1rem;
+  }
+
+  &[type="date"] {
+    position: relative;
+    padding-right: 10px;
+    color: #858585;
+
+    &::-webkit-clear-button,
+    &::-webkit-inner-spin-button {
+      display: none;
+    }
+
+    &::-webkit-calendar-picker-indicator {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      color: transparent;
+      cursor: pointer;
+    }
+
+    &::before {
+      content: attr(data-placeholder);
+      width: 100%;
+      color: var(--label-gray-color); /* 아이콘에 대한 텍스트 색상 */
+    }
+
+    &:valid::before {
+      display: none;
+    }
   }
 `;
 const HelpText = styled.div`
