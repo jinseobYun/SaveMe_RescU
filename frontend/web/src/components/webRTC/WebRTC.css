@@ -9,14 +9,15 @@
 }
 
 .local-position {
-    position: absolute;
-    bottom: 100px;
-    /* right: 50px; */
+    position: fixed;
+    bottom: 0px;
+    left:0px;
 }
 
 .control-panel{
     display: flex;
     justify-content: space-around;
+    padding-top:2rem;
     bottom: 1rem;
     left: 1rem;
     z-index: 3;
