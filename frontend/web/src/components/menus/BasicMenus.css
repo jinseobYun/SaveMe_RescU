@@ -1,0 +1,103 @@
+/* 공통 스타일 */
+* {
+    text-decoration: none;
+}
+
+a:active, a:visited {
+    color: inherit;
+    text-decoration: none;
+    outline: none;
+}
+
+a:hover {
+    color: rgba(70, 113, 255, 0.5);
+    /* text-decoration: underline; */
+}
+
+/* 네비게이션 바 스타일 */
+#navbar {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    height: 180px;
+    flex-shrink: 0;
+    align-items: center;
+    border-bottom: 1px solid;
+    border-color: gainsboro;
+}
+
+/* 메뉴 스타일 */
+.menu-left {
+    display: flex;
+}
+
+.menu-right {
+    display: flex;
+}
+
+/* 각 메뉴 항목 스타일 */
+.open-map, .open-rtc, .open-edit-password {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #000;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 16px;
+}
+
+/* 개별 메뉴 항목의 크기 */
+.open-map {
+    width: 201px;
+    height: 180px;
+}
+
+.open-rtc {
+    width: 172px;
+    height: 180px;
+    margin-left: 50px;
+}
+
+.open-edit-password {
+    width: 300px;
+    height: 180px;
+}
+
+.logout {
+    width: 172px;
+    height: 180px;
+}
+
+/* 로고 스타일 */
+.logo-box {
+    flex-shrink: 0;
+}
+
+.logo {
+    width: 272px;
+    height: 125px;
+    background-image: url(../../assets/Logo.png);
+    background-position: 50% 50%;
+    background-size: 100% 100%;
+}
+.logout-btn {
+    all: unset;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: inherit;
+    text-align: center;
+    cursor: pointer;
+    font-size:40px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 16px;
+}
+
+.logout button:hover {
+    color: rgba(70, 113, 255, 0.5);
+}

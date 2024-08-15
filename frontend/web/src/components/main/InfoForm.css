@@ -1,0 +1,22 @@
+form {
+    display: flex;
+    gap: 20px;
+}
+.left-column, .right-column {
+    display: flex;
+    width: 47%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.left-column {
+    border-right: 1px solid gainsboro;
+    padding-right: 1rem;
+}
+.right-column {
+    margin-right: 1.5rem;
+}
+.patient-basic-info {
+    display: flex;
+    gap : 30px
+}
