@@ -7,8 +7,8 @@ export let session;
 export let mainStreamManager;
 export let publisher;
 export let subscribers = [];
-let sttInterval = null; // STT 데이터 처리 인터벌
-let sttTimeout = null; // STT 호출 타임아웃
+let sttInterval = null;
+let sttTimeout = null;
 
 export const initOpenVidu = async (sessionId, user) => {
   try {
@@ -103,9 +103,9 @@ export const initOpenVidu = async (sessionId, user) => {
     lowPassFilter.frequency.setValueAtTime(10000, audioContext.currentTime);
 
     const compressor = audioContext.createDynamicsCompressor();
-    compressor.threshold.setValueAtTime(-50, audioContext.currentTime);
-    compressor.knee.setValueAtTime(40, audioContext.currentTime);
-    compressor.ratio.setValueAtTime(12, audioContext.currentTime);
+    compressor.threshold.setValueAtTime(-20, audioContext.currentTime);
+    compressor.knee.setValueAtTime(30, audioContext.currentTime);
+    compressor.ratio.setValueAtTime(10, audioContext.currentTime);
     compressor.attack.setValueAtTime(0, audioContext.currentTime);
     compressor.release.setValueAtTime(0.25, audioContext.currentTime);
 
@@ -135,7 +135,7 @@ export const initOpenVidu = async (sessionId, user) => {
       collectedAudioData.push(...dataArray);
 
       const maxVolume = Math.max(...dataArray);
-      if (maxVolume < 0.01) {
+      if (maxVolume < 0.02) {
         if (!sttTimeout) {
           sttTimeout = setTimeout(async () => {
             if (collectedAudioData.length > 0) {
@@ -156,7 +156,7 @@ export const initOpenVidu = async (sessionId, user) => {
               collectedAudioData = [];
               sttTimeout = null;
             }
-          }, 2000);
+          }, 1200);
         }
       } else {
         if (sttTimeout) {
@@ -168,7 +168,7 @@ export const initOpenVidu = async (sessionId, user) => {
 
     const startSTT = () => {
       if (!sttInterval) {
-        sttInterval = setInterval(processAudioData, 100);
+        sttInterval = setInterval(processAudioData, 120);
       }
     };
 
