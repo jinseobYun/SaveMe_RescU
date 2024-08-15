@@ -56,7 +56,7 @@ const Chat = () => {
               isSTTMessage: isSTTMessage,
             },
           ]);
-        } 
+        }
       };
 
       session.on("signal:my-chat", handleChatMessage);
@@ -118,13 +118,13 @@ const Chat = () => {
         ))}
       </ChatMessages>
       <ChatInputBox onSubmit={handleMessageSubmit}>
-        <input
+        <StyledInput
           type="text"
           value={messageInput}
           onChange={(e) => setMessageInput(e.target.value)}
         />
-        <Button type="submit">
-          <SendIcon fontSize="large" />
+        <Button type="submit" $color="#FFF" $size="30px" $width="10rem">
+          <SendIcon fontSize="30rem" />
         </Button>
       </ChatInputBox>
     </ChatContainer>
@@ -170,6 +170,7 @@ const ChatMessage = styled.div`
     word-break: break-all;
   }
 `;
+
 const ChatInputBox = styled.form`
   display: flex;
   padding: 1rem;
@@ -182,6 +183,15 @@ const ChatInputBox = styled.form`
     border-radius: 5px;
     margin-right: 10px;
   }
+`;
+
+const StyledInput = styled.input`
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+  font-size: 20px; // 원하는 크기로 조정
 `;
 
 export default Chat;
