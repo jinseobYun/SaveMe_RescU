@@ -13,7 +13,7 @@ import useFormInputStore from "@/store/useFormInputStore";
 import useSearchStore from "@/store/useSearchStore";
 import { registerMedicalInfo, updateMedicalInfo } from "@api/medicalInfoApi";
 import { successAlert, errorAlert } from "@/util/notificationAlert";
-
+import DeleteIcon from "@mui/icons-material/Delete";
 const MySwal = withReactContent(Swal);
 
 const MedicalSpecificForm = ({ form, btnSetting }) => {
@@ -232,14 +232,23 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
                   key={i}
                   id={item.id}
                   name={item.name}
-                  onClick={() => {
-                    onClickAddBtn(item.name);
-                  }}
                   value={item.name}
                 >
-                  <Text $size="1.4rem" children={item.name} $padding="1rem" />
+                  <div
+                    onClick={() => {
+                      onClickAddBtn(item.name);
+                    }}
+                  >
+                    <Text $size="1.4rem" children={item.name} $padding="1rem" />
+                  </div>
 
-                  <EditIcon />
+                  <DeleteIcon
+                    fontSize="large"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      deleteInput(item.name);
+                    }}
+                  />
                 </InputBox>
               ))
             : drugInputs &&
@@ -248,18 +257,27 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
                   key={i}
                   id={item.id}
                   name={item.name}
-                  onClick={() => {
-                    onClickAddBtn(item.name);
-                  }}
                   value={item.name}
                 >
-                  <Text
-                    $size="1.5rem"
-                    children={item.name}
-                    $padding="2rem"
-                    $lineHeight=""
+                  <div
+                    onClick={() => {
+                      onClickAddBtn(item.name);
+                    }}
+                  >
+                    <Text
+                      $size="1.5rem"
+                      children={item.name}
+                      $padding="2rem"
+                      $lineHeight=""
+                    />
+                  </div>
+                  <DeleteIcon
+                    fontSize="large"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      deleteInput(item.name);
+                    }}
                   />
-                  <EditIcon />
                 </InputBox>
               ))}
         </StyledList>
@@ -295,7 +313,7 @@ const InputBox = styled.div`
   display: flex;
   flex-direction: row;
   // width: 50vw;
-  gap: 2rem;
+  gap: 3rem;
   justify-content: space-between;
   padding: 0 0.1rem 10px 5px;
   padding: 16px;
@@ -304,4 +322,5 @@ const InputBox = styled.div`
   border-bottom: 1px solid var(--dark-blue-color);
 
   z-index: 3;
+  align-items: flex-end;
 `;
