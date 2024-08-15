@@ -26,8 +26,6 @@ const SignupUserInfoForm = () => {
         (response) => {
           if (response.status === 200) {
             navigate("/verification", { state: { type: "signup" } });
-            //FIXME - 인증코드 저장 없애기
-            updateInputs({ temporyCode: response.data.toString() });
           } else {
             console.log(response);
           }

@@ -22,26 +22,14 @@ const ChangePwPage = () => {
       currentPassword: "",
     },
     onSubmit: (values) => {
-      //FIXME - 인증번호 저장 삭제 후 밑의 data로 변경
-      let data = {
+      const data = {
+        ...inputs,
         newPassword: values.newPassword,
         newPasswordConfirm: values.newPasswordConfirm,
       };
-      // const data = {
-      //   ...inputs,
-      //   newPassword: values.newPassword,
-      //   newPasswordConfirm: values.newPasswordConfirm,
-      // };
       if (formType === "update") {
         data.currentPassword = values.currentPassword;
       } else {
-        data = {
-          ...data,
-          phoneNumber: inputs.phoneNumber,
-          memberId: inputs.memberId,
-          memberName: inputs.memberName,
-          verifyCode: inputs.temporyCode,
-        };
       }
       updateUserPwd(
         formType,

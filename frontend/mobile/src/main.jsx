@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
+import { BrowserRouter as Router } from "react-router-dom";
 
 if (import.meta.env.MODE === "production") {
   // production에서만 사용할 수 없도록
@@ -10,4 +11,8 @@ if (import.meta.env.MODE === "production") {
   // console.error = function () {}; // console error 막기
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <Router basename="/app/">
+    <App />
+  </Router>
+);

@@ -43,7 +43,6 @@ const Home = () => {
       yesorNoAlert("태깅이 감지되었습니다.", "취소", "신고하기", (result) => {
         if (result.isDismissed) {
           setTagId(tagId);
-          //TODO - 태깅 신고 로직
           navigate("/report");
         } else navigate("/");
       });
@@ -60,7 +59,6 @@ const Home = () => {
     <Container>
       {/* 헤더 */}
       <StyledHeader>
-        {/* //TODO - 헤더 만들기 */}
         <Image $src={logo} $width="20vw" $height="20vw" />
         <Text $size="4rem" children="SAVE ME" $bold={true} />
         <Text children="119 신고 서비스" />
@@ -72,24 +70,6 @@ const Home = () => {
           $flex_direction="column"
           $margin="6vh"
         >
-          {/* 신고 버튼 */}
-          {/* <Button
-            _onClick={onClickReportBtn}
-            $radius="50%"
-            $width="40vw"
-            $height="40vw"
-            $bg={{ default: "var(--main-red-color)" }}
-            $border="none"
-            $boxShadow=" 4px 3px 62px 0px rgba(0, 0, 0, 0.50);"
-            children={
-              <Text
-                $color="var(--white-color-100)"
-                children="119"
-                $size="40px"
-                $bold="true"
-              />
-            }
-          /> */}
           <NeumorphismButton onClick={onClickReportBtn}>
             <ReportBtnText>
               <Text
@@ -185,8 +165,7 @@ const NeumorphismButton = styled.button`
   padding-top: 1.4rem;
   backdrop-filter: blur(10px);
   background-color: rgb(255, 76, 76, 1);
-  box-shadow:
-    5px 5px 10px rgba(255, 255, 255, 0.6),
+  box-shadow: 5px 5px 10px rgba(255, 255, 255, 0.6),
     /* 오른쪽 아래 그림자 */ -5px -5px 10px rgba(255, 255, 255, 0.6),
     /* 왼쪽 위 하이라이트 */ inset 5px 5px 10px rgba(255, 255, 255, 0.6),
     /* 오목하게 만드는 내부 그림자 */ inset -5px -5px 10px

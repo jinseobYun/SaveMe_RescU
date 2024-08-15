@@ -119,7 +119,6 @@ const MedicalInfoPage = () => {
       <Header navText="내 의료 정보" goTo="/menu" />
       {userMedicalInfo ? (
         <>
-          {/* //TODO - 의료 정보 있으면 있는 상태 보여주기 */}
           <ButtonBox>
             <Button
               _onClick={() => {
