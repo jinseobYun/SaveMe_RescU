@@ -98,21 +98,34 @@ const Login = () => {
             $bg={{ default: "var(--main-orange-color)" }}
             $color={{ default: "var(--white-color-100)" }}
             children="로그인"
+            $size="var(--font-size-medium)"
           />
           <TextBox>
             <Text children="계정이 없으신가요? " />
             <Link to="/signup/userinfo">
-              <Text children="회원가입" $color="var(--main-orange-color)" />
+              <Text
+                children="회원가입"
+                $color="var(--main-orange-color)"
+                $size="var(--font-size-medium)"
+              />
             </Link>
           </TextBox>
           <TextBox>
             <Link to="/findid">
-              <Text children="아이디 찾기" $color="var(--gray-color-200)" />
+              <Text
+                children="아이디 찾기"
+                $color="var(--gray-color-300)"
+                $size="var(--font-size-medium)"
+              />
             </Link>
             <Text children="|" $color="var(--gray-color-200)" />
 
             <Link to="/findpassword">
-              <Text children="비밀번호 찾기" $color="var(--gray-color-200)" />
+              <Text
+                children="비밀번호 찾기"
+                $color="var(--gray-color-300)"
+                $size="var(--font-size-medium)"
+              />
             </Link>
           </TextBox>
         </StyledForm>
