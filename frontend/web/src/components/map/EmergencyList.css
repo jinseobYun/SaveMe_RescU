@@ -5,6 +5,7 @@
     margin: 20px;
     margin-top: 40px;
     overflow-y: auto;
+    scrollbar-width: none;
     flex-grow: 1;
     height: 0;
     border-radius: 8px; /* 모서리 둥글게 */

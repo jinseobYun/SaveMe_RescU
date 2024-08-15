@@ -57,11 +57,11 @@ const Label = styled.div`
 
 const SelectWrapper = styled.div`
   width: 100%;
-  min-height: 5rem;
   padding: 5px;
   box-sizing: border-box;
   border: 1px solid;
   border-radius: 5px;
+  border-color: var(--gray-color-400);
   box-shadow: 0px 1px 2px 0px rgba(55, 65, 81, 0.08);
   background: var(--white-color-100);
 `;
@@ -69,10 +69,11 @@ const SelectWrapper = styled.div`
 const StyledSelect = styled.select`
   width: 100%;
   padding: 10px;
+  min-height: 5rem;
   border: none;
   outline: none;
   color: var(--gray-color-400);
-  font-size: 16px;
+  font-size: 24px;
   font-weight: 500;
   line-height: 24px;
   background: var(--white-color-100);

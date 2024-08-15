@@ -42,6 +42,7 @@ const SecondInfo = () => {
   });
 
   const [hospitalOptions, setHospitalOptions] = useState([]);
+  const [lastAction, setLastAction] = useState(null);
 
   // api 호출 데이터 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
   // reportData의 latitude와 longitude로 응급실 정보를 호출
@@ -205,6 +206,7 @@ const SecondInfo = () => {
   const handleKeyDown = (e, name, index) => {
     if (e.key === "Enter") {
       e.preventDefault();
+      setLastAction("enter");
       setFormData((prevState) => {
         const updatedArray = [...prevState[name]];
         if (updatedArray[index] !== "") {
@@ -216,9 +218,71 @@ const SecondInfo = () => {
         };
       });
     }
+
+    if (e.key === "Backspace" && formData[name][index] === "") {
+      setLastAction("backspace")
+      setFormData((prevState) => {
+        const updatedArray = [...prevState[name]];
+        if (updatedArray.length > 1) {
+          updatedArray.splice(index, 1);
+        }
+        return {
+          ...prevState,
+          [name]: updatedArray,
+        };
+      });
+    }
   };
+  useEffect(() => {
+    if (lastAction === "enter" && chronicDiseaseRefs.current.length > 0) {
+      const lastIndex = chronicDiseaseRefs.current.length - 1;
+      const lastElement = chronicDiseaseRefs.current[lastIndex];
+      if (lastElement) {
+        lastElement.scrollIntoView({ behavior: "smooth" });
+        lastElement.focus();
+      }
+      setLastAction(null); // 액션을 초기화
+    }
+  }, [formData.chronicDisease]);
+
+  useEffect(() => {
+    if (lastAction === "enter" && drugInfosRefs.current.length > 0) {
+      const lastIndex = drugInfosRefs.current.length - 1;
+      const lastElement = drugInfosRefs.current[lastIndex];
+      if (lastElement) {
+        lastElement.scrollIntoView({ behavior: "smooth" });
+        lastElement.focus();
+      }
+      setLastAction(null); // 액션을 초기화
+    }
+  }, [formData.drugInfos]);
+
+  useEffect(() => {
+    if (lastAction === "backspace" && chronicDiseaseRefs.current.length > 0) {
+      const lastIndex = chronicDiseaseRefs.current.length - 2;
+      const lastElement = chronicDiseaseRefs.current[lastIndex];
+      if (lastElement) {
+        lastElement.scrollIntoView({ behavior: "smooth" });
+        lastElement.focus();
+      }
+      setLastAction(null); // 액션을 초기화
+    }
+  }, [formData.chronicDisease]);
+
+  useEffect(() => {
+    if (lastAction === "backspace" && drugInfosRefs.current.length > 0) {
+      const lastIndex = drugInfosRefs.current.length - 2;
+      const lastElement = drugInfosRefs.current[lastIndex];
+      if (lastElement) {
+        lastElement.scrollIntoView({ behavior: "smooth" });
+        lastElement.focus();
+      }
+      setLastAction(null); // 액션을 초기화
+    }
+  }, [formData.drugInfos]);
 
   return (
+    <>
     <FormContainer>
       <Section>
         <Select
@@ -292,14 +356,15 @@ const SecondInfo = () => {
           />
         </InputRow>
       </Section>
-      <Section>
-        <Label>지병정보</Label>
+      <Label>지병정보</Label>
+      <ScrollableSection>
         {(formData.chronicDisease.length === 0
           ? [""]
           : formData.chronicDisease
         ).map((disease, index) => (
           <Input
             key={index}
+            ref={(el) => chronicDiseaseRefs.current[index] = el}
             name={`disease_${index}`}
             value={disease}
             onChange={(e) =>
@@ -309,13 +374,14 @@ const SecondInfo = () => {
             placeholder={`지병을 입력하세요`}
           />
         ))}
-      </Section>
-      <Section>
-        <Label>투약정보</Label>
+      </ScrollableSection>
+      <Label>투약정보</Label>
+      <ScrollableSection>
         {(formData.drugInfos.length === 0 ? [""] : formData.drugInfos).map(
           (medication, index) => (
             <Input
               key={index}
+              ref={(el) => drugInfosRefs.current[index] = el}
               name={`medication_${index}`}
               value={medication}
               onChange={(e) =>
@@ -326,7 +392,7 @@ const SecondInfo = () => {
             />
           )
         )}
-      </Section>
+      </ScrollableSection>
       <Section>
         <Textarea
           label="기타 특이사항"
@@ -336,6 +402,7 @@ const SecondInfo = () => {
           overflow="hidden"
         />
       </Section>
+    </FormContainer>
       <ButtonRow>
         <Button _onClick={() => navigate(-1)} $color="white">
           뒤로가기
@@ -344,7 +411,7 @@ const SecondInfo = () => {
           보내기
         </Button>
       </ButtonRow>
-    </FormContainer>
+      </>
   );
 };
 
@@ -356,6 +423,9 @@ const FormContainer = styled.div`
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow-y:auto;
+  scrollbar-width: none;
+  height:90vh;
 `;
 
 const Section = styled.div`
@@ -376,6 +446,17 @@ const InputRow = styled.div`
 const Label = styled.div`
   font-size: 16px;
   font-weight: bold;
+`;
+
+const ScrollableSection = styled(Section)`
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  scrollbar-width: none;
+  max-height: 27rem;
+  flex-shrink: 0;
+  overflow-y: auto;
 `;
 
 export default SecondInfo;

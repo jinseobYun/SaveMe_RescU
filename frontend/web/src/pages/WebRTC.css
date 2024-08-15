@@ -5,6 +5,7 @@
 }
 
 .left-side {
+    flex-shrink:0;
     width: 25%;
     padding: 20px;
     background-color: #f8f9fa;
@@ -15,6 +16,7 @@
 
 .center {
     width: 50%;
+    flex-shrink:0;
     padding: 20px;
     background-color: #fff;
     display: flex;
