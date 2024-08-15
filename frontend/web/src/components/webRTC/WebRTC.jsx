@@ -66,8 +66,7 @@ const WebRTC = () => {
 
   useEffect(() => {
     const user = { username: "myname", userno: 1 }; 
-    // const sessionId = localStorage.getItem("memberId");
-    const sessionId = "SSAFY"
+    const sessionId = localStorage.getItem("memberId");
 
     initOpenVidu(sessionId, user).then(() => {
       console.log("OpenVidu Init 시작!");
