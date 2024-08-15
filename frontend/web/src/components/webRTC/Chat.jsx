@@ -141,6 +141,7 @@ const ChatMessages = styled.div`
   flex: 1;
   overflow-y: auto;
   padding: 10px;
+  scrollbar-width: none;
 `;
 
 const ChatMessage = styled.div`
@@ -165,6 +166,8 @@ const ChatMessage = styled.div`
     $isSTTMessage &&
     css`
       font-weight: bold;
+      width: 100%; // 전체 너비를 차지하도록 설정
+      text-align: center; // 텍스트를 가운데 정렬
     `}
   & p {
     word-break: break-all;

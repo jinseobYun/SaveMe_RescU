@@ -156,7 +156,7 @@ export const initOpenVidu = async (sessionId, user) => {
               collectedAudioData = [];
               sttTimeout = null;
             }
-          }, 100000);
+          }, 2000);
         }
       } else {
         if (sttTimeout) {
