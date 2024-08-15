@@ -106,6 +106,8 @@ const InputWrapper = styled.div`
   padding: 5px;
   display: flex;
   box-sizing: border-box;
+  font-size:12px;
+  position: relative;
 
   // 색 확인하기 -------------------------------------
   border: 1px solid;
@@ -134,10 +136,14 @@ const BasicInput = styled.input`
 // ClearButton
 const ClearButton = styled.button`
   display: flex;
+  position: absolute;
   background: none;
   border: none;
   cursor: pointer;
-  // color: #ff0000;
+  font-size:2rem;
+  color: var(--gray-color-400);
+  right: 0.5rem;
+  top: 50%; transform: translateY(-50%)
 `;
 
 const TogglePasswordButton = styled.button`
