@@ -363,6 +363,26 @@ const ReportOpenViduPage = () => {
         <LoadingScreen />
       ) : (
         <>
+          {isChatting && (
+            <ChatInputBox onClick={(event) => event.stopPropagation()}>
+              <input
+                type="text"
+                onChange={onChangeMessage}
+                value={input}
+                ref={chatInputRef}
+              />
+              <Button
+                _onClick={handleMessageSubmit}
+                $width=""
+                $height=""
+                $padding="0.8rem"
+                $radius="30%"
+                $bg={{ default: "var(--white-color-100)" }}
+              >
+                <SendIcon fontSize="large" />
+              </Button>
+            </ChatInputBox>
+          )}
           <PeerVideo ref={remoteVideoRef} autoPlay playsInline />
           {showMenuAll && (
             <VideoBtn>
@@ -463,7 +483,7 @@ const ReportOpenViduPage = () => {
                   ))}
                 </ChattingContents>
               )}
-              <ChatInputBox onClick={(event) => event.stopPropagation()}>
+              {/* <ChatInputBox onClick={(event) => event.stopPropagation()}>
                 <input
                   type="text"
                   onChange={onChangeMessage}
@@ -480,7 +500,7 @@ const ReportOpenViduPage = () => {
                 >
                   <SendIcon fontSize="large" />
                 </Button>
-              </ChatInputBox>
+              </ChatInputBox> */}
             </ChattingWrapper>
           ) : (
             <ChatBtn>
@@ -520,7 +540,7 @@ const Container = styled.div`
 const PeerVideo = styled.video`
   width: 100%;
   height: auto;
-  top: 0;
+  top: 8vh;
   left: 0;
   position: absolute;
   transform: rotateY(180deg);
@@ -634,6 +654,8 @@ const ChattingMessage = styled.div`
 `;
 
 const ChatInputBox = styled.div`
+  position: relative;
+  top: 0;
   display: flex;
   align-items: center;
   padding: 1rem;
