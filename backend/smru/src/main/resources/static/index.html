@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket 테스트</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+</head>
+<body>
+<h1>WebSocket 테스트</h1>
+<input type="text" id="messageInput" placeholder="메시지 입력">
+<button id="sendOffer">오퍼 전송</button>
+<button id="sendIceCandidate">ICE 후보 전송</button>
+<button id="sendAnswer">응답 전송</button>
+<div id="messages"></div>
+
+<script>
+    const socket = new SockJS('/signaling'); // WebSocket 연결
+    const stompClient = Stomp.over(socket); // STOMP 클라이언트 생성
+
+    stompClient.connect({}, function (frame) {
+        console.log('연결됨: ' + frame); // 연결 성공 메시지
+
+        // 오퍼 메시지 수신 구독
+        stompClient.subscribe('/topic/peer/offer/yourCamKey/yourRoomId', function (message) {
+            console.log('받은 오퍼: ' + message.body); // 수신된 오퍼 메시지
+            document.getElementById('messages').innerHTML += '<p>오퍼: ' + message.body + '</p>';
+        });
+
+        // ICE 후보 메시지 수신 구독
+        stompClient.subscribe('/topic/peer/iceCandidate/yourCamKey/yourRoomId', function (message) {
+            console.log('받은 ICE 후보: ' + message.body); // 수신된 ICE 후보 메시지
+            document.getElementById('messages').innerHTML += '<p>ICE 후보: ' + message.body + '</p>';
+        });
+
+        // 응답 메시지 수신 구독
+        stompClient.subscribe('/topic/peer/answer/yourCamKey/yourRoomId', function (message) {
+            console.log('받은 응답: ' + message.body); // 수신된 응답 메시지
+            document.getElementById('messages').innerHTML += '<p>응답: ' + message.body + '</p>';
+        });
+    });
+
+    // 오퍼 전송 버튼 클릭 시
+    document.getElementById('sendOffer').onclick = function() {
+        const message = document.getElementById('messageInput').value; // 입력된 메시지 가져오기
+        stompClient.send("/app/peer/offer/yourCamKey/yourRoomId", {}, message); // 오퍼 전송
+    };
+
+    // ICE 후보 전송 버튼 클릭 시
+    document.getElementById('sendIceCandidate').onclick = function() {
+        const message = document.getElementById('messageInput').value; // 입력된 메시지 가져오기
+        stompClient.send("/app/peer/iceCandidate/yourCamKey/yourRoomId", {}, message); // ICE 후보 전송
+    };
+
+    // 응답 전송 버튼 클릭 시
+    document.getElementById('sendAnswer').onclick = function() {
+        const message = document.getElementById('messageInput').value; // 입력된 메시지 가져오기
+        stompClient.send("/app/peer/answer/yourCamKey/yourRoomId", {}, message); // 응답 전송
+    };
+</script>
+</body>
+</html>

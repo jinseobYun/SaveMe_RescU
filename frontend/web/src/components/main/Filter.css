@@ -1,0 +1,30 @@
+.filter {
+    display: flex;
+    width: 100%;
+    border-bottom: 1px solid;
+    margin-bottom: 48px;
+}
+.filter > .condition {
+    align-items: center;
+    width: 100%;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-shrink: 1;
+}
+.filter-date {
+    min-width: 19rem;
+    width: 20rem;
+}
+.charge-input {
+    margin-right: 4rem;
+    min-width: 90px;
+    width: 20rem;
+}
+.filter-btn {
+    display:flex;
+    width: 20rem;
+    color: white;
+    margin-left:auto;
+    min-width: 110px;
+}
