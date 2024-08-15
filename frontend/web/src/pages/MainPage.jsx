@@ -40,7 +40,7 @@ const MainPage = () => {
     createdBy: null,
   });
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
 
   // 페이지 로드 시 기본 데이터 불러오기
   useEffect(() => {
