@@ -171,15 +171,18 @@ const MedicalSpecificForm = ({ form, btnSetting }) => {
     });
   };
   const deleteInput = (name) => {
+    console.log(name);
     if (form === "disease") {
       const prevIndex = medCdisInputs.findIndex((item) => item.name === name);
       if (prevIndex !== -1) {
-        deleteMedCdisInput(prevIndex);
+        deleteMedCdisInput(medCdisInputs[prevIndex].id);
       }
     } else {
+      console.log(drugInputs);
       const prevIndex = drugInputs.findIndex((item) => item.name === name);
       if (prevIndex !== -1) {
-        deleteDrugInput(prevIndex);
+        console.log(drugInputs[prevIndex].id);
+        deleteDrugInput(drugInputs[prevIndex].id);
       }
     }
   };
