@@ -7,7 +7,7 @@ import useForm from "@/hooks/useForm";
 import { updateUserPwd } from "@/api/userApi";
 import useFormInputStore from "@/store/useFormInputStore";
 import { ChangePwValidation } from "@/util/validation";
-import { errorAlert } from "@/util/notificationAlert";
+import { errorAlert, successAlert } from "@/util/notificationAlert";
 import axios from "axios";
 
 const ChangePwPage = () => {
@@ -34,7 +34,6 @@ const ChangePwPage = () => {
       // };
       if (formType === "update") {
         data.currentPassword = values.currentPassword;
-        console.log(values.currentPassword);
       } else {
         data = {
           ...data,
@@ -44,20 +43,20 @@ const ChangePwPage = () => {
           verifyCode: inputs.temporyCode,
         };
       }
-      console.log(data);
       updateUserPwd(
         formType,
         data,
         (response) => {
-          console.log(response);
+          console.log(JSON.stringify(response));
           if (response.status === 200) {
             clearInputs();
-            navigate("/", { replace: true });
+            successAlert("변경되었습니다", () => {
+              navigate("/", { replace: true });
+            });
           }
         },
         (error) => {
-          console.log(error);
-          errorAlert(error);
+          errorAlert(error.response.data);
         }
       );
     },

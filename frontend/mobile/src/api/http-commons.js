@@ -67,10 +67,10 @@ function loginAxios() {
           successAlert("다시 로그인 해주세요", () => {
             window.location.replace("/app/login");
             localStorage.removeItem("userStore");
-            return new Promise(() => {});
+            return new Promise(() => { });
           });
         }
-      }
+      } else return Promise.reject(error);
     }
   );
   return instance;

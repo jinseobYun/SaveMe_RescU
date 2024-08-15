@@ -45,9 +45,28 @@ const ReportOpenViduPage = () => {
   const [isCameraFront, setIsCameraFront] = useState(true);
   const [currentVideoDevice, setCurrentVideoDevice] = useState(null);
   const scrollRef = useRef();
-
+  const containerRef = useRef();
   const [{ x, y }, api] = useSpring(() => ({ x: 0, y: 0 }));
 
+  const screenWidth = window.innerWidth;
+  const screenHeight = window.innerHeight;
+
+  // const bind = useDrag((state) => {
+  //   const elementWidth = localVideoRef.current.offsetWidth;
+  //   const elementHeight = localVideoRef.current.offsetHeight;
+  //   let [mx, my] = state.offset;
+
+  //   // 화면 경계를 기준으로 드래그 제한
+  //   if (mx > screenWidth - elementWidth / 2)
+  //     mx = screenWidth - elementWidth / 2;
+  //   if (mx < -elementWidth / 2) mx = -elementWidth / 2;
+  //   if (my > screenHeight - elementHeight / 2)
+  //     my = screenHeight - elementHeight / 2;
+  //   if (my < -elementHeight / 2) my = -elementHeight / 2;
+
+  //   // 위치 업데이트
+  //   api.start({ x: mx, y: my });
+  // });
   const bind = useDrag(({ offset: [ox, oy] }) => {
     api.start({ x: ox, y: oy });
   });
@@ -65,9 +84,6 @@ const ReportOpenViduPage = () => {
     console.log("handleMuteClick");
     setMuted(enabled);
   };
-  useEffect(() => {
-    console.log("Muted", muted);
-  }, [muted]);
   const handleCameraClick = () => {
     const enabled = toggleVideo();
     setCameraOff(enabled);
@@ -198,7 +214,8 @@ const ReportOpenViduPage = () => {
     if (isChatting && !showMenuAll) {
       setShowMenu(true);
       setIsChatting(false);
-      localVideoRef.current.style.bottom = `10px`;
+
+      localVideoRef.current.style.bottom = `1rem`;
     } else {
       setShowMenuAll(true);
     }
@@ -283,11 +300,14 @@ const ReportOpenViduPage = () => {
     }
   }, [chatlog, isChatting]);
   useEffect(() => {
-    if (localVideoRef.current) {
-      const chatHeight = chatWrapperRef.current.offsetHeight;
+    if (
+      localVideoRef.current &&
+      localVideoRef.current.offsetHeight < chatlogWrapperHeight
+    ) {
       localVideoRef.current.style.bottom = `${chatlogWrapperHeight + 16}px`; // 1rem = 16px
     }
   }, [chatlogWrapperHeight]);
+
   useEffect(() => {
     if (session) {
       const handleChatMessage = (event) => {
@@ -338,7 +358,7 @@ const ReportOpenViduPage = () => {
   }, [session]);
 
   return (
-    <Container onClick={onClickScreen}>
+    <Container onClick={onClickScreen} ref={containerRef}>
       {loading ? (
         <LoadingScreen />
       ) : (
@@ -474,9 +494,16 @@ const ReportOpenViduPage = () => {
               />
             </ChatBtn>
           )}
-          <animated.div {...bind()} style={{ x, y, touchAction: "none" }}>
+          <LocalVideoBox
+            {...bind()}
+            style={{
+              x,
+              y,
+              touchAction: "none",
+            }}
+          >
             <MyVideo ref={localVideoRef} autoPlay />
-          </animated.div>
+          </LocalVideoBox>
         </>
       )}
     </Container>
@@ -485,8 +512,7 @@ const ReportOpenViduPage = () => {
 export default ReportOpenViduPage;
 
 const Container = styled.div`
-  // display: flex;
-  // flex-direction: column;
+  position: relative;
   height: 100vh;
   width: 100vw;
   background-color: var(--black-color-200);
@@ -494,18 +520,24 @@ const Container = styled.div`
 const PeerVideo = styled.video`
   width: 100%;
   height: auto;
-  flex-shrink: 0;
-  position: relative;
+  top: 0;
+  left: 0;
+  position: absolute;
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg); /* Safari and Chrome */
   -moz-transform: rotateY(180deg); /* Firefox */
 `;
-const MyVideo = styled.video`
+const LocalVideoBox = styled(animated.div)`
+  position: absolute;
   left: 1rem;
   bottom: 1rem;
+`;
+const MyVideo = styled.video`
   width: 40vw;
-  height: 30vh;
-  flex-shrink: 0;
+  height: auto;
+  left: 1rem;
+  bottom: 1rem;
+
   border-radius: 20px;
   position: absolute;
   background-color: black;
