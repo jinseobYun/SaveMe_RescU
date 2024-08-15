@@ -46,9 +46,11 @@ const FirstAidPage = () => {
               <IconButton style={{ color: topic.color, p: 0 }}>
                 {topic.icon}
               </IconButton>
-              <Text align="center" variant="body2">
-                {topic.name}
-              </Text>
+              <Text
+                children={topic.name}
+                $size="var(--font-size-medium)"
+                $lineHeight="150%"
+              />
             </GroupBox>
           </Link>
         ))}
@@ -66,21 +68,22 @@ const Container = styled.div`
 
 const Grid = styled.div`
   width: 100%;
-  height: 83vh;
+  height: 82vh;
   display: flex;
   flex-wrap: wrap;
   padding: 16px;
   flex-grow: 1;
   align-items: flex-start;
-  align-content: center;
   flex-direction: row;
-  column-gap: 3vw;
+  column-gap: 1.7vw;
   row-gap: 4vh;
   justify-content: space-evenly;
+  align-content: flex-start;
+  margin-top: 3rem;
 `;
 const GroupBox = styled.div`
   width: 30vw;
-  height: 30vh;
+  height: 25vh;
   background-color: rgb(255, 255, 255, 0.4);
   border-radius: 10px;
   box-shadow: 0px 1px 8px #dfdbdb;

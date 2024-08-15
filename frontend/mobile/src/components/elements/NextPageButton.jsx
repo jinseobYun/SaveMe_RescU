@@ -13,7 +13,7 @@ const NextPageButton = ({
         _onClick={handleClick}
         $display="flex"
         $width="100vw"
-        $height="48px"
+        $height="8vh"
         $padding="8px 12px"
         $justify-content="center"
         $align-items="center"
@@ -24,6 +24,7 @@ const NextPageButton = ({
         $color={{ default: "var(--white-color-100)" }}
         children={text}
         $disabled={isError}
+        $size="var(--font-size-medium)"
       />
     </ButtonBox>
   );
@@ -35,4 +36,5 @@ const ButtonBox = styled.div`
   position: fixed;
   left: 0;
   bottom: 0;
+  display: block;
 `;

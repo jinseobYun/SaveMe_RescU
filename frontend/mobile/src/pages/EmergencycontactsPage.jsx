@@ -266,12 +266,13 @@ const Container = styled.div`
   width: 100vw;
 `;
 const AddBtnDiv = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
-  margin-right: 2rem;
-  margin-bottom: 1.5rem;
+  margin-right: 5rem;
+  margin-bottom: 2rem;
 `;
 
 const Content = styled.div`
@@ -279,16 +280,22 @@ const Content = styled.div`
   display: flex;
   align-items: center;
   overflow: auto;
-  height: 83vh;
+  height: 82vh;
 `;
 
 const ContactList = styled.div`
   flex: 1;
   padding: 10px;
   width: -webkit-fill-available;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
 `;
 
 const ContactCard = styled.div`
+  width: 80%;
   position: relative;
   background-color: white;
   padding: 15px;

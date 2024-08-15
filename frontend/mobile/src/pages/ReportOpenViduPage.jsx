@@ -23,14 +23,10 @@ import { averageGps } from "@/util/dataProcessing";
 import {
   initOpenVidu,
   leaveSession,
-  setMainStreamManager,
   getMainStreamManager,
-  subscribers,
   toggleAudio,
   toggleVideo,
   session,
-  getPublisher,
-  setPublisher,
   OV,
 } from "@/util/openvidu";
 const ReportOpenViduPage = () => {
@@ -50,16 +46,12 @@ const ReportOpenViduPage = () => {
   const [currentVideoDevice, setCurrentVideoDevice] = useState(null);
   const scrollRef = useRef();
 
-  //내 비디오 드래그 드롭
-  // react-spring의 useSpring을 이용해 드래그 가능한 위치를 애니메이션으로 관리합니다.
   const [{ x, y }, api] = useSpring(() => ({ x: 0, y: 0 }));
 
-  // react-use-gesture의 useDrag를 사용해 드래그 동작을 정의합니다.
   const bind = useDrag(({ offset: [ox, oy] }) => {
-    // 드래그 중 위치를 업데이트합니다.
-
     api.start({ x: ox, y: oy });
   });
+
   // 상대방 스트림 상태 관리
   const navigate = useNavigate();
   const [remoteStream, setRemoteStream] = useState(null);
@@ -242,7 +234,6 @@ const ReportOpenViduPage = () => {
     setShowMenu(false);
     setShowMenuAll(false);
     setChatBtnColor("var(--white-color-200)");
-    // localVideoRef.current.style.bottom = `70px`;
   };
 
   //SECTION - chatting
@@ -279,7 +270,10 @@ const ReportOpenViduPage = () => {
   };
   const [chatlogWrapperHeight, setChatlogWrapperHeight] = useState(0); // 채팅 높이 상태 추가
   const chatWrapperRef = useRef(null);
+  const chatInputRef = useRef(null);
   useEffect(() => {
+    if (chatInputRef.current) chatInputRef.current.focus();
+
     if (chatWrapperRef.current && localVideoRef.current) {
       const chatHeight = chatWrapperRef.current.offsetHeight;
       setChatlogWrapperHeight(chatHeight);
@@ -344,17 +338,12 @@ const ReportOpenViduPage = () => {
   }, [session]);
 
   return (
-    <>
+    <Container onClick={onClickScreen}>
       {loading ? (
         <LoadingScreen />
       ) : (
         <>
-          <PeerVideo
-            onClick={onClickScreen}
-            ref={remoteVideoRef}
-            autoPlay
-            playsInline
-          />
+          <PeerVideo ref={remoteVideoRef} autoPlay playsInline />
           {showMenuAll && (
             <VideoBtn>
               <Button
@@ -454,8 +443,13 @@ const ReportOpenViduPage = () => {
                   ))}
                 </ChattingContents>
               )}
-              <ChatInputBox>
-                <input type="text" onChange={onChangeMessage} value={input} />
+              <ChatInputBox onClick={(event) => event.stopPropagation()}>
+                <input
+                  type="text"
+                  onChange={onChangeMessage}
+                  value={input}
+                  ref={chatInputRef}
+                />
                 <Button
                   _onClick={handleMessageSubmit}
                   $width=""
@@ -485,17 +479,23 @@ const ReportOpenViduPage = () => {
           </animated.div>
         </>
       )}
-    </>
+    </Container>
   );
 };
 export default ReportOpenViduPage;
 
+const Container = styled.div`
+  // display: flex;
+  // flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--black-color-200);
+`;
 const PeerVideo = styled.video`
   width: 100%;
-  height: 100%;
+  height: auto;
   flex-shrink: 0;
   position: relative;
-  background-color: var(--black-color-200);
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg); /* Safari and Chrome */
   -moz-transform: rotateY(180deg); /* Firefox */
@@ -530,16 +530,6 @@ const VideoBtn = styled.div`
   align-items: flex-start;
   gap: 16px;
 `;
-
-// const ChatInputBox = styled.div`
-//   display: flex;
-//   height: 48px;
-//   justify-content: center;
-//   align-items: center;
-//   align-self: stretch;
-//   position: relative;
-//   bottom: 0;
-// `;
 
 const ChatBtn = styled.div`
   width: 55px;

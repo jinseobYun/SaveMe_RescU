@@ -16,7 +16,7 @@ function SignUpValidationUserInfo({ name, birth, gender, phoneNumber }) {
   if (!phoneNumber) {
     errors.phoneNumber = "전화번호를 입력해주세요.";
   } else if (!/^01(0|1|[6-9])[0-9]{4}[0-9]{4}$/.test(phoneNumber)) {
-    errors.phoneNumber = "유효한 전화 번호를 입력해주세요.";
+    errors.phoneNumber = "유효한 전화번호를 입력해주세요.";
   }
 
   return errors;
@@ -27,7 +27,7 @@ function SignUpValidationLoginInfo({ id, password, passwordConfirm }) {
   if (!id) {
     errors.id = "아이디를 입력해주세요.";
   } else if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,20}$/.test(id)) {
-    errors.id = "아이디는5~20 자 이내 영문과 숫자 조합이어야합니다";
+    errors.id = "영문과 숫자를 포함한 5~20 자를 입력해주세요.";
   } else if (previd !== id) {
     console.log(previd);
     checkIdDuplication(
@@ -51,7 +51,7 @@ function SignUpValidationLoginInfo({ id, password, passwordConfirm }) {
   if (!password) {
     errors.password = "비밀번호가 입력되지 않았습니다.";
   } else if (!/^(?=.*[a-zA-Z])(?=.*[0-9]).{8,20}$/.test(password)) {
-    errors.password = "영대소문, 숫자를 포함한ss 8~20자를 입력해주세요.";
+    errors.password = "영대소문, 숫자를 포함한 8~20자를 입력해주세요.";
   }
 
   if (!passwordConfirm) {
@@ -73,7 +73,7 @@ function EmergencyContactValidation({ relation, phoneNumber }) {
   if (!phoneNumber) {
     errors.phoneNumber = "전화번호를 입력해주세요.";
   } else if (!/^01(0|1|[6-9])[0-9]{4}[0-9]{4}$/.test(phoneNumber)) {
-    errors.phoneNumber = "유효한 전화 번호를 입력해주세요.";
+    errors.phoneNumber = "유효한 전화번호를 입력해주세요.";
   }
   return errors;
 }

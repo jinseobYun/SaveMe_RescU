@@ -285,7 +285,7 @@ const Content = styled.div`
   display: flex;
   align-items: center;
   overflow: auto;
-  height: 83vh;
+  height: 82vh;
   align-items: flex-end;
   margin: auto;
   background-color: #f5f5f5;
