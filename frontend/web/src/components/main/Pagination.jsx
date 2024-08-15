@@ -14,7 +14,7 @@ const Pagination = ({ currentPage, totalItems, onPageChange, itemsPerPage }) => 
   }
 
   const handleClick = (page) => {
-    if (page >= 1 && page <= totalPages) {
+    if (page >= 0 && page <= totalPages) {
       onPageChange(page);
     }
   };
@@ -30,7 +30,7 @@ const Pagination = ({ currentPage, totalItems, onPageChange, itemsPerPage }) => 
       {[...Array(totalPages)].map((_, index) => (
         <button id="page-num"
           key={index}
-          onClick={() => handleClick(index + 1)}
+          onClick={() => handleClick(index)}
           className={currentPage === index + 1 ? "active" : ""}
         >
           {index + 1}

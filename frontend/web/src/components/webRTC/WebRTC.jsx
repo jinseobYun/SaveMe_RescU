@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useCallback } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   initOpenVidu,
@@ -7,6 +7,8 @@ import {
   toggleAudio,
   toggleVideo,
 } from "../../util/openvidu";
+import { useSpring, animated } from "react-spring";
+import { useDrag } from "@use-gesture/react";
 import styled from "styled-components";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import VideocamIcon from "@mui/icons-material/Videocam";
@@ -25,7 +27,32 @@ const WebRTC = () => {
   const navigate = useNavigate();
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
+  const containerRef = useRef(null);
   //remoteVideo 자체를 state로 관리
+
+  const [{ x, y }, api] = useSpring(() => ({ x: 0, y: 0 }));
+
+  const bind = useDrag(({ offset: [ox, oy] }) => {
+    if (containerRef.current) {
+      const containerWidth = containerRef.current.offsetWidth;
+      const containerHeight = containerRef.current.offsetHeight;
+      const videoWidth = localVideoRef.current.offsetWidth;
+      const videoHeight = localVideoRef.current.offsetHeight;
+
+      // X 좌표를 부모 컨테이너의 크기에 맞게 제한
+      const minX = 0;
+      const maxX = containerWidth - videoWidth;
+
+      // Y 좌표를 부모 컨테이너의 크기에 맞게 제한
+      const minY = -containerHeight + videoHeight;
+      const maxY = 0;
+
+      api.start({
+        x: Math.max(minX, Math.min(maxX, -ox)), // X 좌표 제한
+        y: Math.max(minY, Math.min(maxY, oy)),  // Y 좌표 제한
+      });
+    }
+  });
 
   const handleMuteClick = () => {
     const enabled = toggleAudio();
@@ -38,8 +65,8 @@ const WebRTC = () => {
   };
 
   useEffect(() => {
-    const user = { username: "myname", userno: 1 }; // 실제 사용자 정보로 대체
-    const sessionId = localStorage.getItem("memberId"); // 실제 세션 ID로 대체
+    const user = { username: "myname", userno: 1 }; 
+    const sessionId = localStorage.getItem("memberId");
 
     initOpenVidu(sessionId, user).then(() => {
       console.log("OpenVidu Init 시작!");
@@ -100,11 +127,14 @@ const WebRTC = () => {
 
   return (
     <VideoContainer>
-      <div className="remote-position">
+      <div className="remote-position" ref={containerRef}>
         <Video ref={remoteVideoRef} autoPlay playsInline />
-        <div className="local-position">
+        {/* <div className="local-position">
           <LocalVideo ref={localVideoRef} autoPlay playsInline />
-        </div>
+        </div> */}
+        <LocalPosition {...bind()} style={{ x, y, touchAction: "none" }}>
+          <LocalVideo ref={localVideoRef} autoPlay playsInline />
+        </LocalPosition>
       </div>
       <div className="control-panel">
         <div className="rtc-btn">
@@ -174,10 +204,20 @@ const Video = styled.video`
   height: 100%;
 `;
 
+const LocalPosition = styled(animated.div)`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+`;
+
 const LocalVideo = styled.video`
   width: 350px;
   height: 300px;
   z-index: 4;
+    cursor: grab;
+  &:active {
+    cursor: grabbing;
+  }
 `;
 
 export default WebRTC;
