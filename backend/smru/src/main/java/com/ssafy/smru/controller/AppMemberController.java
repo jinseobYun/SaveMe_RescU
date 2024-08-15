@@ -13,6 +13,7 @@ import com.ssafy.smru.service.app.PhoneVerificationService;
 import com.ssafy.smru.util.RegularExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -134,13 +135,13 @@ public class AppMemberController {
 
         PhoneVerificationDto.Response response = phoneVerificationService.generateAndSaveVerificationCode(request);
 // -------------------------------실제 휴대폰 문자 보내는 매서드 -----------------------------------
-//            // 휴대폰 번호로 문자 보내는 메서드 작성
-//        try {
-//            SingleMessageSentResponse result = phoneVerificationService.sendVerificationCode(response.getPhoneNumber(),response.getVerifyCode());
-//
-//        }catch (Exception e){
-//            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("인증번호 발송 오류");
-//        }
+            // 휴대폰 번호로 문자 보내는 메서드 작성
+        try {
+            SingleMessageSentResponse result = phoneVerificationService.sendVerificationCode(response.getPhoneNumber(),response.getVerifyCode());
+
+        }catch (Exception e){
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("인증번호 발송 오류");
+        }
 // -----------------------------------------------------------------------------------------------
 
 
