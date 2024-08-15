@@ -289,7 +289,7 @@ const ReportOpenViduPage = () => {
   const chatWrapperRef = useRef(null);
   const chatInputRef = useRef(null);
   useEffect(() => {
-    if (chatInputRef.current) chatInputRef.current.focus();
+    // if (chatInputRef.current) chatInputRef.current.focus();
 
     if (chatWrapperRef.current && localVideoRef.current) {
       const chatHeight = chatWrapperRef.current.offsetHeight;
