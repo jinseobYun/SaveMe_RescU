@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Button from "../components/elements/Button";
 import WebRTC from "../components/webRTC/WebRTC";
 import Chat from "../components/webRTC/Chat";
@@ -12,6 +12,19 @@ import "./WebRTC.css";
 
 const WebRtcPage = () => {
   const [dispatchOrderId, setDispatchOrderId] = useState(null);
+  
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <div className="webrtc">
