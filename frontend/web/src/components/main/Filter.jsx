@@ -37,7 +37,7 @@ const Filter = ({ formData, handleInputChange, handleFilter }) => (
         />
       </div>
       <div className="filter-btn">
-        <Button _onClick={handleFilter} $height="8rem" $color="white" $bold="true">조회하기</Button>
+        <Button _onClick={handleFilter} $height="2rem" $color="white" >검색</Button>
       </div>
     </div>
   </div>
