@@ -58,7 +58,6 @@ const FirstInfo = () => {
 
   useEffect(() => {
     if (reportData && reportData.rescueTeams.length > 0) {
-      console.log("이거확인!!", reportData);
       setRescueTeamNameOptions(
         reportData.rescueTeams.map((team) => team.teamName)
       );
@@ -88,7 +87,6 @@ const FirstInfo = () => {
       dispatch(setDispatchOrderId(result.payload.dispatchOrderId));
       navigate("/webrtc/second-info");
     }
-    console.log(result.payload);
   };
 
   return (

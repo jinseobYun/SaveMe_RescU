@@ -30,7 +30,6 @@ export default function LoginComponent() {
   const handleSubmit = async () => {
     try {
       const data = await doLogin(loginParam);
-      console.log(data);
       if (data.error) {
         alert("이메일 또는 패스워드를 확인하세요.");
       } else {

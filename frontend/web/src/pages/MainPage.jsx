@@ -67,7 +67,7 @@ const MainPage = () => {
     setCurrentPage(1);
     const filteredParams = getFilteredParams(formData);
     setCurrentPage(1);
-    dispatch(fetchIncidentList({ page: 1, ...filteredParams }));
+    dispatch(fetchIncidentList({ page: 0, ...filteredParams }));
   };
 
   const handleIncidentClick = (id) => {

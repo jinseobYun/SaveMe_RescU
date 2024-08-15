@@ -11,7 +11,6 @@ export const getReportAsync = createAsyncThunk(
 export const postFirstInfoAsync = createAsyncThunk(
   "postFirstInfoAsync",
   async (param) => {
-    console.log(param);
     return await postFirstInfo(param);
   }
 );
@@ -75,7 +74,6 @@ const reportSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getReportAsync.fulfilled, (state, action) => {
-        console.log(action.payload);
         return {
           ...state,
           reportData: action.payload,
@@ -91,7 +89,6 @@ const reportSlice = createSlice({
       })
       .addCase(putSecondInfoAsync.fulfilled, (state, action) => {
         alert(action.payload)
-        console.log(action.payload);
       });
   },
 });
