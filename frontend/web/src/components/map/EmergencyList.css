@@ -1,0 +1,51 @@
+.emergency-list {
+    display: flex;
+    flex-direction: column;
+    padding-left: 15px;
+    margin: 20px;
+    margin-top: 40px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    flex-grow: 1;
+    height: 0;
+    border-radius: 8px; /* 모서리 둥글게 */
+    box-shadow: 0 4px 10px rgba(208, 19, 19, 0.1); /* 부드러운 그림자 */
+    background-color: #f9f9f9; /* 배경 색상 */
+}
+
+.list-title {
+    color: #3E4958;
+    font-size: 32px; /* 글자 크기 증가 */
+    font-weight: 600; /* 글자 두께 증가 */
+    line-height: 36px; /* 줄 높이 증가 */
+    letter-spacing: 0.5px; /* 글자 간격 증가 */
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 5;
+    padding: 20px; /* 패딩 증가 */
+    border-bottom: 2px solid #D0D0D0; /* 두꺼운 테두리 */
+    border-radius: 8px 8px 0 0; /* 상단 모서리 둥글게 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 제목 그림자 */
+}
+
+.list-items {
+    overflow-y: visible;
+    width: 95%;
+    margin: 0 auto;
+    padding-top: 20px; /* 패딩 증가 */
+    background-color: #ffffff; /* 배경 색상 */
+    border-radius: 0 0 8px 8px; /* 하단 모서리 둥글게 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 그림자 */
+}
+
+.list-item {
+    padding: 15px; /* 항목 패딩 */
+    border-radius: 5px; /* 항목 모서리 둥글게 */
+    background-color: #f0f0f0; /* 항목 배경 색상 */
+    transition: background-color 0.3s; /* 배경색 전환 효과 */
+}
+
+.list-item:hover {
+    background-color: #d0eaff; /* 마우스 오버 시 색상 변화 */
+}

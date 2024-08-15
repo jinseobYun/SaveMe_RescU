@@ -1,0 +1,19 @@
+{
+  "properties": {
+    "medicine_id": {
+      "type": "integer"
+    },
+    "medicine_name": {
+      "type": "text",
+      "analyzer": "standard",
+      "search_analyzer": "standard",
+      "fields": {
+        "ngram": {
+          "type": "text",
+          "analyzer": "my_ngram_analyzer",
+          "search_analyzer": "my_ngram_analyzer"
+        }
+      }
+    }
+  }
+}
