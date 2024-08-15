@@ -26,9 +26,6 @@ const FindIdPwPage = () => {
         values.phoneNumber,
         (response) => {
           if (response.status === 200) {
-            //FIXME - 인증코드 저장 없애기
-            updateInputs({ temporyCode: response.data });
-
             isFindPassword
               ? navigate("/verification", { state: { type: "findpassword" } })
               : navigate("/verification", { state: { type: "findid" } });
