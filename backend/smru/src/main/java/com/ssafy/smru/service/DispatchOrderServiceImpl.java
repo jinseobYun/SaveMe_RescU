@@ -5,7 +5,6 @@ import com.ssafy.smru.entity.DispatchOrder;
 import com.ssafy.smru.entity.WebMember;
 import com.ssafy.smru.repository.DispatchOrderRepository;
 import com.ssafy.smru.repository.WebMemberRepository;
-import com.ssafy.smru.repository.app.MedicalInformationRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,7 +25,6 @@ import java.time.LocalDateTime;
 public class DispatchOrderServiceImpl implements DispatchOrderService{
 
     private final DispatchOrderRepository dispatchOrderRepository;
-    private final MedicalInformationRepository medicalInformationRepository;
     private final WebMemberRepository webMemberRepository;
 
     // 출동 지령 리스트 페이징 메서드
@@ -92,7 +90,7 @@ public class DispatchOrderServiceImpl implements DispatchOrderService{
 
         dispatchOrder.setHospitalName(request.getHospitalName());
         dispatchOrder.setMemberName(request.getMemberName());
-        dispatchOrder.setGender(request.getGender());
+        dispatchOrder.setGender(request.getGender().equals("0")?"남":"여");
         dispatchOrder.setBirth(request.getBirth());
         dispatchOrder.setBloodType1(request.getBloodType1());
         dispatchOrder.setBloodType2(request.getBloodType2());

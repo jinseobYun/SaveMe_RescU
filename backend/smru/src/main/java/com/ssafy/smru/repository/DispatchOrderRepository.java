@@ -14,6 +14,7 @@ import java.sql.Timestamp;
 public interface DispatchOrderRepository extends JpaRepository<DispatchOrder, Long> {
     // 작성자와 기간으로 필터링된 출동 지령을 조회하는 쿼리 메서드
     // null값이면 모든 d를 출력하게 설정
+
     @Query("SELECT d FROM DispatchOrder d WHERE " +
             "(:createdBy IS NULL OR d.createdBy LIKE %:createdBy%) AND " +
             "(:startDate IS NULL OR d.reportedTime >= :startDate) AND " +

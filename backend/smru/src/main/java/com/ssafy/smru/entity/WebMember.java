@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -41,6 +42,8 @@ public class WebMember implements UserDetails {
         this.password = password;
         this.name = name;
     }
+
+
 
     // GrantedAuthority 를 구현하는 getAuthorities 메서드, 현재는 빈 리스트 반환
     @Override

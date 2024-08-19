@@ -102,6 +102,7 @@ public class DispatchOrderDto {
         private String otherInfo;
         private String createdBy;
 
+
         public Response(DispatchOrder dispatchOrder) {
             this.dispatchOrderId = dispatchOrder.getDispatchOrderId();
             this.firestation = dispatchOrder.getFirestation();
@@ -116,6 +117,7 @@ public class DispatchOrderDto {
             this.memberName = dispatchOrder.getMemberName();
             this.gender = dispatchOrder.getGender();
             this.birth = dispatchOrder.getBirth();
+            this.memberName = dispatchOrder.getMemberName();
             this.chronicDisease = dispatchOrder.getChronicDisease();
             this.bloodType1 = dispatchOrder.getBloodType1();
             this.bloodType2 = dispatchOrder.getBloodType2();
