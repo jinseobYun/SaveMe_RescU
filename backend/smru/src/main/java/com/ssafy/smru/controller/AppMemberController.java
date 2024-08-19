@@ -13,6 +13,7 @@ import com.ssafy.smru.service.app.PhoneVerificationService;
 import com.ssafy.smru.util.RegularExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -134,18 +135,18 @@ public class AppMemberController {
 
         PhoneVerificationDto.Response response = phoneVerificationService.generateAndSaveVerificationCode(request);
 // -------------------------------실제 휴대폰 문자 보내는 매서드 -----------------------------------
-//            // 휴대폰 번호로 문자 보내는 메서드 작성
-//        try {
-//            SingleMessageSentResponse result = phoneVerificationService.sendVerificationCode(response.getPhoneNumber(),response.getVerifyCode());
-//
-//        }catch (Exception e){
-//            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("인증번호 발송 오류");
-//        }
+            // 휴대폰 번호로 문자 보내는 메서드 작성
+        try {
+            SingleMessageSentResponse result = phoneVerificationService.sendVerificationCode(response.getPhoneNumber(),response.getVerifyCode());
+
+        }catch (Exception e){
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("인증번호 발송 오류");
+        }
 // -----------------------------------------------------------------------------------------------
 
 
         // 테스트를 위해 프론트로 리스폰스 넘기기
-        return ResponseEntity.ok().body(response.getVerifyCode());
+        return ResponseEntity.ok().body("인증번호 발송 성공");
     }
 
 
@@ -277,6 +278,10 @@ public class AppMemberController {
     public ResponseEntity<?> changePassword(@RequestBody PasswordChangeDto.Request request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserName = authentication.getName();
+        System.out.println(currentUserName);
+        System.out.println(request.getCurrentPassword());
+        System.out.println(request.getNewPassword());
+        System.out.println(request.getNewPasswordConfirm());
         if (request.getCurrentPassword() == null || request.getCurrentPassword().trim().isEmpty() ||
                 request.getNewPassword() == null || request.getNewPassword().trim().isEmpty() ||
                 request.getNewPasswordConfirm() == null || request.getNewPasswordConfirm().trim().isEmpty()) {
@@ -284,15 +289,19 @@ public class AppMemberController {
         }
 
         if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {
+            System.out.println("----------새 비밀번호 불일치----------");
             return ResponseEntity.badRequest().body("새 비밀번호가 일치하지 않습니다.");
         }
         if (!appMemberService.checkPasswordMatchMemberId(currentUserName, request.getCurrentPassword())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("현재 비밀번호가 일치하지 않습니다.");
+            System.out.println("---------현재 비밀번호 불일치----------------");
+
+
+            return new ResponseEntity<>("현재 비밀번호가 일치하지 않습니다.",HttpStatus.BAD_REQUEST);
         }
 
         try {
             appMemberService.updatePassword(currentUserName, request.getNewPassword());
-            return ResponseEntity.ok().body(true);
+            return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (IllegalArgumentException e) {
