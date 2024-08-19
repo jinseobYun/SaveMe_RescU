@@ -58,8 +58,8 @@ public class DispatchOrderServiceImpl implements DispatchOrderService{
 
     // 1차 출동지령정보 작성
     public DispatchOrder createFirstOrder(FirstDispatchOrderDto.FirstInfoRequest request) {
-        WebMember webMember = webMemberRepository.findById(1L)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid rescue team ID"));
+//        WebMember webMember = webMemberRepository.findById(1L)
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid rescue team ID"));
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
@@ -76,7 +76,7 @@ public class DispatchOrderServiceImpl implements DispatchOrderService{
                 .reporterName(request.getReporterName())
                 .reporterPhone(request.getReporterPhone())
                 .reportDetails(request.getReportDetail())
-                .webMember(webMember)
+                .webMember(currentUser)
                 .createdBy(currentUser.getName())
                 .build();
         System.out.println(dispatchOrder.toString());

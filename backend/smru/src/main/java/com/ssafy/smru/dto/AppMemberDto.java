@@ -9,6 +9,7 @@ public class AppMemberDto {
     @Getter
     @NoArgsConstructor
     @ToString
+    @Builder
     public static class Request {
         private Long appMemberId;
         private String memberId;
@@ -19,19 +20,8 @@ public class AppMemberDto {
         private String phoneNumber;
         private boolean deleted;
         private MedicalInfoDto medicalInfoDto;
+        private String deviceToken;
 
-        @Builder
-        public Request(Long appMemberId, String memberId, String password, String memberName, LocalDate birth, boolean gender, String phoneNumber, boolean deleted, MedicalInfoDto medicalInfoDto) {
-            this.appMemberId = appMemberId;
-            this.memberId = memberId;
-            this.password = password;
-            this.memberName = memberName;
-            this.birth = birth;
-            this.gender = gender;
-            this.phoneNumber = phoneNumber;
-            this.deleted = deleted;
-            this.medicalInfoDto = medicalInfoDto;
-        }
 
         public AppMember toEntity() {
             return AppMember.builder()
@@ -43,8 +33,22 @@ public class AppMemberDto {
                     .gender(gender)
                     .phoneNumber(phoneNumber)
                     .deleted(deleted)
+                    .deviceToken(deviceToken)
                     .medicalInformation(null)
                     .build();
+        }
+
+        public Request(Long appMemberId, String memberId, String password, String memberName, LocalDate birth, boolean gender, String phoneNumber, boolean deleted, MedicalInfoDto medicalInfoDto, String deviceToken) {
+            this.appMemberId = appMemberId;
+            this.memberId = memberId;
+            this.password = password;
+            this.memberName = memberName;
+            this.birth = birth;
+            this.gender = gender;
+            this.phoneNumber = phoneNumber;
+            this.deleted = deleted;
+            this.medicalInfoDto = medicalInfoDto;
+            this.deviceToken = deviceToken;
         }
     }
 

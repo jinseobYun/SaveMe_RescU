@@ -15,10 +15,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-    @RequestMapping("/api/v1/app/emergency-info")
+@RequestMapping("/api/v1/app/emergency-info")
 @RequiredArgsConstructor
 public class EmergencyContactController {
 
@@ -41,15 +43,16 @@ public class EmergencyContactController {
         try {
             String memberId = getAuthenticatedUserId();
             List<EmergencyContactDto.Response> contacts = emergencyContactService.getEmergencyContactsByMemberId(memberId);
-            if(contacts == null || contacts.isEmpty()) {
+            if (contacts == null || contacts.isEmpty()) {
                 return new ResponseEntity<>("등록된 비상연락망이 없습니다.", HttpStatus.OK);
             }
             return new ResponseEntity<>(contacts, HttpStatus.OK);
-        }catch (ResourceNotFoundException e) {
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-        catch (Exception e) {
-            return new ResponseEntity<>("처리 중 서버에서 오류가 발생했습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (UnauthorizedException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("처리 중 서버에서 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -60,22 +63,24 @@ public class EmergencyContactController {
             String memberId = getAuthenticatedUserId();
 
             // 휴대폰 번호 입력 검증
-            if(!regularExpression.isPhone(request.getPhoneNumber())){
-                return new ResponseEntity<>("올바르지 않은 형식의 데이터입니다.",HttpStatus.BAD_REQUEST);
+            if (!regularExpression.isPhone(request.getPhoneNumber())) {
+                return new ResponseEntity<>("올바르지 않은 형식의 데이터입니다.", HttpStatus.BAD_REQUEST);
             }
 
             // 비상연락망 저장
-            emergencyContactService.createEmergencyContact(memberId, request);
-
-
-            return new ResponseEntity<>("비상연락망이 정상적으로 등록되었습니다.",HttpStatus.CREATED);
+            EmergencyContactDto.Response response = emergencyContactService.createEmergencyContact(memberId, request);
+            Map<String, Object> map = new HashMap<>();
+            map.put("message", "비상연락망이 정상적으로 등록되었습니다.");
+            map.put("emergencyContactId", response.getEmergencyContactId());
+            return new ResponseEntity<>(map, HttpStatus.CREATED);
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }catch (ResourceConflictException e) {
+        } catch (ResourceConflictException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-        }
-        catch (Exception e) {
-            return new ResponseEntity<>("처리 중 서버에서 오류가 발생했습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (UnauthorizedException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("처리 중 서버에서 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -85,36 +90,36 @@ public class EmergencyContactController {
             String memberId = getAuthenticatedUserId();
 
             // 휴대폰 번호 입력 검증
-            if(!regularExpression.isPhone(request.getPhoneNumber())){
-                return new ResponseEntity<>("올바르지 않은 형식의 데이터입니다.",HttpStatus.BAD_REQUEST);
+            if (!regularExpression.isPhone(request.getPhoneNumber())) {
+                return new ResponseEntity<>("올바르지 않은 형식의 데이터입니다.", HttpStatus.BAD_REQUEST);
             }
             emergencyContactService.updateEmergencyContact(emergencyContactId, request, memberId);
-            return new ResponseEntity<>("비상연락망을 정상적으로 수정했습니다.",HttpStatus.OK);
+            return new ResponseEntity<>("비상연락망을 정상적으로 수정했습니다.", HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (UnauthorizedException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
-            return new ResponseEntity<>("처리 중 서버에서 오류가 발생했습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("처리 중 서버에서 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @DeleteMapping
     public ResponseEntity<?> deleteEmergencyContact(@RequestParam Long emergencyContactId) {
-        if(emergencyContactId  == null) {
-            return new ResponseEntity<>("잘못된 요청입니다.",HttpStatus.BAD_REQUEST);
+        if (emergencyContactId == null) {
+            return new ResponseEntity<>("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
         }
         try {
 
             String memberId = getAuthenticatedUserId();
             emergencyContactService.deleteEmergencyContact(emergencyContactId, memberId);
-            return new ResponseEntity<>("비상연락망을 정상적으로 삭제했습니다.",HttpStatus.OK);
+            return new ResponseEntity<>("비상연락망을 정상적으로 삭제했습니다.", HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (UnauthorizedException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
-            return new ResponseEntity<>("처리 중 서버에서 오류가 발생했습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("처리 중 서버에서 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

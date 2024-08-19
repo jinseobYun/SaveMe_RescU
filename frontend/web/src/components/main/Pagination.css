@@ -1,0 +1,25 @@
+.pagination {
+    margin: 0 auto;
+}
+
+.page-btn {
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    color:black;
+    font-size: 16px;
+    background-color: white;
+    border: none;
+}
+
+#page-num {
+    color:black;
+    font-size: 25px;
+    background-color: white;
+    border: none;
+    font-weight: bold;
+}
+#page-num:hover {
+    color:blue
+
+}

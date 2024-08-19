@@ -114,7 +114,7 @@ public class DispatchOrderDto {
             this.reporterPhone = dispatchOrder.getReporterPhone();
             this.reportDetails = dispatchOrder.getReportDetails();
             this.hospitalName = dispatchOrder.getHospitalName();
-            this.memberName=dispatchOrder.getMemberName();
+            this.memberName = dispatchOrder.getMemberName();
             this.gender = dispatchOrder.getGender();
             this.birth = dispatchOrder.getBirth();
             this.memberName = dispatchOrder.getMemberName();

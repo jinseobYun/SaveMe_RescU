@@ -32,7 +32,7 @@ public class DispatchOrderController {
             @RequestParam(required = false) String createdBy,
             @RequestParam(required = false) Date startDate,
             @RequestParam(required = false) Date endDate,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
@@ -56,9 +56,14 @@ public class DispatchOrderController {
 
     // 1차 출동지령정보 작성
     @PostMapping("/1st-info")
-    public ResponseEntity<FirstDispatchOrderDto.Response> createFirstOrder(@RequestBody FirstDispatchOrderDto.FirstInfoRequest dto) {
-        DispatchOrder dispatchOrder = dispatchOrderService.createFirstOrder(dto);
-        return ResponseEntity.ok(new FirstDispatchOrderDto.Response(dispatchOrder.getDispatchOrderId()));
+    public ResponseEntity<?> createFirstOrder(@RequestBody FirstDispatchOrderDto.FirstInfoRequest dto) {
+        try {
+            DispatchOrder dispatchOrder = dispatchOrderService.createFirstOrder(dto);
+            return ResponseEntity.ok(new FirstDispatchOrderDto.Response(dispatchOrder.getDispatchOrderId()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("서버에서 오류 발생");
+        }
     }
 
     // 2차 출동지령정보 업데이트

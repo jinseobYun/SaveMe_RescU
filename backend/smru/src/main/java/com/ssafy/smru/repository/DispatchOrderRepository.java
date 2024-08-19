@@ -15,12 +15,13 @@ public interface DispatchOrderRepository extends JpaRepository<DispatchOrder, Lo
     // 작성자와 기간으로 필터링된 출동 지령을 조회하는 쿼리 메서드
     // null값이면 모든 d를 출력하게 설정
 
-    @Query("SELECT d FROM DispatchOrder d WHERE (:createdBy IS NULL OR d.createdBy = :createdBy) AND " +
+    @Query("SELECT d FROM DispatchOrder d WHERE " +
+            "(:createdBy IS NULL OR d.createdBy LIKE %:createdBy%) AND " +
             "(:startDate IS NULL OR d.reportedTime >= :startDate) AND " +
             "(:endDate IS NULL OR d.reportedTime <= :endDate)")
     Page<DispatchOrder> findByCreatedByAndReportedTimeBetween(@Param("createdBy") String createdBy,
                                                               @Param("startDate") Timestamp startDate,
                                                               @Param("endDate") Timestamp endDate,
                                                               Pageable pageable);
-
 }
+

@@ -4,7 +4,14 @@ import com.ssafy.smru.dto.app.PhoneVerificationDto;
 import com.ssafy.smru.entity.app.PhoneVerification;
 import com.ssafy.smru.exception.UnauthorizedException;
 import com.ssafy.smru.repository.app.PhoneVerificationRepository;
-import lombok.RequiredArgsConstructor;
+import net.nurigo.sdk.NurigoApp;
+import net.nurigo.sdk.message.model.Message;
+import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
+import net.nurigo.sdk.message.response.SingleMessageSentResponse;
+import net.nurigo.sdk.message.service.DefaultMessageService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -13,10 +20,31 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
+@PropertySource(value="classpath:/openAPI.properties")
+
 public class PhoneVerificationService {
 
-    private final PhoneVerificationRepository phoneVerificationRepository;
+
+    private String apiKey;
+
+
+    private String secretKey;
+
+
+    String outGoingPhone;
+
+    private PhoneVerificationRepository phoneVerificationRepository;
+    private DefaultMessageService messageService;
+    @Autowired
+    public PhoneVerificationService(@Value("${sms.api.key}")String apiKey, @Value("${sms.secret.api.key}")String secretKey, @Value("${sms.outGoing.phone}")String outGoingPhone, PhoneVerificationRepository phoneVerificationRepository) {
+        this.apiKey = apiKey;
+        this.secretKey = secretKey;
+        this.outGoingPhone = outGoingPhone;
+        this.phoneVerificationRepository = phoneVerificationRepository;
+        this.messageService = NurigoApp.INSTANCE.initialize( apiKey,secretKey, "https://api.coolsms.co.kr");;
+    }
+
+
 
     // 인증번호 생성 후 저장하는 매서드
     public PhoneVerificationDto.Response generateAndSaveVerificationCode(PhoneVerificationDto.Request request) {
@@ -82,6 +110,20 @@ public class PhoneVerificationService {
         phoneVerificationRepository.deleteById(phoneNumber);
     }
 
+
+    // 실제 문자 보내는 매서드
+    public SingleMessageSentResponse sendVerificationCode(String receptionPhone, String verificationCode) {
+        Message message = new Message();
+        // 발신번호 및 수신번호는 반드시 01012345678 형태로 입력되어야 합니다.
+        message.setFrom(outGoingPhone);
+        message.setTo(receptionPhone);
+        message.setText("[SaveMe] 인증번호 : [" + verificationCode + "]" + "\n" + "인증번호 노출에 주의하세요.");
+
+        SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
+        System.out.println(response);
+
+        return response;
+    }
 
 
 

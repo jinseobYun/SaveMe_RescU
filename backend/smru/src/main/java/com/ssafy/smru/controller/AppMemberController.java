@@ -13,6 +13,8 @@ import com.ssafy.smru.service.app.PhoneVerificationService;
 import com.ssafy.smru.util.RegularExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.nurigo.sdk.message.response.SingleMessageSentResponse;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.webjars.NotFoundException;
 
 import java.util.Map;
 
@@ -58,7 +61,7 @@ public class AppMemberController {
         try {
             return ResponseEntity.ok(appMemberService.login(dto));
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 일치하지 않습니다.");
         }catch (ResponseStatusException e) {
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
@@ -132,18 +135,18 @@ public class AppMemberController {
 
         PhoneVerificationDto.Response response = phoneVerificationService.generateAndSaveVerificationCode(request);
 // -------------------------------실제 휴대폰 문자 보내는 매서드 -----------------------------------
-//            // 휴대폰 번호로 문자 보내는 메서드 작성
-//        try {
-//            SingleMessageSentResponse result = phoneVerificationService.sendVerificationCode(response.getPhoneNumber(),response.getVerifyCode());
-//
-//        }catch (Exception e){
-//            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("인증번호 발송 오류");
-//        }
+            // 휴대폰 번호로 문자 보내는 메서드 작성
+        try {
+            SingleMessageSentResponse result = phoneVerificationService.sendVerificationCode(response.getPhoneNumber(),response.getVerifyCode());
+
+        }catch (Exception e){
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("인증번호 발송 오류");
+        }
 // -----------------------------------------------------------------------------------------------
 
 
         // 테스트를 위해 프론트로 리스폰스 넘기기
-        return ResponseEntity.ok().body(response.getVerifyCode());
+        return ResponseEntity.ok().body("인증번호 발송 성공");
     }
 
 
@@ -248,13 +251,12 @@ public class AppMemberController {
         }
 
         if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {
-            return ResponseEntity.unprocessableEntity().body("새 비밀번호가 일치하지 않습니다.");
+            return ResponseEntity.badRequest().body("새 비밀번호가 일치하지 않습니다.");
         }
 
         try {
             boolean isValid = phoneVerificationService.commonVerifyPhoneNumber(request.getPhoneNumber(), request.getVerifyCode());
             if (isValid) {
-
                 AppMemberDto.Response member = appMemberService.getMemberByPhoneNumberAndMemberIdAndMemberName(request.getPhoneNumber(),request.getMemberId(),request.getMemberName());
                 appMemberService.updatePassword(member.getMemberId(), request.getNewPassword());
                 // 인증 성공 후 비밀번호 변경이 끝났으므로
@@ -276,6 +278,10 @@ public class AppMemberController {
     public ResponseEntity<?> changePassword(@RequestBody PasswordChangeDto.Request request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserName = authentication.getName();
+        System.out.println(currentUserName);
+        System.out.println(request.getCurrentPassword());
+        System.out.println(request.getNewPassword());
+        System.out.println(request.getNewPasswordConfirm());
         if (request.getCurrentPassword() == null || request.getCurrentPassword().trim().isEmpty() ||
                 request.getNewPassword() == null || request.getNewPassword().trim().isEmpty() ||
                 request.getNewPasswordConfirm() == null || request.getNewPasswordConfirm().trim().isEmpty()) {
@@ -283,19 +289,25 @@ public class AppMemberController {
         }
 
         if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {
+            System.out.println("----------새 비밀번호 불일치----------");
             return ResponseEntity.badRequest().body("새 비밀번호가 일치하지 않습니다.");
         }
         if (!appMemberService.checkPasswordMatchMemberId(currentUserName, request.getCurrentPassword())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("현재 비밀번호가 일치하지 않습니다.");
+            System.out.println("---------현재 비밀번호 불일치----------------");
+
+
+            return new ResponseEntity<>("현재 비밀번호가 일치하지 않습니다.",HttpStatus.BAD_REQUEST);
         }
 
         try {
             appMemberService.updatePassword(currentUserName, request.getNewPassword());
-            return ResponseEntity.ok().body("true");
+            return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버에서 예상치 못한 오류가 발생했습니다.");
         }
     }
 
@@ -310,7 +322,6 @@ public class AppMemberController {
         if (!regularExpression.isPhone(phone)){
             return new ResponseEntity<>("올바르지 않은 형식의 데이터입니다.",HttpStatus.BAD_REQUEST);
         }
-        System.out.println(phone);
 
         try {
             appMemberService.updatePhoneNumber(currentUserName, phone);
@@ -323,7 +334,27 @@ public class AppMemberController {
 
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<?> regenerateToken(@RequestBody Map<String, String> req) {
+        try {
+            return ResponseEntity.ok(appMemberService.regenerateToken(req));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (UnauthorizedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("서버에서 예상치 못한 오류가 발생했습니다.");
+        }
+    }
 
-
-
+    @GetMapping("/nfc-token/{memberId}")
+    public ResponseEntity<?> getNfcToken(@PathVariable("memberId") String memberId) {
+        try {
+            return ResponseEntity.ok(appMemberService.getNfcToken(memberId));
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("서버에서 에상치 못한 오류가 발생했습니다.");
+        }
+    }
 }

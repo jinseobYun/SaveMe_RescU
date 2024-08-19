@@ -2,7 +2,6 @@ package com.ssafy.smru.controller;
 
 import com.ssafy.smru.dto.WebMemberDto;
 import com.ssafy.smru.dto.WebPasswordChangeDto;
-import com.ssafy.smru.repository.WebMemberRepository;
 import com.ssafy.smru.service.WebMemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,12 +14,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/web/members")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin(allowCredentials = "true", originPatterns = {"*"})
 public class WebMemberController {
     private final WebMemberService webMemberService;
     // 로그인
@@ -47,21 +49,27 @@ public class WebMemberController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody WebMemberDto.Request dto) {
         try {
-            return ResponseEntity.ok(webMemberService.register(dto));
+            int result =webMemberService.register(dto);
+            if(result==1){
+                return new ResponseEntity<>("중복된 ID 입니다.",HttpStatus.BAD_REQUEST);
+            }
+            return ResponseEntity.ok("회원가입에 성공했습니다!");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("서버에서 오류 발생");
         }
     }
+
     // 비밀번호 입력 했는지 확인
     // 현재 비밀번호가 DB에 등록된 정보와  맞는지 확인
     // 새비밀번호와 비밀번호 확인 번호가 일치하는지 확인
     @PostMapping("/change-password")
-    public ResponseEntity<?> changePassword(@RequestBody WebPasswordChangeDto.Request dto) {
+    public ResponseEntity<?> changePassword(@RequestBody WebPasswordChangeDto.Request dto, HttpServletRequest request) {
         try {
+            log.info("Headers: {}", Collections.list(request.getHeaderNames()).stream()
+                    .collect(Collectors.toMap(h -> h, request::getHeader)));
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String memberId = authentication.getName();
-            System.out.println(memberId);
-
+            log.info("memberId : {}", memberId);
             webMemberService.changePassword(memberId, dto);
             return new ResponseEntity<>("Password changed successfully", HttpStatus.OK);
         } catch (IllegalArgumentException e) {
@@ -70,6 +78,7 @@ public class WebMemberController {
             return new ResponseEntity<>("An unexpected error occurred.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     // 로그인된 유저 이름 반환
     @GetMapping("/extract-memberId")
     public ResponseEntity<?> extractUsername() {
@@ -77,10 +86,22 @@ public class WebMemberController {
 
     }
 
+
     // 전체 Member 조회
     @GetMapping("/member-list")
     public ResponseEntity<?> memberList(){
         List<WebMemberDto.Response> members = webMemberService.getAllMembers();
         return new ResponseEntity<>(members,HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{memberId}")
+    public ResponseEntity<?> deleteMember(@PathVariable String memberId){
+        try{
+        webMemberService.deleteMember(memberId);
+
+        return new ResponseEntity<>("삭제되었습니다",HttpStatus.OK);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body("삭제에 실패했습니다");
+        }
     }
 }
