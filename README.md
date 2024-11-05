@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/8cab0a58-3171-45a6-9a8b-24452e241c14)# 🚑 SaveMe_RescU 🚨
+# 🚑 SaveMe_RescU 🚨
 
 ![image](https://github.com/user-attachments/assets/e94a0b22-f0cd-4ef8-8206-d19edb98b2c7)
 ![image](https://github.com/user-attachments/assets/1dce2ea5-a93b-4d70-8338-1e278c1e9daa)
