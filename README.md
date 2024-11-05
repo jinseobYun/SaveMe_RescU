@@ -1,4 +1,7 @@
-# SaveMe_RescU
+![image](https://github.com/user-attachments/assets/8cab0a58-3171-45a6-9a8b-24452e241c14)# 🚑 SaveMe_RescU 🚨
+
+![image](https://github.com/user-attachments/assets/e94a0b22-f0cd-4ef8-8206-d19edb98b2c7)
+![image](https://github.com/user-attachments/assets/1dce2ea5-a93b-4d70-8338-1e278c1e9daa)
 
 <h2>프로젝트 개요</h2>
 
@@ -8,6 +11,44 @@
   2024.07.02 ~ 2024.08.16 ( 5명 )
 </h4>
 
+<h3> 팀원 소개 </h3>
+
+<table>
+  <tr>
+    <td style="text-align: center; padding: 10px;">
+      <a href="https://github.com/flex2020" target="_blank">
+      <img src="https://avatars.githubusercontent.com/u/61104736?v=4" alt="노의빈" height="150" width="150" style="border-radius: 50%;"/>
+      <h4>노의빈</h4>
+      <p><strong>역할:</strong> 팀장, Infra, Backend</p>
+    </td>
+    <td style="text-align: center; padding: 10px;">
+      <a href="https://github.com/jinseobYun" target="_blank">
+      <img src="https://avatars.githubusercontent.com/u/103829767?v=4" alt="윤진섭" height="150" width="150" style="border-radius: 50%;"/>
+      <h4>윤진섭</h4>
+      <p><strong>역할:</strong> Backend </p>
+    </td>
+    <td style="text-align: center; padding: 10px;">
+      <a href="https://github.com/Jeon-YJ1004" target="_blank">
+      <img src="https://avatars.githubusercontent.com/u/69620036?v=4" alt="전영주" height="150" width="150" style="border-radius: 50%;"/>
+      <h4>전영주</h4>
+      <p><strong>역할:</strong> Frontend </p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align: center; padding: 10px;">
+      <a href="https://github.com/Sanghwi-dodo" target="_blank">
+      <img src="https://avatars.githubusercontent.com/u/148059944?v=4" alt="이상휘" height="150" width="150" style="border-radius: 50%;"/>
+      <h4>이상휘</h4>
+      <p><strong>역할:</strong> Frontend </p>
+    </td>
+    <td style="text-align: center; padding: 10px;">
+        <a href="https://github.com/BigCuteMan" target="_blank">
+      <img src="https://avatars.githubusercontent.com/u/148304305?v=4" alt="안해찬" height="150" width="150" style="border-radius: 50%;"/>
+      <h4>안해찬</h4>
+      <p><strong>역할:</strong> Backend </p>
+    </td>
+  </tr>
+</table>
 
 <h3> 기획 배경 </h3>
 
