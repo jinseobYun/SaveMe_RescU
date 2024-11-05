@@ -38,3 +38,96 @@
   - **신고 시 보호자에게 Push 알림**: 신고가 접수되면 비상 연락망에 저장된 보호자에게 즉시 푸시 알림이 전송됩니다.
 
 ---
+
+
+
+<h2> 주요 기능 화면 </h2>
+
+<h3> APP ( 신고자 )</h3>
+<table>
+  <tr>
+    <th>회원가입</th>
+    <th>의료정보 등록</th>
+    <th>비상연락망 등록</th>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://github.com/user-attachments/assets/4d3d5dfd-12c0-46cb-a47b-f5aa92b57dab" alt="회원가입" width="300"/>
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/aeb9b181-f021-4ea9-995e-6299a7df9538" alt="의료정보 등록" width="300"/>
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/8dacf1f7-8484-4cda-85ee-eb6e86ae6157" alt="비상연락망 등록" width="300"/>
+    </td>
+  </tr>
+  <tr>
+    <th>NFC 토큰 발급</th>
+    <th>NFC 태깅 후 신고 자동 연결</th>
+    <th>보호자 Push 알림</th>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://github.com/user-attachments/assets/14281ddb-678f-4285-a4c7-f8b9dd389570" alt="NFC 토큰 발급" width="300"/>
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/d95fa738-1382-47c7-bbfc-9c9164c9fcc4" alt="NFC 태깅 후 신고 자동 연결" width="300"/>
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/a8ce0604-8b99-4312-996a-ad7053f80acc" alt="보호자 Push 알림" width="300"/>
+    </td>
+  </tr>
+</table>
+
+**회원가입**: 기본 정보를 입력하고 Cool SMS를 활용해 문자 인증을 구현했습니다.
+
+**의료정보 등록**: 의료 정보 등록 중 복용 중인 약, 질병 정보를 정확하게 입력할 수 있도록 자동완성 형식으로 구현했고, 
+
+이 때 필요한 의약품과 질병명을 Elastic Search를 활용해 빠르게 조회할 수 있도록 구현했습니다.
+
+**비상연락망 등록**: 보호자를 비상연락망에 등록하여 해당 사용자가 NFC 태깅을 통해 신고되면 보호자에게 Push 알림을 통해 신고 상황을 전달하고 119상황실에도 비상연락망을 전달하도록 구현했습니다.
+
+**NFC 토큰 발급**: NFC 스티커에 NFC 토큰을 등록하면 위급 상황 시 스티커를 통해 별다른 절차 없이 바로 119 상황실과 연결됩니다. 
+
+여기서는 NFC 토큰을 어떻게 스티커에 등록하는지에 대한 방법을 안내하고 실제 NFC 토큰을 발급받을 수 있습니다.
+
+**NFC 태깅 후 신고 자동 연결**: 해당 화면은 실제 NFC 스티커를 휴대폰에 태깅했을 때 나오는 화면입니다. 바로 119 상황실로 연결되는 것을 확인할 수 있습니다.
+
+**보호자 Push 알림**: NFC 태깅을 통해 신고가 이루어지면 NFC 스티커에 토큰을 등록한 사용자가 비상연락망에 저장한 보호자에게 Push 알림이 전송됩니다.
+
+<h3> WEB ( 119 상황실 ) </h3>
+
+<table>
+  <tr>
+    <th colspan="2" style="text-align: center;">전체 프로세스</th>
+  </tr>
+  <tr>
+    <td colspan="2" style="text-align: center;">
+      <img src="https://github.com/user-attachments/assets/f8ecd016-66ce-497f-ae48-8d93a6ab4b78" alt="전체 프로세스" width="100%"/>
+    </td>
+  </tr>
+  <tr>
+    <th style="text-align: center;">로그인</th>
+    <th style="text-align: center;">채팅</th>
+  </tr>
+  <tr>
+    <td style="text-align: center;">
+      <img src="https://github.com/user-attachments/assets/21de7ac3-1f3d-47ce-acd3-a97825b0c18e" alt="로그인" width="450px"/>
+    </td>
+    <td style="text-align: center;">
+      <img src="https://github.com/user-attachments/assets/de6053e6-2aeb-4786-9b43-3a11de0347db" alt="채팅" width="450px"/>
+    </td>
+  </tr>
+  <tr>
+    <th style="text-align: center;">출동지령 작성</th>
+    <th style="text-align: center;">최단 거리 응급실</th>
+  </tr>
+  <tr>
+    <td style="text-align: center;">
+      <img src="https://github.com/user-attachments/assets/e22777f1-bee8-4d9b-8041-6b7655de0e54" alt="출동지령 작성" width="450px"/>
+    </td>
+    <td style="text-align: center;">
+      <img src="https://github.com/user-attachments/assets/aeae76ef-78bd-4ed3-9324-8f6b33f1acc8" alt="최단 거리 응급실" width="450px"/>
+    </td>
+  </tr>
+</table>
