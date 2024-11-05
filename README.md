@@ -52,13 +52,13 @@
   </tr>
   <tr>
     <td>
-      <img src="https://github.com/user-attachments/assets/4d3d5dfd-12c0-46cb-a47b-f5aa92b57dab" alt="회원가입" width="300"/>
+      <img src="https://github.com/user-attachments/assets/4d3d5dfd-12c0-46cb-a47b-f5aa92b57dab" alt="회원가입" width="250"/>
     </td>
     <td>
-      <img src="https://github.com/user-attachments/assets/aeb9b181-f021-4ea9-995e-6299a7df9538" alt="의료정보 등록" width="300"/>
+      <img src="https://github.com/user-attachments/assets/aeb9b181-f021-4ea9-995e-6299a7df9538" alt="의료정보 등록" width="250"/>
     </td>
     <td>
-      <img src="https://github.com/user-attachments/assets/8dacf1f7-8484-4cda-85ee-eb6e86ae6157" alt="비상연락망 등록" width="300"/>
+      <img src="https://github.com/user-attachments/assets/8dacf1f7-8484-4cda-85ee-eb6e86ae6157" alt="비상연락망 등록" width="250"/>
     </td>
   </tr>
   <tr>
@@ -68,13 +68,13 @@
   </tr>
   <tr>
     <td>
-      <img src="https://github.com/user-attachments/assets/14281ddb-678f-4285-a4c7-f8b9dd389570" alt="NFC 토큰 발급" width="300"/>
+      <img src="https://github.com/user-attachments/assets/14281ddb-678f-4285-a4c7-f8b9dd389570" alt="NFC 토큰 발급" width="250"/>
     </td>
     <td>
-      <img src="https://github.com/user-attachments/assets/d95fa738-1382-47c7-bbfc-9c9164c9fcc4" alt="NFC 태깅 후 신고 자동 연결" width="300"/>
+      <img src="https://github.com/user-attachments/assets/d95fa738-1382-47c7-bbfc-9c9164c9fcc4" alt="NFC 태깅 후 신고 자동 연결" width="250"/>
     </td>
     <td>
-      <img src="https://github.com/user-attachments/assets/a8ce0604-8b99-4312-996a-ad7053f80acc" alt="보호자 Push 알림" width="300"/>
+      <img src="https://github.com/user-attachments/assets/a8ce0604-8b99-4312-996a-ad7053f80acc" alt="보호자 Push 알림" width="250"/>
     </td>
   </tr>
 </table>
@@ -112,10 +112,10 @@
   </tr>
   <tr>
     <td style="text-align: center;">
-      <img src="https://github.com/user-attachments/assets/21de7ac3-1f3d-47ce-acd3-a97825b0c18e" alt="로그인" width="450px"/>
+      <img src="https://github.com/user-attachments/assets/21de7ac3-1f3d-47ce-acd3-a97825b0c18e" alt="로그인" width="400px"/>
     </td>
     <td style="text-align: center;">
-      <img src="https://github.com/user-attachments/assets/de6053e6-2aeb-4786-9b43-3a11de0347db" alt="채팅" width="450px"/>
+      <img src="https://github.com/user-attachments/assets/de6053e6-2aeb-4786-9b43-3a11de0347db" alt="채팅" width="400px"/>
     </td>
   </tr>
   <tr>
@@ -124,10 +124,10 @@
   </tr>
   <tr>
     <td style="text-align: center;">
-      <img src="https://github.com/user-attachments/assets/e22777f1-bee8-4d9b-8041-6b7655de0e54" alt="출동지령 작성" width="450px"/>
+      <img src="https://github.com/user-attachments/assets/e22777f1-bee8-4d9b-8041-6b7655de0e54" alt="출동지령 작성" width="400px"/>
     </td>
     <td style="text-align: center;">
-      <img src="https://github.com/user-attachments/assets/aeae76ef-78bd-4ed3-9324-8f6b33f1acc8" alt="최단 거리 응급실" width="450px"/>
+      <img src="https://github.com/user-attachments/assets/aeae76ef-78bd-4ed3-9324-8f6b33f1acc8" alt="최단 거리 응급실" width="400px"/>
     </td>
   </tr>
 </table>
